@@ -1,0 +1,15 @@
+MON BUDGET ZEN — PACK ANDROID / CODEMAGIC
+
+Ce pack remplace les 3 fichiers de configuration du dépôt GitHub :
+- package.json
+- capacitor.config.json
+- codemagic.yaml
+
+IMPORTANT :
+Il n'est PAS nécessaire de créer ou d'envoyer un dossier www sur GitHub.
+Codemagic le crée automatiquement pendant la compilation à partir des
+fichiers web déjà présents à la racine du dépôt.
+
+Ce premier workflow produit un APK Android de test (debug).
+La signature de production et le fichier AAB Google Play seront configurés
+dans une étape ultérieure.

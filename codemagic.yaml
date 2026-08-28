@@ -1,11 +1,30 @@
 workflows:
-  monbudget-zen:
-    name: Mon Budget ZEN
+  android-debug:
+    name: Mon Budget ZEN Android
     max_build_duration: 60
+    environment:
+      node: 20
+      java: 17
     scripts:
-      - name: Verify application files
+      - name: Install Capacitor
         script: |
-          echo "Mon Budget ZEN"
-          ls -la
+          npm install
+
+      - name: Prepare web files
+        script: |
+          rm -rf www
+          mkdir -p www
+          cp index.html privacy.html about.html manifest.webmanifest sw.js ads.txt www/
+
+      - name: Create Android project
+        script: |
+          npx cap add android
+          npx cap sync android
+
+      - name: Build Android APK
+        script: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleDebug
     artifacts:
-      - "**/*"
+      - android/app/build/outputs/**/*.apk
