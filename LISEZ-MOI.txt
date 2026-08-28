@@ -1,0 +1,1 @@
+VERSION 2.0 — redessinée sur le modèle visuel validé. Déployer CE DOSSIER COMPLET sur le même projet Netlify. La clé budgetDataV1 est conservée afin de préserver les données locales existantes.

@@ -1,0 +1,9 @@
+{
+  "name": "Mon Budget & Mes Économies",
+  "short_name": "Mon Budget",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#06101d",
+  "theme_color": "#06101d"
+}
