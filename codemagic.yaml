@@ -30,12 +30,26 @@ workflows:
     artifacts:
       - android/app/build/outputs/**/*.apk
 
-  ios-debug:
-    name: Mon Budget ZEN iPhone
+  ios-app-store:
+    name: Mon Budget ZEN App Store
     max_build_duration: 60
+
+    integrations:
+      app_store_connect: Codemagic Mon Budget ZEN
+
     environment:
       node: 20
       xcode: latest
+      cocoapods: default
+
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.michaelburniaux.monbudget
+
+      vars:
+        XCODE_WORKSPACE: "App.xcworkspace"
+        XCODE_SCHEME: "App"
+
     scripts:
       - name: Install Capacitor
         script: |
@@ -52,10 +66,18 @@ workflows:
           npx cap add ios
           npx cap sync ios
 
-      - name: Build iPhone app
+      - name: Apply Apple signing
         script: |
           cd ios/App
-          xcodebuild -workspace App.xcworkspace -scheme App -configuration Debug -sdk iphonesimulator -derivedDataPath build CODE_SIGNING_ALLOWED=NO
+          xcode-project use-profiles
+
+      - name: Build signed IPA
+        script: |
+          xcode-project build-ipa \
+            --workspace "$CM_BUILD_DIR/ios/App/$XCODE_WORKSPACE" \
+            --scheme "$XCODE_SCHEME"
 
     artifacts:
-      - ios/App/build/Build/Products/Debug-iphonesimulator/*.app
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
