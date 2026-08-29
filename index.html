@@ -24,13 +24,13 @@ nav{position:fixed;bottom:0;left:0;right:0;background:#071321eF;border-top:1px s
 @media(max-width:570px){.charts{grid-template-columns:1fr}.twocol{grid-template-columns:1fr 1fr}h1{font-size:31px}.datetime{font-size:12px}.stats{font-size:13px}.stat b{font-size:16px}}
 </style></head><body><main>
 
-<header class="head"><div><h1>Mon Budget</h1><div class="sub">Mes économies • v2.1</div></div><div class="datetime"><span id="date"></span><b id="time"></b></div></header>
+<header class="head"><div><h1>Mon Budget</h1><div class="sub">Mes économies • v2.2</div></div><div class="datetime"><span id="date"></span><b id="time"></b></div></header>
 
 <section class="card balance"><div class="muted">Solde du mois</div><div class="big" id="balance">0,00 €</div><div class="stats"><div class="stat">↓ Revenus<b class="green" id="income">0 €</b></div><div class="stat">↑ Dépenses<b class="red" id="expense">0 €</b></div><div class="stat">🐷 Épargne<b class="blue" id="rate">0 %</b></div></div></section>
 
-<section class="actions"><button class="inc" onclick="openForm('income')">+ Revenu</button><button class="exp" onclick="openForm('expense')">− Dépense</button></section>
+<section class="actions"><button type="button" class="inc" onclick="openForm('income')">+ Revenu</button><button type="button" class="exp" onclick="openForm('expense')">− Dépense</button></section>
 
-<section id="form" class="card form"><h3 id="formTitle"></h3><input id="amount" type="number" inputmode="decimal" placeholder="Montant €"><select id="category"></select><input id="label" placeholder="Description (facultatif)"><button onclick="addTx()">Enregistrer</button><button onclick="form.classList.remove('show')">Annuler</button></section>
+<section id="form" class="card form"><h3 id="formTitle"></h3><input id="amount" type="number" inputmode="decimal" placeholder="Montant €"><select id="category"></select><input id="label" placeholder="Description (facultatif)"><button type="button" onclick="addTx()">Enregistrer</button><button type="button" onclick="closeTransactionForm()">Annuler</button></section>
 
 <section class="twocol">
 <div class="card">
@@ -42,738 +42,236 @@ nav{position:fixed;bottom:0;left:0;right:0;background:#071321eF;border-top:1px s
 <div class="progress"><i id="dayProgress"></i></div>
 <p class="muted" id="days"></p>
 </div>
-
 <div class="card"><b>🎯 Objectif d’épargne</b><div class="value purple" id="goalValue">0 €</div><div class="progress purple"><i id="goalProgress"></i></div><p class="purple" id="goalPct"></p></div>
 </section>
 
 <div class="sectionTitle"><h2>📅 Dépenses à venir</h2></div>
-
 <section class="card">
 <div class="plannedSummary">
 <div class="mini"><span class="muted">À réserver</span><b class="orange" id="reserved">0 €</b></div>
 <div class="mini"><span class="muted">Échéances</span><b id="plannedCount">0</b></div>
 </div>
 
-<button class="addPlanned" onclick="togglePlannedForm()">+ Ajouter une dépense à venir</button>
+<button type="button" class="addPlanned" onclick="togglePlannedForm()">+ Ajouter une dépense à venir</button>
 
 <div id="plannedForm" class="plannedForm">
-
 <input id="plannedLabel" placeholder="Détail facultatif (ex. ING, Proximus…)">
-
 <input id="plannedAmount" type="number" inputmode="decimal" placeholder="Montant €">
-
 <select id="plannedCategory">
-<option>Logement</option>
-<option>Crédit</option>
-<option>Énergie</option>
-<option>Assurance</option>
-<option>Abonnement</option>
-<option>Transport</option>
-<option>Impôts</option>
-<option>Santé</option>
-<option>Autre</option>
+<option>Logement</option><option>Crédit</option><option>Énergie</option>
+<option>Assurance</option><option>Abonnement</option><option>Transport</option>
+<option>Impôts</option><option>Santé</option><option>Autre</option>
 </select>
-
 <input id="plannedDay" type="number" inputmode="numeric" min="1" max="31" placeholder="Jour du mois (ex. 5)">
-
-<label class="checkline">
-<input id="plannedRecurring" type="checkbox" checked>
-Répéter automatiquement chaque mois
-</label>
-
-<button onclick="addPlanned()">Enregistrer l’échéance</button>
-<button onclick="togglePlannedForm(false)">Annuler</button>
-
+<label class="checkline"><input id="plannedRecurring" type="checkbox" checked> Répéter automatiquement chaque mois</label>
+<button type="button" onclick="addPlanned()">Enregistrer l’échéance</button>
+<button type="button" onclick="togglePlannedForm(false)">Annuler</button>
 </div>
-
 <div id="plannedList"></div>
 </section>
 
 <div class="sectionTitle"><h2>📊 Ce mois-ci vs mois précédent</h2></div>
 
 <section class="charts">
-
-<div class="card chartCard">
-<b>Dépenses & Épargne (€)</b>
-<div class="bars" id="bars"></div>
-<div class="legend">■ Ce mois-ci &nbsp;&nbsp; ▪ Mois précédent</div>
-</div>
-
-<div class="card chartCard">
-<b>Répartition des dépenses</b>
-<div class="donutWrap">
-<div id="donut" class="donut">
-<div class="donutCenter">
-<span id="donutTotal">0 €</span>
-<small>Total</small>
-</div>
-</div>
-</div>
-<div id="catLegend"></div>
-</div>
-
+<div class="card chartCard"><b>Dépenses & Épargne (€)</b><div class="bars" id="bars"></div><div class="legend">■ Ce mois-ci &nbsp;&nbsp; ▪ Mois précédent</div></div>
+<div class="card chartCard"><b>Répartition des dépenses</b><div class="donutWrap"><div id="donut" class="donut"><div class="donutCenter"><span id="donutTotal">0 €</span><small>Total</small></div></div></div><div id="catLegend"></div></div>
 </section>
 
-<section class="card tip">
-<h3>💡 Conseil du jour</h3>
-<div id="tip"></div>
-</section>
-
+<section class="card tip"><h3>💡 Conseil du jour</h3><div id="tip"></div></section>
 <div class="ad">EMPLACEMENT PUBLICITAIRE</div>
 
-<div class="sectionTitle">
-<h2>Dernières opérations</h2>
-</div>
+<div class="sectionTitle"><h2>Dernières opérations</h2></div>
+<section class="card" id="transactions">Aucune opération.</section>
 
-<section class="card" id="transactions">
-Aucune opération.
-</section>
+<section class="card settings"><details><summary>⚙️ Réglages et sauvegarde</summary><div style="margin-top:10px"><label>Objectif d'épargne (€)</label><input id="goalInput" type="number" inputmode="decimal"><button type="button" onclick="saveGoal()">Enregistrer l'objectif</button><button type="button" onclick="exportData()">Exporter mes données</button><input id="importFile" type="file" accept=".json" onchange="importData(event)"><button type="button" onclick="clearData()">Effacer toutes les données</button></div></details></section>
 
-<section class="card settings">
-<details>
-<summary>⚙️ Réglages et sauvegarde</summary>
-
-<div style="margin-top:10px">
-
-<label>Objectif d'épargne (€)</label>
-
-<input id="goalInput" type="number" inputmode="decimal">
-
-<button onclick="saveGoal()">Enregistrer l'objectif</button>
-
-<button onclick="exportData()">Exporter mes données</button>
-
-<input id="importFile" type="file" accept=".json" onchange="importData(event)">
-
-<button onclick="clearData()">Effacer toutes les données</button>
-
-</div>
-
-</details>
-</section>
-
-<div style="text-align:center">
-<a style="color:#9ba9bf" href="privacy.html">Confidentialité</a>
-·
-<a style="color:#9ba9bf" href="about.html">À propos</a>
-</div>
+<div style="text-align:center"><a style="color:#9ba9bf" href="privacy.html">Confidentialité</a> · <a style="color:#9ba9bf" href="about.html">À propos</a></div>
 
 </main>
 
-<nav>
-
-<button onclick="scrollTo({top:0,behavior:'smooth'})">
-<span>⌂</span>
-Accueil
-</button>
-
-<button onclick="document.getElementById('transactions').scrollIntoView({behavior:'smooth'})">
-<span>☷</span>
-Opérations
-</button>
-
-<button class="plusbtn" onclick="openForm('expense')">
-<span>+</span>
-Ajouter
-</button>
-
-<button onclick="document.querySelector('.charts').scrollIntoView({behavior:'smooth'})">
-<span>▥</span>
-Graphiques
-</button>
-
-<button onclick="document.querySelector('.settings').scrollIntoView({behavior:'smooth'})">
-<span>⚙</span>
-Réglages
-</button>
-
-</nav>
+<nav><button type="button" onclick="window.scrollTo({top:0,behavior:'smooth'})"><span>⌂</span>Accueil</button><button type="button" onclick="document.getElementById('transactions').scrollIntoView({behavior:'smooth'})"><span>☷</span>Opérations</button><button type="button" class="plusbtn" onclick="openForm('expense')"><span>+</span>Ajouter</button><button type="button" onclick="document.querySelector('.charts').scrollIntoView({behavior:'smooth'})"><span>▥</span>Graphiques</button><button type="button" onclick="document.querySelector('.settings').scrollIntoView({behavior:'smooth'})"><span>⚙</span>Réglages</button></nav>
 
 <script>
-
 const KEY="budgetDataV1";
-
-let data={
- transactions:[],
- goal:0,
- planned:[]
-};
+let data={transactions:[],goal:0,planned:[]};
 
 try{
  let x=JSON.parse(localStorage.getItem(KEY)||"null");
- if(x)data=x;
+ if(x)data=x
 }catch(e){}
 
 if(!Array.isArray(data.transactions))data.transactions=[];
 if(!Array.isArray(data.planned))data.planned=[];
-
 data.goal=Number(data.goal)||0;
 
-const $=x=>document.getElementById(x);
-
-const money=n=>new Intl.NumberFormat(
- "fr-BE",
- {
-  style:"currency",
-  currency:"EUR"
- }
-).format(n);
+const $=x=>document.getElementById(x),
+money=n=>new Intl.NumberFormat("fr-BE",{style:"currency",currency:"EUR"}).format(n);
 
 const cats={
- income:[
-  "Salaire",
-  "Prime",
-  "Remboursement",
-  "Vente",
-  "Autre revenu"
- ],
- expense:[
-  "Alimentation",
-  "Logement",
-  "Transport",
-  "Énergie",
-  "Loisirs",
-  "Abonnements",
-  "Santé",
-  "Shopping",
-  "Autre"
- ]
+ income:["Salaire","Prime","Remboursement","Vente","Autre revenu"],
+ expense:["Alimentation","Logement","Transport","Énergie","Loisirs","Abonnements","Santé","Shopping","Autre"]
 };
 
 const tips=[
- "Attends 24 heures avant un achat non essentiel : l'envie disparaît souvent.",
- "Avant un crédit, compare le TAEG et surtout le montant total à rembourser.",
- "Passe régulièrement en revue tes abonnements : les petites dépenses récurrentes s'additionnent vite.",
- "Essaie de mettre une somme de côté dès qu'un revenu arrive, plutôt que d'épargner uniquement ce qui reste.",
- "Prévois une petite marge pour les imprévus : un budget trop serré est difficile à tenir."
+"Attends 24 heures avant un achat non essentiel : l'envie disparaît souvent.",
+"Avant un crédit, compare le TAEG et surtout le montant total à rembourser.",
+"Passe régulièrement en revue tes abonnements : les petites dépenses récurrentes s'additionnent vite.",
+"Essaie de mettre une somme de côté dès qu'un revenu arrive, plutôt que d'épargner uniquement ce qui reste.",
+"Prévois une petite marge pour les imprévus : un budget trop serré est difficile à tenir."
 ];
 
-function save(){
- localStorage.setItem(KEY,JSON.stringify(data));
-}
+function save(){localStorage.setItem(KEY,JSON.stringify(data))}
 
 function clock(){
-
  let n=new Date();
-
- $("time").textContent=n.toLocaleTimeString(
-  "fr-BE",
-  {
-   hour:"2-digit",
-   minute:"2-digit"
-  }
- );
-
- $("date").textContent=n.toLocaleDateString(
-  "fr-BE",
-  {
-   weekday:"long",
-   day:"numeric",
-   month:"long",
-   year:"numeric"
-  }
- );
-
+ $("time").textContent=n.toLocaleTimeString("fr-BE",{hour:"2-digit",minute:"2-digit"});
+ $("date").textContent=n.toLocaleDateString("fr-BE",{weekday:"long",day:"numeric",month:"long",year:"numeric"})
 }
-
 clock();
-
 setInterval(clock,1000);
 
 function totals(y,m){
-
  let a=data.transactions.filter(t=>{
-
   let d=new Date(t.date);
-
-  return d.getFullYear()==y &&
-         d.getMonth()==m;
-
+  return d.getFullYear()==y&&d.getMonth()==m
  });
-
- let inc=a
- .filter(t=>t.type=="income")
- .reduce((s,t)=>s+Number(t.amount),0);
-
- let exp=a
- .filter(t=>t.type=="expense")
- .reduce((s,t)=>s+Number(t.amount),0);
-
- return{
-  inc,
-  exp,
-  save:inc-exp,
-  a
- };
-
+ let inc=a.filter(t=>t.type=="income").reduce((s,t)=>s+Number(t.amount),0);
+ let exp=a.filter(t=>t.type=="expense").reduce((s,t)=>s+Number(t.amount),0);
+ return{inc,exp,save:inc-exp,a}
 }
 
 function period(d=new Date()){
-
- return d.getFullYear()+"-"+
- String(d.getMonth()+1).padStart(2,"0");
-
+ return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")
 }
 
 function activePlanned(){
-
  let p=period();
-
- return data.planned.filter(
-  x=>x.paidPeriod!==p
- );
-
+ return data.planned.filter(x=>x.paidPeriod!==p)
 }
 
 function render(){
-
  let n=new Date();
-
- let c=totals(
-  n.getFullYear(),
-  n.getMonth()
- );
-
- let pD=new Date(
-  n.getFullYear(),
-  n.getMonth()-1,
-  1
- );
-
- let p=totals(
-  pD.getFullYear(),
-  pD.getMonth()
- );
-
+ let c=totals(n.getFullYear(),n.getMonth());
+ let pD=new Date(n.getFullYear(),n.getMonth()-1,1);
+ let p=totals(pD.getFullYear(),pD.getMonth());
  let bal=c.save;
 
  let upcoming=activePlanned();
-
- let reserved=upcoming.reduce(
-  (a,x)=>a+Number(x.amount),
-  0
- );
-
+ let reserved=upcoming.reduce((a,x)=>a+Number(x.amount),0);
  let available=bal-reserved;
 
  $("balance").textContent=money(bal);
+ $("balance").style.color=bal>=0?"#38d66b":"#ff4555";
+ $("income").textContent=money(c.inc);
+ $("expense").textContent=money(c.exp);
+ $("rate").textContent=(c.inc>0?Math.max(0,bal/c.inc*100):0).toFixed(1)+" %";
 
- $("balance").style.color=
- bal>=0
- ?"#38d66b"
- :"#ff4555";
+ let last=new Date(n.getFullYear(),n.getMonth()+1,0).getDate();
+ let left=last-n.getDate()+1;
 
- $("income").textContent=
- money(c.inc);
+ $("available").textContent=money(available);
+ $("available").style.color=available>=0?"#2e8cff":"#ff4555";
+ $("reserved").textContent=money(reserved);
+ $("plannedCount").textContent=upcoming.length;
 
- $("expense").textContent=
- money(c.exp);
+ $("reservedText").textContent=reserved
+ ? money(reserved)+" réservés pour les échéances"
+ : "Aucune échéance à réserver";
 
- $("rate").textContent=
- (
-  c.inc>0
-  ?Math.max(0,bal/c.inc*100)
-  :0
- ).toFixed(1)+" %";
+ $("daily").textContent=money(Math.max(0,available)/left);
+ $("days").textContent="Jour "+n.getDate()+" / "+last+" • "+left+" jours restants";
+ $("dayProgress").style.width=(n.getDate()/last*100)+"%";
 
- let last=new Date(
-  n.getFullYear(),
-  n.getMonth()+1,
-  0
- ).getDate();
+ $("goalValue").textContent=money(data.goal);
+ let gp=data.goal?Math.max(0,Math.min(100,bal/data.goal*100)):0;
+ $("goalProgress").style.width=gp+"%";
+ $("goalPct").textContent=gp.toFixed(1)+" % atteint";
+ $("goalInput").value=data.goal||"";
 
- let left=
- last-n.getDate()+1;
-
- $("available").textContent=
- money(available);
-
- $("available").style.color=
- available>=0
- ?"#2e8cff"
- :"#ff4555";
-
- $("reserved").textContent=
- money(reserved);
-
- $("plannedCount").textContent=
- upcoming.length;
-
- $("reservedText").textContent=
- reserved
- ?money(reserved)+" réservés pour les échéances"
- :"Aucune échéance à réserver";
-
- $("daily").textContent=
- money(
-  Math.max(0,available)/left
- );
-
- $("days").textContent=
- "Jour "+
- n.getDate()+
- " / "+
- last+
- " • "+
- left+
- " jours restants";
-
- $("dayProgress").style.width=
- (n.getDate()/last*100)+"%";
-
- $("goalValue").textContent=
- money(data.goal);
-
- let gp=data.goal
- ?Math.max(
-  0,
-  Math.min(
-   100,
-   bal/data.goal*100
-  )
- )
- :0;
-
- $("goalProgress").style.width=
- gp+"%";
-
- $("goalPct").textContent=
- gp.toFixed(1)+" % atteint";
-
- $("goalInput").value=
- data.goal||"";
-
- $("plannedList").innerHTML=
- upcoming.length
- ?upcoming
- .slice()
- .sort((a,b)=>a.day-b.day)
- .map(x=>`
-
+ $("plannedList").innerHTML=upcoming.length
+ ? upcoming.slice().sort((a,b)=>a.day-b.day).map(x=>`
  <div class="plannedRow">
-
   <div>
-
    <b>${x.label}</b>
-
-   <div class="meta">
-    Le ${x.day} · ${x.category}${x.recurring?" · chaque mois":" · une fois"}
-   </div>
-
+   <div class="meta">Le ${x.day} · ${x.category}${x.recurring?" · chaque mois":" · une fois"}</div>
   </div>
-
   <div style="text-align:right">
-
-   <b class="orange">
-    ${money(x.amount)}
-   </b>
-
+   <b class="orange">${money(x.amount)}</b>
    <div class="rowBtns">
-
-    <button
-     class="smallBtn paidBtn"
-     onclick="payPlanned('${x.id}')">
-     Payée
-    </button>
-
-    <button
-     class="smallBtn delBtn"
-     onclick="deletePlanned('${x.id}')">
-     ×
-    </button>
-
+    <button type="button" class="smallBtn paidBtn" onclick="payPlanned('${x.id}')">Payée</button>
+    <button type="button" class="smallBtn delBtn" onclick="deletePlanned('${x.id}')">×</button>
    </div>
-
   </div>
+ </div>`).join("")
+ : "<p class='muted'>Ajoute ici ton loyer, tes crédits, abonnements et autres échéances.</p>";
 
- </div>
+ let mx=Math.max(c.exp,p.exp,Math.max(0,c.save),Math.max(0,p.save),1);
+ function h(v){return Math.max(2,v/mx*155)}
 
- `).join("")
- :"<p class='muted'>Ajoute ici ton loyer, tes crédits, abonnements et autres échéances.</p>";
-
- let mx=Math.max(
-  c.exp,
-  p.exp,
-  Math.max(0,c.save),
-  Math.max(0,p.save),
-  1
- );
-
- function h(v){
-  return Math.max(
-   2,
-   v/mx*155
-  );
- }
-
- $("bars").innerHTML=`
-
- <div class="group">
-
-  <div
-   class="bar"
-   style="height:${h(c.exp)}px">
-  </div>
-
-  <div
-   class="bar old"
-   style="height:${h(p.exp)}px">
-  </div>
-
-  <label>
-   Dépenses
-  </label>
-
- </div>
-
- <div class="group">
-
-  <div
-   class="bar"
-   style="height:${h(Math.max(0,c.save))}px">
-  </div>
-
-  <div
-   class="bar old"
-   style="height:${h(Math.max(0,p.save))}px">
-  </div>
-
-  <label>
-   Épargne
-  </label>
-
- </div>
-
- `;
+ $("bars").innerHTML=
+ `<div class="group"><div class="bar" style="height:${h(c.exp)}px"></div>
+ <div class="bar old" style="height:${h(p.exp)}px"></div><label>Dépenses</label></div>
+ <div class="group"><div class="bar" style="height:${h(Math.max(0,c.save))}px"></div>
+ <div class="bar old" style="height:${h(Math.max(0,p.save))}px"></div><label>Épargne</label></div>`;
 
  let g={};
+ c.a.filter(t=>t.type=="expense").forEach(t=>g[t.category]=(g[t.category]||0)+Number(t.amount));
 
- c.a
- .filter(t=>t.type=="expense")
- .forEach(t=>
-  g[t.category]=
-  (g[t.category]||0)+
-  Number(t.amount)
- );
-
- let arr=
- Object.entries(g)
- .sort((a,b)=>b[1]-a[1]);
-
- let colors=[
-  "#2385ff",
-  "#f17b32",
-  "#40b85a",
-  "#a247df",
-  "#ffd02f",
-  "#28798a",
-  "#ee4f5f",
-  "#8d9caf",
-  "#5bc9b5"
- ];
-
- let total=c.exp;
-
- let deg=0;
-
- let parts=[];
+ let arr=Object.entries(g).sort((a,b)=>b[1]-a[1]);
+ let colors=["#2385ff","#f17b32","#40b85a","#a247df","#ffd02f","#28798a","#ee4f5f","#8d9caf","#5bc9b5"];
+ let total=c.exp,deg=0,parts=[];
 
  arr.forEach(([k,v],i)=>{
-
-  let end=
-  deg+
-  (
-   total
-   ?v/total*360
-   :0
-  );
-
-  parts.push(
-   `${colors[i%colors.length]} ${deg}deg ${end}deg`
-  );
-
-  deg=end;
-
+  let end=deg+(total?v/total*360:0);
+  parts.push(`${colors[i%colors.length]} ${deg}deg ${end}deg`);
+  deg=end
  });
 
- $("donut").style.background=
- parts.length
- ?`conic-gradient(${parts.join(",")})`
- :"#26364b";
+ $("donut").style.background=parts.length?`conic-gradient(${parts.join(",")})`:"#26364b";
+ $("donutTotal").textContent=money(total);
 
- $("donutTotal").textContent=
- money(total);
+ $("catLegend").innerHTML=arr.map(([k,v],i)=>
+ `<div class="cat"><span><i class="dot" style="background:${colors[i%colors.length]}"></i>${k}</span>
+ <b>${total?(v/total*100).toFixed(0):0}% · ${money(v)}</b></div>`
+ ).join("")||'<span class="muted">Ajoute des dépenses pour remplir le graphique.</span>';
 
- $("catLegend").innerHTML=
- arr.map(([k,v],i)=>`
+ $("tip").textContent=tips[Math.floor(Date.now()/86400000)%tips.length];
 
- <div class="cat">
+ let list=data.transactions.slice().reverse().slice(0,12);
 
-  <span>
-
-   <i
-    class="dot"
-    style="background:${colors[i%colors.length]}">
-   </i>
-
-   ${k}
-
-  </span>
-
-  <b>
-   ${
-    total
-    ?(v/total*100).toFixed(0)
-    :0
-   }% · ${money(v)}
-  </b>
-
- </div>
-
- `).join("")
- ||
- '<span class="muted">Ajoute des dépenses pour remplir le graphique.</span>';
-
- $("tip").textContent=
- tips[
-  Math.floor(
-   Date.now()/86400000
-  )%tips.length
- ];
-
- let list=
- data.transactions
- .slice()
- .reverse()
- .slice(0,12);
-
- $("transactions").innerHTML=
- list.length
- ?list.map((t,i)=>{
-
-  let d=new Date(t.date);
-
-  let idx=
-  data.transactions.length-1-i;
-
-  return`
-
-  <div class="tx">
-
-   <div>
-
-    <b>
-     ${t.label||t.category}
-    </b>
-
-    <div class="meta">
-     ${d.toLocaleDateString("fr-BE")} ·
-     ${d.toLocaleTimeString(
-      "fr-BE",
-      {
-       hour:"2-digit",
-       minute:"2-digit"
-      }
-     )} ·
-     ${t.category}
-    </div>
-
-   </div>
-
-   <div>
-
-    <b class="${t.type=="income"?"green":"red"}">
-     ${t.type=="income"?"+":"−"}${money(t.amount)}
-    </b>
-
-    <button onclick="delTx(${idx})">
-     ×
-    </button>
-
-   </div>
-
-  </div>
-
-  `;
-
- }).join("")
- :"Aucune opération.";
-
+ $("transactions").innerHTML=list.length?list.map((t,i)=>{
+  let d=new Date(t.date),idx=data.transactions.length-1-i;
+  return `<div class="tx"><div><b>${t.label||t.category}</b>
+  <div class="meta">${d.toLocaleDateString("fr-BE")} · ${d.toLocaleTimeString("fr-BE",{hour:"2-digit",minute:"2-digit"})} · ${t.category}</div></div>
+  <div><b class="${t.type=="income"?"green":"red"}">${t.type=="income"?"+":"−"}${money(t.amount)}</b>
+  <button type="button" onclick="delTx(${idx})">×</button></div></div>`
+ }).join(""):"Aucune opération.";
 }
 
 function togglePlannedForm(force){
-
  let f=$("plannedForm");
-
- let show=
- typeof force==="boolean"
- ?force
- :!f.classList.contains("show");
-
- f.classList.toggle(
-  "show",
-  show
- );
-
+ let show=typeof force==="boolean"?force:!f.classList.contains("show");
+ f.classList.toggle("show",show);
+ if(!show && document.activeElement && typeof document.activeElement.blur==="function")document.activeElement.blur();
 }
 
 function addPlanned(){
+ let label=$("plannedLabel").value.trim();
+ let amount=Number($("plannedAmount").value);
+ let day=Math.round(Number($("plannedDay").value));
 
- let label=
- $("plannedLabel")
- .value
- .trim();
-
- let amount=
- Number(
-  $("plannedAmount").value
- );
-
- let day=
- Math.round(
-  Number(
-   $("plannedDay").value
-  )
- );
-
- if(!label){
-  label=$("plannedCategory").value;
- }
-
- if(!(amount>0)){
-  return alert(
-   "Entre un montant supérieur à 0."
-  );
- }
-
- if(!(day>=1&&day<=31)){
-  return alert(
-   "Indique un jour du mois entre 1 et 31."
-  );
- }
+ if(!label)label=$("plannedCategory").value;
+ if(!(amount>0))return alert("Entre un montant supérieur à 0.");
+ if(!(day>=1&&day<=31))return alert("Indique un jour du mois entre 1 et 31.");
 
  data.planned.push({
-
-  id:
-  Date.now().toString(36)+
-  Math.random()
-  .toString(36)
-  .slice(2,7),
-
+  id:Date.now().toString(36)+Math.random().toString(36).slice(2,7),
   label,
-
   amount,
-
   day,
-
-  category:
-  $("plannedCategory").value,
-
-  recurring:
-  $("plannedRecurring").checked,
-
+  category:$("plannedCategory").value,
+  recurring:$("plannedRecurring").checked,
   paidPeriod:""
-
  });
 
  save();
@@ -781,27 +279,15 @@ function addPlanned(){
  $("plannedLabel").value="";
  $("plannedAmount").value="";
  $("plannedDay").value="";
-
  togglePlannedForm(false);
-
- render();
-
+ render()
 }
 
 function payPlanned(id){
-
- let x=
- data.planned.find(
-  p=>p.id===id
- );
-
+ let x=data.planned.find(p=>p.id===id);
  if(!x)return;
 
- if(!confirm(
-  "Marquer cette échéance comme payée et l’ajouter aux dépenses ?"
- )){
-  return;
- }
+ if(!confirm("Marquer cette échéance comme payée et l’ajouter aux dépenses ?"))return;
 
  let map={
   Crédit:"Autre",
@@ -811,293 +297,118 @@ function payPlanned(id){
  };
 
  data.transactions.push({
-
   type:"expense",
-
-  amount:
-  Number(x.amount),
-
-  category:
-  map[x.category]||
-  x.category,
-
-  label:
-  x.label,
-
-  date:
-  new Date().toISOString()
-
+  amount:Number(x.amount),
+  category:map[x.category]||x.category,
+  label:x.label,
+  date:new Date().toISOString()
  });
 
- if(x.recurring){
-
-  x.paidPeriod=
-  period();
-
- }else{
-
-  data.planned=
-  data.planned.filter(
-   p=>p.id!==id
-  );
-
- }
+ if(x.recurring)x.paidPeriod=period();
+ else data.planned=data.planned.filter(p=>p.id!==id);
 
  save();
-
- render();
-
+ render()
 }
 
 function deletePlanned(id){
-
- if(confirm(
-  "Supprimer cette dépense à venir ?"
- )){
-
-  data.planned=
-  data.planned.filter(
-   p=>p.id!==id
-  );
-
+ if(confirm("Supprimer cette dépense à venir ?")){
+  data.planned=data.planned.filter(p=>p.id!==id);
   save();
-
-  render();
-
+  render()
  }
-
 }
 
 let type="expense";
 
+function closeTransactionForm(){
+ $("form").classList.remove("show");
+ if(document.activeElement && typeof document.activeElement.blur==="function")document.activeElement.blur();
+}
+
 function openForm(t){
-
  type=t;
-
- $("formTitle").textContent=
- t=="income"
- ?"Ajouter un revenu"
- :"Ajouter une dépense";
-
- $("category").innerHTML=
- cats[t]
- .map(
-  x=>`<option>${x}</option>`
- )
- .join("");
-
+ $("formTitle").textContent=t=="income"?"Ajouter un revenu":"Ajouter une dépense";
+ $("category").innerHTML=cats[t].map(x=>`<option>${x}</option>`).join("");
  $("amount").value="";
  $("label").value="";
-
- $("form").classList.add(
-  "show"
- );
-
- $("form").scrollIntoView({
-  behavior:"smooth"
- });
-
+ $("form").classList.add("show");
+ $("form").scrollIntoView({behavior:"smooth"})
 }
 
 function addTx(){
-
- let a=
- Number(
-  $("amount").value
- );
-
- if(!(a>0)){
-  return alert(
-   "Entre un montant supérieur à 0."
-  );
- }
+ let a=Number($("amount").value);
+ if(!(a>0))return alert("Entre un montant supérieur à 0.");
 
  data.transactions.push({
-
   type,
-
   amount:a,
-
-  category:
-  $("category").value,
-
-  label:
-  $("label").value.trim(),
-
-  date:
-  new Date().toISOString()
-
+  category:$("category").value,
+  label:$("label").value.trim(),
+  date:new Date().toISOString()
  });
 
  save();
-
- $("form").classList.remove(
-  "show"
- );
-
- render();
-
+ closeTransactionForm();
+ render()
 }
 
 function delTx(i){
-
- if(confirm(
-  "Supprimer cette opération ?"
- )){
-
-  data.transactions.splice(
-   i,
-   1
-  );
-
+ if(confirm("Supprimer cette opération ?")){
+  data.transactions.splice(i,1);
   save();
-
-  render();
-
+  render()
  }
-
 }
 
 function saveGoal(){
-
- data.goal=
- Math.max(
-  0,
-  Number(
-   $("goalInput").value
-  )||0
- );
-
+ data.goal=Math.max(0,Number($("goalInput").value)||0);
  save();
-
- render();
-
+ render()
 }
 
 function exportData(){
-
- let b=
- new Blob(
-  [
-   JSON.stringify(
-    data,
-    null,
-    2
-   )
-  ],
-  {
-   type:"application/json"
-  }
- );
-
- let a=
- document.createElement(
-  "a"
- );
-
- a.href=
- URL.createObjectURL(b);
-
- a.download=
- "mon-budget-sauvegarde.json";
-
- a.click();
-
+ let b=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+ let a=document.createElement("a");
+ a.href=URL.createObjectURL(b);
+ a.download="mon-budget-sauvegarde.json";
+ a.click()
 }
 
 function importData(e){
-
- let f=
- e.target.files[0];
-
+ let f=e.target.files[0];
  if(!f)return;
 
- let r=
- new FileReader();
+ let r=new FileReader();
 
  r.onload=()=>{
-
   try{
-
-   let x=
-   JSON.parse(
-    r.result
-   );
-
-   if(
-    !Array.isArray(
-     x.transactions
-    )
-   ){
-    throw 0;
-   }
-
-   if(
-    !Array.isArray(
-     x.planned
-    )
-   ){
-    x.planned=[];
-   }
-
+   let x=JSON.parse(r.result);
+   if(!Array.isArray(x.transactions))throw 0;
+   if(!Array.isArray(x.planned))x.planned=[];
    data=x;
-
    save();
-
    render();
-
-   alert(
-    "Données importées."
-   );
-
+   alert("Données importées.")
   }catch(e){
-
-   alert(
-    "Fichier invalide."
-   );
-
+   alert("Fichier invalide.")
   }
-
  };
 
- r.readAsText(f);
-
+ r.readAsText(f)
 }
 
 function clearData(){
-
- if(confirm(
-  "Effacer toutes les données ?"
- )){
-
-  data={
-   transactions:[],
-   goal:0,
-   planned:[]
-  };
-
+ if(confirm("Effacer toutes les données ?")){
+  data={transactions:[],goal:0,planned:[]};
   save();
-
-  render();
-
+  render()
  }
-
 }
 
 render();
 
-if(
- "serviceWorker" in navigator
-){
+if("serviceWorker"in navigator)
+ navigator.serviceWorker.register("./sw.js").catch(()=>{});
 
- navigator
- .serviceWorker
- .register("./sw.js")
- .catch(()=>{});
-
-}
-
-</script>
-
-</body>
-</html>
+</script></body></html>
