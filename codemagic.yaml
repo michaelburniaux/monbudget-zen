@@ -1,4 +1,5 @@
 workflows:
+
   android-debug:
     name: Mon Budget ZEN Android
     max_build_duration: 60
@@ -8,6 +9,7 @@ workflows:
       java: 21
 
     scripts:
+
       - name: Install Capacitor
         script: |
           npm install
@@ -54,6 +56,7 @@ workflows:
         XCODE_SCHEME: "App"
 
     scripts:
+
       - name: Install Capacitor and AdMob
         script: |
           npm install
@@ -87,10 +90,26 @@ workflows:
             -c "Set :GADApplicationIdentifier ca-app-pub-1076788224709799~8711250560" \
             ios/App/App/Info.plist
 
+      - name: Configure Camera and Photo Library permissions
+        script: |
+          /usr/libexec/PlistBuddy \
+            -c "Add :NSCameraUsageDescription string Mon Budget ZEN utilise l'appareil photo pour photographier et archiver vos factures." \
+            ios/App/App/Info.plist || \
+          /usr/libexec/PlistBuddy \
+            -c "Set :NSCameraUsageDescription Mon Budget ZEN utilise l'appareil photo pour photographier et archiver vos factures." \
+            ios/App/App/Info.plist
+
+          /usr/libexec/PlistBuddy \
+            -c "Add :NSPhotoLibraryUsageDescription string Mon Budget ZEN utilise votre photothèque pour importer et archiver vos factures." \
+            ios/App/App/Info.plist || \
+          /usr/libexec/PlistBuddy \
+            -c "Set :NSPhotoLibraryUsageDescription Mon Budget ZEN utilise votre photothèque pour importer et archiver vos factures." \
+            ios/App/App/Info.plist
+
       - name: Set iOS build number
         script: |
           cd ios/App
-          agvtool new-version -all 11
+          agvtool new-version -all 12
 
       - name: Apply Apple signing
         script: |
