@@ -66,6 +66,10 @@ workflows:
         script: |
           node -e "const p=require('./node_modules/@pantrist/capacitor-plugin-ml-kit-text-recognition/package.json'); if(!String(p.version).startsWith('7.')){ console.error('ERREUR : le module OCR doit être en version 7.x pour Capacitor 7. Version trouvée : '+p.version); process.exit(1); } console.log('OK : module OCR installé en version '+p.version);"
 
+      - name: Verify Local Notifications dependency
+        script: |
+          node -e "const p=require('./node_modules/@capacitor/local-notifications/package.json'); if(!String(p.version).startsWith('7.')){ console.error('ERREUR : Local Notifications doit être en version 7.x pour Capacitor 7. Version trouvée : '+p.version); process.exit(1); } console.log('OK : Local Notifications installé en version '+p.version);"
+
       - name: Prepare web files
         script: |
           rm -rf www
@@ -165,6 +169,15 @@ workflows:
           fi
           echo "OK : CapacitorCamera est bien installé."
 
+      - name: Verify Local Notifications plugin is installed
+        script: |
+          echo "=== Vérification du plugin Local Notifications ==="
+          if ! grep -q "CapacitorLocalNotifications" ios/App/Podfile.lock; then
+            echo "ERREUR : le plugin CapacitorLocalNotifications n'est pas présent dans Podfile.lock."
+            exit 1
+          fi
+          echo "OK : CapacitorLocalNotifications est bien installé."
+
       - name: Configure AdMob iOS
         script: |
           /usr/libexec/PlistBuddy \
@@ -239,8 +252,48 @@ workflows:
 
       - name: Set iOS build number
         script: |
+          set -e
+          echo "=== Forçage du build Apple à 22 ==="
+
           cd ios/App
-          agvtool new-version -all 21
+
+          # 1) Réglage Xcode standard.
+          agvtool new-version -all 22 || true
+
+          # 2) Force CURRENT_PROJECT_VERSION dans le projet Xcode.
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          p=Path("App.xcodeproj/project.pbxproj")
+          s=p.read_text()
+          s,n=re.subn(r'CURRENT_PROJECT_VERSION = [^;]+;', 'CURRENT_PROJECT_VERSION = 22;', s)
+          if n == 0:
+              raise SystemExit("ERREUR : CURRENT_PROJECT_VERSION introuvable dans project.pbxproj")
+          p.write_text(s)
+          print(f"OK : CURRENT_PROJECT_VERSION forcé à 22 ({n} occurrence(s)).")
+          PY
+
+          # 3) Force aussi CFBundleVersion dans le vrai Info.plist de l'app.
+          /usr/libexec/PlistBuddy -c "Set :CFBundleVersion 22" App/Info.plist 2>/dev/null || \
+          /usr/libexec/PlistBuddy -c "Add :CFBundleVersion string 22" App/Info.plist
+
+          echo "=== Vérification AVANT signature ==="
+          PLIST_BUILD=$(/usr/libexec/PlistBuddy -c "Print :CFBundleVersion" App/Info.plist)
+          echo "Info.plist CFBundleVersion = $PLIST_BUILD"
+          if [ "$PLIST_BUILD" != "22" ]; then
+            echo "ERREUR : Info.plist n'est pas au build 22."
+            exit 1
+          fi
+
+          PBX_OTHER=$(grep -E "CURRENT_PROJECT_VERSION = " App.xcodeproj/project.pbxproj | grep -v "CURRENT_PROJECT_VERSION = 22;" || true)
+          if [ -n "$PBX_OTHER" ]; then
+            echo "ERREUR : au moins une configuration Xcode n'est pas au build 22 :"
+            echo "$PBX_OTHER"
+            exit 1
+          fi
+
+          echo "OK : le projet iOS est intégralement réglé sur le build 22."
+          cd ../..
 
       - name: Apply Apple signing
         script: |
@@ -290,8 +343,8 @@ workflows:
             exit 1
           fi
 
-          if [ "$BUILD_NUMBER" != "20" ]; then
-            echo "ERREUR : le numéro de build final n'est pas 20."
+          if [ "$BUILD_NUMBER" != "22" ]; then
+            echo "ERREUR : le numéro de build final n'est pas 22."
             exit 1
           fi
 
@@ -305,7 +358,7 @@ workflows:
             exit 1
           fi
 
-          echo "OK : build 20 vérifié, avec autorisations caméra présentes dans l'IPA finale."
+          echo "OK : build 22 vérifié, avec autorisations caméra présentes dans l'IPA finale."
 
     artifacts:
       - build/ios/ipa/*.ipa
