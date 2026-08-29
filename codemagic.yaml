@@ -253,12 +253,12 @@ workflows:
       - name: Set iOS build number
         script: |
           set -e
-          echo "=== Forçage du build Apple à 25 ==="
+          echo "=== Forçage du build Apple à 26 ==="
 
           cd ios/App
 
           # 1) Réglage Xcode standard.
-          agvtool new-version -all 25 || true
+          agvtool new-version -all 26 || true
 
           # 2) Force CURRENT_PROJECT_VERSION dans le projet Xcode.
           python3 - <<'PY'
@@ -266,33 +266,33 @@ workflows:
           import re
           p=Path("App.xcodeproj/project.pbxproj")
           s=p.read_text()
-          s,n=re.subn(r'CURRENT_PROJECT_VERSION = [^;]+;', 'CURRENT_PROJECT_VERSION = 25;', s)
+          s,n=re.subn(r'CURRENT_PROJECT_VERSION = [^;]+;', 'CURRENT_PROJECT_VERSION = 26;', s)
           if n == 0:
               raise SystemExit("ERREUR : CURRENT_PROJECT_VERSION introuvable dans project.pbxproj")
           p.write_text(s)
-          print(f"OK : CURRENT_PROJECT_VERSION forcé à 25 ({n} occurrence(s)).")
+          print(f"OK : CURRENT_PROJECT_VERSION forcé à 26 ({n} occurrence(s)).")
           PY
 
           # 3) Force aussi CFBundleVersion dans le vrai Info.plist de l'app.
-          /usr/libexec/PlistBuddy -c "Set :CFBundleVersion 25" App/Info.plist 2>/dev/null || \
+          /usr/libexec/PlistBuddy -c "Set :CFBundleVersion 26" App/Info.plist 2>/dev/null || \
           /usr/libexec/PlistBuddy -c "Add :CFBundleVersion string 22" App/Info.plist
 
           echo "=== Vérification AVANT signature ==="
           PLIST_BUILD=$(/usr/libexec/PlistBuddy -c "Print :CFBundleVersion" App/Info.plist)
           echo "Info.plist CFBundleVersion = $PLIST_BUILD"
-          if [ "$PLIST_BUILD" != "25" ]; then
-            echo "ERREUR : Info.plist n'est pas au build 25."
+          if [ "$PLIST_BUILD" != "26" ]; then
+            echo "ERREUR : Info.plist n'est pas au build 26."
             exit 1
           fi
 
-          PBX_OTHER=$(grep -E "CURRENT_PROJECT_VERSION = " App.xcodeproj/project.pbxproj | grep -v "CURRENT_PROJECT_VERSION = 25;" || true)
+          PBX_OTHER=$(grep -E "CURRENT_PROJECT_VERSION = " App.xcodeproj/project.pbxproj | grep -v "CURRENT_PROJECT_VERSION = 26;" || true)
           if [ -n "$PBX_OTHER" ]; then
-            echo "ERREUR : au moins une configuration Xcode n'est pas au build 25 :"
+            echo "ERREUR : au moins une configuration Xcode n'est pas au build 26 :"
             echo "$PBX_OTHER"
             exit 1
           fi
 
-          echo "OK : le projet iOS est intégralement réglé sur le build 25."
+          echo "OK : le projet iOS est intégralement réglé sur le build 26."
           cd ../..
 
       - name: Apply Apple signing
@@ -343,8 +343,8 @@ workflows:
             exit 1
           fi
 
-          if [ "$BUILD_NUMBER" != "25" ]; then
-            echo "ERREUR : le numéro de build final n'est pas 25."
+          if [ "$BUILD_NUMBER" != "26" ]; then
+            echo "ERREUR : le numéro de build final n'est pas 26."
             exit 1
           fi
 
@@ -358,7 +358,7 @@ workflows:
             exit 1
           fi
 
-          echo "OK : build 25 vérifié, avec autorisations caméra présentes dans l'IPA finale."
+          echo "OK : build 26 vérifié, avec autorisations caméra présentes dans l'IPA finale."
 
     artifacts:
       - build/ios/ipa/*.ipa
