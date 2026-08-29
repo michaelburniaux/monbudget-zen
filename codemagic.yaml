@@ -67,6 +67,14 @@ workflows:
       - name: Create iOS project
         script: |
           npx cap add ios
+
+      - name: Set iOS 15 deployment target
+        script: |
+          sed -i '' "s/platform :ios, '[0-9.]*'/platform :ios, '15.0'/" ios/App/Podfile
+          cd ios/App
+          pod repo update
+          pod install
+          cd ../..
           npx cap sync ios
 
       - name: Configure AdMob iOS
