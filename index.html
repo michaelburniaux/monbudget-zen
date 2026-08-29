@@ -760,7 +760,7 @@ select:focus{
 
   <div class="header">
     <h1>💶 Mon Budget ZEN</h1>
-    <p>Mes économies • v2.7.1</p>
+    <p>Mes économies • v2.7.2</p>
 
     <div
       class="headerClock"
@@ -1166,10 +1166,28 @@ select:focus{
       Photographiez une facture et conservez son image dans l'application. Elle peut ensuite être placée dans « À payer prochainement » puis dans « Payé ».
     </div>
 
-    <label class="fileLabel" style="margin-top:12px">
-      📷 Photographier / choisir une facture
-      <input id="invoicePhoto" type="file" accept="image/*" onchange="prepareInvoicePhoto(event)">
-    </label>
+    <div class="row" style="margin-top:12px">
+
+      <label class="fileLabel" style="flex:1">
+        📷 Photographier une facture
+        <input
+          id="invoiceCamera"
+          type="file"
+          accept="image/*"
+          capture="environment"
+          onchange="prepareInvoicePhoto(event)">
+      </label>
+
+      <label class="fileLabel" style="flex:1">
+        🖼️ Choisir dans les photos
+        <input
+          id="invoicePhoto"
+          type="file"
+          accept="image/*"
+          onchange="prepareInvoicePhoto(event)">
+      </label>
+
+    </div>
 
     <div class="formBox" id="invoiceForm" style="margin-top:12px">
       <div class="small" style="margin-bottom:8px">Identification de la facture</div>
@@ -6973,7 +6991,15 @@ function prepareInvoicePhoto(event){
 function cancelInvoiceForm(){
   pendingInvoiceImage=null;
   $("invoiceForm").classList.remove("show");
-  $("invoicePhoto").value="";
+
+  if($("invoiceCamera")){
+    $("invoiceCamera").value="";
+  }
+
+  if($("invoicePhoto")){
+    $("invoicePhoto").value="";
+  }
+
   $("invoiceLabel").value="";
   $("invoiceAmount").value="";
   $("invoiceDueDate").value="";
