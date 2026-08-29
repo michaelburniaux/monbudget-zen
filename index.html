@@ -2,31 +2,27 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#07172d">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#071426">
 
 <title>Mon Budget ZEN</title>
 
-<link rel="manifest" href="manifest.webmanifest">
-
 <style>
-*{
-  box-sizing:border-box;
-  -webkit-tap-highlight-color:transparent;
-}
-
 :root{
-  --bg:#07172d;
+  --bg:#071426;
   --card:#10233f;
-  --card2:#142b4b;
-  --text:#f5f8ff;
-  --muted:#9fb1c9;
+  --card2:#173657;
+  --border:#284766;
+  --text:#ffffff;
+  --muted:#9fb0c5;
   --green:#4ee2a2;
   --red:#ff6b78;
   --blue:#5aa9ff;
   --yellow:#ffd369;
-  --purple:#ad8cff;
-  --border:rgba(255,255,255,.09);
+}
+
+*{
+  box-sizing:border-box;
 }
 
 html{
@@ -35,108 +31,168 @@ html{
 
 body{
   margin:0;
-  padding:0 0 100px;
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
-  background:linear-gradient(180deg,#061326,#0a1d37);
+  background:
+    radial-gradient(circle at top,#12335a 0,#071426 420px);
   color:var(--text);
   min-height:100vh;
+  padding-bottom:105px;
 }
 
-button,input,select{
+button,
+input,
+select{
   font:inherit;
 }
 
-header{
-  padding:22px 18px 12px;
-  max-width:760px;
-  margin:auto;
+button{
+  cursor:pointer;
 }
 
-h1{
+.app{
+  width:min(760px,100%);
+  margin:auto;
+  padding:18px 14px 30px;
+}
+
+.header{
+  padding:10px 4px 20px;
+}
+
+.header h1{
   margin:0;
-  font-size:28px;
+  font-size:29px;
 }
 
-.version{
+.header p{
+  margin:5px 0 0;
   color:var(--muted);
-  font-size:13px;
-  margin-top:4px;
-}
-
-main{
-  max-width:760px;
-  margin:auto;
-  padding:0 14px;
-}
-
-.grid{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:12px;
 }
 
 .card{
-  background:rgba(16,35,63,.94);
-  border:1px solid var(--border);
-  border-radius:20px;
-  padding:16px;
-  margin-bottom:12px;
-  box-shadow:0 8px 25px rgba(0,0,0,.18);
+  background:
+    linear-gradient(145deg,#173657,#10233f);
+  border:1px solid rgba(255,255,255,.09);
+  border-radius:22px;
+  padding:18px;
+  margin-bottom:14px;
+  box-shadow:0 14px 30px rgba(0,0,0,.18);
+}
+
+.card h2{
+  margin:0 0 14px;
+  font-size:18px;
+}
+
+.grid2{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
 }
 
 .stat{
-  min-height:112px;
+  background:#091a31;
+  border:1px solid var(--border);
+  border-radius:17px;
+  padding:14px;
 }
 
-.label{
-  font-size:13px;
+.small{
   color:var(--muted);
-  margin-bottom:8px;
+  font-size:12px;
+  line-height:1.4;
 }
 
 .big{
-  font-size:26px;
+  font-size:24px;
   font-weight:800;
+  margin-top:5px;
 }
 
-.green{color:var(--green);}
-.red{color:var(--red);}
-.blue{color:var(--blue);}
-.yellow{color:var(--yellow);}
-.purple{color:var(--purple);}
-
-.small{
-  font-size:13px;
-  color:var(--muted);
+.green{
+  color:var(--green);
 }
 
-.sectionTitle{
-  margin:4px 0 14px;
-  font-size:19px;
+.red{
+  color:var(--red);
+}
+
+.blue{
+  color:var(--blue);
+}
+
+.yellow{
+  color:var(--yellow);
 }
 
 .actions{
   display:grid;
   grid-template-columns:1fr 1fr;
   gap:10px;
+  margin-bottom:14px;
 }
 
-button{
+.actionButton{
   border:0;
-  border-radius:14px;
-  padding:13px 14px;
-  font-weight:700;
-  cursor:pointer;
+  border-radius:18px;
+  padding:16px 10px;
+  font-weight:800;
+  font-size:15px;
 }
 
-.btnIncome{
+.incomeButton{
   background:var(--green);
-  color:#06271b;
+  color:#04251a;
 }
 
-.btnExpense{
+.expenseButton{
   background:var(--red);
+  color:#341015;
+}
+
+.formBox{
+  display:none;
+}
+
+.formBox.show{
+  display:block;
+}
+
+input,
+select{
+  width:100%;
+  border:1px solid var(--border);
+  background:#091a31;
   color:white;
+  border-radius:13px;
+  padding:13px;
+  margin-bottom:9px;
+  outline:none;
+}
+
+input:focus,
+select:focus{
+  border-color:var(--blue);
+}
+
+.row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+}
+
+.btnSave,
+.btnSecondary,
+.btnDanger{
+  border:0;
+  border-radius:13px;
+  padding:13px;
+  font-weight:800;
+}
+
+.btnSave{
+  background:var(--green);
+  color:#06271d;
 }
 
 .btnSecondary{
@@ -144,121 +200,38 @@ button{
   color:white;
 }
 
-.btnPrimary{
-  background:var(--blue);
-  color:#04182f;
-}
-
-.btnSave{
-  width:100%;
-  background:var(--green);
-  color:#06271b;
-  margin-top:8px;
-}
-
 .btnDanger{
-  background:rgba(255,107,120,.14);
-  color:#ff9da7;
+  background:#512638;
+  color:#ffd9df;
 }
 
-.formBox{
-  display:none;
-  margin-top:14px;
-  padding-top:14px;
-  border-top:1px solid var(--border);
-}
-
-.formBox.show{
-  display:block;
-}
-
-input,select{
-  width:100%;
-  padding:13px;
-  margin:6px 0;
-  border-radius:12px;
+.miniButton{
   border:1px solid var(--border);
-  background:#091a31;
-  color:white;
-  outline:none;
+  background:#172f4d;
+  color:#dce7f5;
+  border-radius:9px;
+  padding:6px 8px;
+  font-size:11px;
 }
 
-input::placeholder{
-  color:#71839b;
-}
-
-.row{
+.plannedItem,
+.txItem{
   display:flex;
-  gap:8px;
-}
-
-.row>*{
-  flex:1;
-}
-
-.progressOuter{
-  height:16px;
-  background:#07172d;
-  border-radius:999px;
-  overflow:hidden;
-  margin:12px 0 7px;
-}
-
-.progressInner{
-  height:100%;
-  width:0;
-  background:linear-gradient(90deg,#4ee2a2,#5aa9ff);
-  border-radius:999px;
-  transition:width .6s ease;
-}
-
-.savingHero{
-  text-align:center;
-  padding:8px 0;
-}
-
-.savingAmount{
-  font-size:31px;
-  font-weight:900;
-  margin-top:5px;
-}
-
-.totalSaving{
-  border-top:1px solid var(--border);
-  margin-top:16px;
-  padding-top:14px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-
-.totalSaving strong{
-  font-size:22px;
-  color:var(--yellow);
-}
-
-.challenge{
-  margin-top:10px;
-  background:rgba(78,226,162,.08);
-  padding:12px;
-  border-radius:14px;
-  font-size:14px;
-}
-
-.plannedItem,.txItem{
-  display:flex;
+  align-items:flex-start;
   justify-content:space-between;
   gap:10px;
-  padding:12px 0;
   border-bottom:1px solid var(--border);
+  padding:13px 0;
 }
 
-.plannedItem:last-child,.txItem:last-child{
+.plannedItem:last-child,
+.txItem:last-child{
   border-bottom:0;
 }
 
 .txMain{
   min-width:0;
+  flex:1;
 }
 
 .txTitle{
@@ -267,9 +240,9 @@ input::placeholder{
 }
 
 .txMeta{
-  font-size:12px;
   color:var(--muted);
-  margin-top:3px;
+  font-size:12px;
+  margin-top:4px;
 }
 
 .txValue{
@@ -277,17 +250,49 @@ input::placeholder{
   white-space:nowrap;
 }
 
-.miniButton{
-  padding:7px 9px;
-  border-radius:10px;
-  background:#203a5d;
-  color:white;
-  font-size:12px;
+.goalLine{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  margin-bottom:8px;
+}
+
+.progressTrack{
+  height:13px;
+  background:#071426;
+  border-radius:999px;
+  overflow:hidden;
+  border:1px solid var(--border);
+}
+
+.progressBar{
+  width:0;
+  height:100%;
+  background:
+    linear-gradient(90deg,var(--green),var(--blue));
+  border-radius:999px;
+  transition:width .5s ease;
+}
+
+.challenge{
+  margin-top:12px;
+  background:#091a31;
+  border-radius:14px;
+  padding:13px;
+  line-height:1.5;
+}
+
+.soundLine{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-top:12px;
+  gap:10px;
 }
 
 .chartBrowser{
   touch-action:pan-y;
-  user-select:none;
 }
 
 .monthHeader{
@@ -295,154 +300,116 @@ input::placeholder{
   justify-content:space-between;
   align-items:center;
   gap:8px;
-  margin-bottom:12px;
 }
 
-.monthCenter{
-  text-align:center;
-  flex:1;
+.monthNav{
+  display:flex;
+  gap:5px;
 }
 
-.monthName{
-  font-weight:800;
-  font-size:18px;
-}
-
-.monthStatus{
-  font-size:12px;
-  color:var(--muted);
-  margin-top:2px;
-}
-
-.monthArrow{
-  width:42px;
-  height:42px;
-  padding:0;
+.monthNav button{
+  width:35px;
+  height:35px;
   border-radius:50%;
-  background:#203a5d;
+  border:1px solid var(--border);
+  background:#172f4d;
   color:white;
-  font-size:22px;
 }
 
 .todayBtn{
-  padding:8px 11px;
-  font-size:12px;
+  border:0;
   background:#203a5d;
   color:white;
-  margin:0 auto 12px;
-  display:block;
+  padding:7px 10px;
+  border-radius:9px;
+  margin-top:8px;
 }
 
-.swipeHint{
-  text-align:center;
-  color:var(--muted);
-  font-size:11px;
-  margin-top:10px;
-}
-
-.monthSummary{
+.chartStats{
   display:grid;
   grid-template-columns:repeat(3,1fr);
-  gap:8px;
-  margin-bottom:16px;
+  gap:7px;
+  margin:14px 0;
 }
 
-.summaryBox{
-  background:#091a31;
-  border-radius:13px;
-  padding:10px 6px;
+.chartStat{
   text-align:center;
+  background:#091a31;
+  padding:10px 5px;
+  border-radius:12px;
 }
 
-.summaryBox div:first-child{
-  color:var(--muted);
-  font-size:11px;
-}
-
-.summaryBox strong{
-  display:block;
-  margin-top:5px;
-  font-size:15px;
-}
-
-.barArea{
-  display:flex;
-  align-items:flex-end;
-  justify-content:center;
-  gap:26px;
+.barChart{
   height:190px;
-  padding:15px 10px 0;
+  display:flex;
+  justify-content:center;
+  align-items:flex-end;
+  gap:45px;
+  padding:20px 0 0;
   border-bottom:1px solid var(--border);
 }
 
 .barWrap{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:flex-end;
-  height:100%;
-  width:80px;
-}
-
-.bar{
-  width:54px;
-  min-height:3px;
-  border-radius:10px 10px 0 0;
-  transition:height .4s;
-}
-
-.barIncome{
-  background:var(--green);
-}
-
-.barExpense{
-  background:var(--red);
+  width:85px;
+  text-align:center;
 }
 
 .barValue{
-  font-size:12px;
-  margin-bottom:6px;
+  font-size:11px;
+  margin-bottom:5px;
+}
+
+.bar{
+  width:52px;
+  min-height:3px;
+  margin:auto;
+  border-radius:9px 9px 0 0;
+  transition:height .4s ease;
+}
+
+.bar.income{
+  background:var(--green);
+}
+
+.bar.expense{
+  background:var(--red);
 }
 
 .barLabel{
+  color:var(--muted);
   font-size:12px;
   margin-top:7px;
-  color:var(--muted);
 }
 
-.donutWrap{
-  display:flex;
-  gap:20px;
+.donutArea{
+  display:grid;
+  grid-template-columns:145px 1fr;
+  gap:16px;
   align-items:center;
-  margin-top:22px;
+  margin-top:20px;
 }
 
 .donut{
-  width:145px;
-  height:145px;
+  width:140px;
+  height:140px;
   border-radius:50%;
-  position:relative;
-  flex-shrink:0;
   background:#203a5d;
+  position:relative;
 }
 
 .donut::after{
   content:"";
   position:absolute;
-  inset:28px;
+  inset:31px;
+  background:#10233f;
   border-radius:50%;
-  background:var(--card);
-}
-
-.legend{
-  flex:1;
 }
 
 .legendItem{
   display:flex;
   justify-content:space-between;
   gap:8px;
-  margin:7px 0;
+  padding:6px 0;
   font-size:12px;
 }
 
@@ -453,59 +420,78 @@ input::placeholder{
 }
 
 .dot{
-  width:10px;
-  height:10px;
+  width:9px;
+  height:9px;
   border-radius:50%;
-  display:inline-block;
+  flex:none;
 }
 
 .noData{
   display:none;
-  padding:24px 10px;
+  padding:28px 5px;
   text-align:center;
   color:var(--muted);
 }
 
 .ad{
-  height:70px;
-  border:1px dashed rgba(255,255,255,.22);
+  height:62px;
+  border:1px dashed #416385;
   border-radius:15px;
   display:flex;
   align-items:center;
   justify-content:center;
-  color:var(--muted);
+  color:#7190af;
   font-size:12px;
+  margin:16px 0;
 }
 
-.backupActions{
+.backupButtons{
   display:grid;
   grid-template-columns:1fr 1fr;
   gap:8px;
 }
 
-nav{
+.fileLabel{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#203a5d;
+  color:white;
+  border-radius:13px;
+  padding:13px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.fileLabel input{
+  display:none;
+}
+
+.bottomNav{
   position:fixed;
-  bottom:0;
+  z-index:80;
   left:0;
   right:0;
-  background:rgba(5,17,33,.97);
+  bottom:0;
+  height:75px;
+  padding-bottom:env(safe-area-inset-bottom);
+  background:rgba(7,20,38,.96);
+  backdrop-filter:blur(15px);
   border-top:1px solid var(--border);
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  padding:8px max(8px,env(safe-area-inset-right))
-          calc(8px + env(safe-area-inset-bottom))
-          max(8px,env(safe-area-inset-left));
-  z-index:30;
+  display:flex;
+  justify-content:space-around;
+  align-items:center;
 }
 
-nav button{
-  background:transparent;
-  color:#aabbd0;
-  padding:7px 2px;
+.bottomNav button{
+  border:0;
+  background:none;
+  color:#9fb0c5;
   font-size:11px;
+  min-width:75px;
 }
 
-nav span{
+.bottomNav span{
   display:block;
   font-size:21px;
   margin-bottom:2px;
@@ -514,97 +500,185 @@ nav span{
 .victoryOverlay{
   position:fixed;
   inset:0;
-  background:rgba(2,10,22,.87);
-  z-index:100;
+  z-index:200;
   display:none;
   align-items:center;
   justify-content:center;
   padding:20px;
+  background:rgba(2,10,22,.91);
 }
 
 .victoryOverlay.show{
   display:flex;
-  animation:fadeIn .25s ease;
 }
 
 .victoryCard{
-  width:min(390px,100%);
-  background:linear-gradient(145deg,#173657,#10233f);
+  width:min(430px,100%);
+  background:
+    linear-gradient(145deg,#173657,#10233f);
   border:1px solid rgba(255,255,255,.15);
   border-radius:28px;
-  padding:28px 22px;
+  padding:30px 22px;
   text-align:center;
-  box-shadow:0 25px 70px rgba(0,0,0,.5);
-  animation:pop .45s cubic-bezier(.2,1.5,.4,1);
+  box-shadow:0 30px 80px rgba(0,0,0,.5);
+  animation:victoryPop .5s ease;
 }
 
-.trophy{
-  font-size:66px;
+.victoryEmoji{
+  font-size:65px;
 }
 
 .victoryCard h2{
-  font-size:29px;
+  font-size:30px;
   margin:8px 0;
 }
 
 .victoryCard p{
-  color:#c2d0e2;
+  color:#c8d5e5;
   line-height:1.5;
+}
+
+@keyframes victoryPop{
+  0%{
+    transform:scale(.7);
+    opacity:0;
+  }
+  70%{
+    transform:scale(1.05);
+  }
+  100%{
+    transform:scale(1);
+    opacity:1;
+  }
 }
 
 .confetti{
   position:fixed;
   top:-20px;
-  width:10px;
-  height:18px;
-  z-index:110;
+  width:9px;
+  height:15px;
+  z-index:210;
   pointer-events:none;
-  animation:fall linear forwards;
+  animation:confettiFall linear forwards;
 }
 
-.soundLine{
-  margin-top:13px;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  gap:8px;
+@keyframes confettiFall{
+  to{
+    transform:
+      translateY(110vh)
+      rotate(720deg);
+  }
+}
+
+.sourceBox{
+  display:none;
+  margin-top:8px;
+  padding:12px;
+  border-radius:14px;
+  background:#091a31;
+  border:1px solid var(--border);
+}
+
+.sourceBox.show{
+  display:block;
+}
+
+.sourceTitle{
+  font-size:13px;
   color:var(--muted);
-  font-size:12px;
+  margin-bottom:8px;
 }
 
-.soundLine button{
+.sourceChoices{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+}
+
+.sourceChoice{
   background:#203a5d;
   color:white;
-  padding:8px 12px;
+  border:1px solid transparent;
+  border-radius:12px;
+  padding:11px 7px;
 }
 
-@keyframes fall{
-  to{
-    transform:translateY(110vh) rotate(900deg);
+.sourceChoice.active{
+  border-color:var(--blue);
+  background:#173b62;
+}
+
+.monthOverlay{
+  position:fixed;
+  inset:0;
+  z-index:120;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  background:rgba(2,10,22,.88);
+}
+
+.monthOverlay.show{
+  display:flex;
+}
+
+.monthCard{
+  width:min(430px,100%);
+  max-height:80vh;
+  overflow:auto;
+  background:
+    linear-gradient(145deg,#173657,#10233f);
+  border:1px solid rgba(255,255,255,.15);
+  border-radius:26px;
+  padding:22px;
+}
+
+.monthCard h2{
+  margin:0 0 8px;
+}
+
+.monthRecurringList{
+  margin:14px 0;
+  padding:10px 12px;
+  background:#091a31;
+  border-radius:14px;
+}
+
+.monthRecurringRow{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  padding:8px 0;
+  border-bottom:1px solid var(--border);
+}
+
+.monthRecurringRow:last-child{
+  border-bottom:0;
+}
+
+.savingActions{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:8px;
+  margin-top:12px;
+}
+
+@media(max-width:520px){
+  .donutArea{
+    grid-template-columns:1fr;
   }
-}
 
-@keyframes pop{
-  from{transform:scale(.65);opacity:0;}
-  to{transform:scale(1);opacity:1;}
-}
-
-@keyframes fadeIn{
-  from{opacity:0;}
-  to{opacity:1;}
-}
-
-@media(max-width:460px){
-  .big{
-    font-size:22px;
+  .donut{
+    margin:auto;
   }
 
-  .donutWrap{
-    flex-direction:column;
+  .chartStats{
+    grid-template-columns:1fr 1fr 1fr;
   }
 
-  .legend{
-    width:100%;
+  .barChart{
+    gap:25px;
   }
 }
 </style>
@@ -612,158 +686,178 @@ nav span{
 
 <body>
 
-<header id="top">
-  <h1>Mon budget ZEN</h1>
-  <div class="version">Mes économies • v2.4</div>
-</header>
+<div class="app" id="home">
 
-<main>
-
-  <div class="grid">
-    <div class="card stat">
-      <div class="label">💰 Revenus du mois</div>
-      <div class="big green" id="incomeTotal">0,00 €</div>
-    </div>
-
-    <div class="card stat">
-      <div class="label">💸 Dépenses du mois</div>
-      <div class="big red" id="expenseTotal">0,00 €</div>
-    </div>
-
-    <div class="card stat">
-      <div class="label">💳 Disponible réel</div>
-      <div class="big blue" id="realAvailable">0,00 €</div>
-      <div class="small" id="reservedText">0 € réservé</div>
-    </div>
-
-    <div class="card stat">
-      <div class="label">📅 Budget par jour</div>
-      <div class="big yellow" id="dailyBudget">0,00 €</div>
-      <div class="small" id="daysText"></div>
-    </div>
+  <div class="header">
+    <h1>💶 Mon Budget ZEN</h1>
+    <p>Mes économies • v2.5</p>
   </div>
 
-  <section class="card">
-    <div class="sectionTitle">Ajouter une opération</div>
+  <div class="card">
+    <h2>Ce mois-ci</h2>
 
-    <div class="actions">
-      <button type="button" class="btnIncome"
-              onclick="openTransactionForm('income')">
-        + Revenu
-      </button>
+    <div class="grid2">
 
-      <button type="button" class="btnExpense"
-              onclick="openTransactionForm('expense')">
-        − Dépense
-      </button>
+      <div class="stat">
+        <div class="small">Revenus</div>
+        <div class="big green" id="incomeTotal">
+          0,00 €
+        </div>
+      </div>
+
+      <div class="stat">
+        <div class="small">Dépenses</div>
+        <div class="big red" id="expenseTotal">
+          0,00 €
+        </div>
+      </div>
+
     </div>
 
-    <div class="formBox" id="form">
+    <div class="stat" style="margin-top:10px">
+      <div class="small">
+        Disponible réel
+      </div>
 
-      <input id="txLabel"
-             placeholder="Libellé">
+      <div class="big blue" id="realAvailable">
+        0,00 €
+      </div>
 
-      <input id="txAmount"
-             type="number"
-             inputmode="decimal"
-             step="0.01"
-             min="0"
-             placeholder="Montant en €">
+      <div class="small" id="reservedText">
+        0,00 € réservé pour les dépenses prévues
+      </div>
+    </div>
 
-      <select id="txCategory"></select>
+    <div class="stat" style="margin-top:10px">
+      <div class="small">
+        Budget conseillé par jour
+      </div>
 
-      <input id="txDate"
-             type="date">
+      <div class="big yellow" id="dailyBudget">
+        0,00 €
+      </div>
 
-      <div class="row">
-        <button type="button"
-                class="btnSave"
-                onclick="addTx()">
-          Enregistrer
+      <div class="small" id="daysText"></div>
+    </div>
+
+  </div>
+
+  <div class="actions">
+
+    <button
+      type="button"
+      class="actionButton incomeButton"
+      onclick="openTransactionForm('income')">
+      + Ajouter un revenu
+    </button>
+
+    <button
+      type="button"
+      class="actionButton expenseButton"
+      onclick="openTransactionForm('expense')">
+      − Ajouter une dépense
+    </button>
+
+  </div>
+
+  <div class="card formBox" id="form">
+
+    <h2>Nouvelle opération</h2>
+
+    <input
+      id="txLabel"
+      type="text"
+      placeholder="Description">
+
+    <input
+      id="txAmount"
+      type="number"
+      step="0.01"
+      inputmode="decimal"
+      placeholder="Montant">
+
+    <select id="txCategory"></select>
+
+    <input
+      id="txDate"
+      type="date">
+
+    <div class="sourceBox" id="sourceBox">
+
+      <div class="sourceTitle">
+        Cette dépense est payée avec :
+      </div>
+
+      <div class="sourceChoices">
+
+        <button
+          type="button"
+          class="sourceChoice active"
+          id="sourceCurrent"
+          onclick="setExpenseSource('current')">
+          💳 Compte courant
         </button>
 
-        <button type="button"
-                class="btnSecondary"
-                onclick="closeTransactionForm()">
-          Annuler
+        <button
+          type="button"
+          class="sourceChoice"
+          id="sourceSaving"
+          onclick="setExpenseSource('saving')">
+          🐿️ Épargne
         </button>
-      </div>
-    </div>
-  </section>
 
-  <section class="card" id="savingSection">
-
-    <div class="sectionTitle">🐷 Défi épargne</div>
-
-    <div class="savingHero">
-      <div class="small">Objectif actuel</div>
-
-      <div class="savingAmount">
-        <span id="savingCurrent">0,00 €</span>
-        <span class="small"> / </span>
-        <span id="savingGoalLabel">0,00 €</span>
       </div>
 
-      <div class="progressOuter">
-        <div class="progressInner" id="savingProgress"></div>
+      <div
+        class="small"
+        id="sourceHelp"
+        style="margin-top:8px">
+        Cette dépense diminuera le compte courant.
       </div>
 
-      <div class="small" id="savingPercent">
-        Définissez un objectif
-      </div>
     </div>
 
-    <div class="row">
-      <input id="goalInput"
-             type="number"
-             min="0"
-             step="10"
-             placeholder="Objectif d'épargne en €">
+    <div class="row" style="margin-top:10px">
 
-      <button type="button"
-              class="btnPrimary"
-              onclick="setGoal()">
-        Définir
+      <button
+        type="button"
+        class="btnSave"
+        onclick="addTx()">
+        Enregistrer
       </button>
-    </div>
 
-    <div class="totalSaving">
-      <div>
-        <div class="label">🏆 Épargne totale</div>
-        <div class="small">Montant réellement mis de côté</div>
-      </div>
-
-      <strong id="savingTotal">0,00 €</strong>
-    </div>
-
-    <div class="challenge" id="challengeText">
-      Chaque dépense enregistrée dans la catégorie « Épargne »
-      fera progresser votre défi.
-    </div>
-
-    <div class="soundLine">
-      <span id="soundStatus">🔊 Son de victoire activé</span>
-
-      <button type="button"
-              onclick="toggleSound()">
-        Activer / couper
+      <button
+        type="button"
+        class="btnSecondary"
+        onclick="closeTransactionForm()">
+        Annuler
       </button>
+
     </div>
 
-  </section>
+  </div>
 
-  <section class="card">
+  <div class="card">
 
-    <div class="sectionTitle">📌 Dépenses prévues</div>
+    <h2>📅 Dépenses prévues</h2>
 
-    <button type="button"
-            class="btnPrimary"
-            style="width:100%"
-            onclick="togglePlannedForm(true)">
+    <div class="small">
+      Les dépenses actives sont déjà retirées de votre
+      disponible réel, même avant leur paiement.
+    </div>
+
+    <button
+      type="button"
+      class="btnSecondary"
+      style="width:100%;margin-top:12px"
+      onclick="togglePlannedForm(true)">
       + Ajouter une dépense prévue
     </button>
 
-    <div class="formBox" id="plannedForm">
+    <div
+      class="formBox"
+      id="plannedForm"
+      style="margin-top:12px">
 
       <select id="plannedCategory">
         <option>Logement</option>
@@ -778,245 +872,501 @@ nav span{
         <option>Autre</option>
       </select>
 
-      <input id="plannedDetail"
-             placeholder="Détail facultatif (ex. ING, Proximus…)">
+      <input
+        id="plannedDetail"
+        type="text"
+        placeholder="Détail facultatif (ex. ING, Proximus…)">
 
-      <input id="plannedAmount"
-             type="number"
-             inputmode="decimal"
-             step="0.01"
-             min="0"
-             placeholder="Montant en €">
+      <input
+        id="plannedAmount"
+        type="number"
+        step="0.01"
+        inputmode="decimal"
+        placeholder="Montant">
 
-      <input id="plannedDay"
-             type="number"
-             min="1"
-             max="31"
-             placeholder="Jour du mois (ex. 5)">
+      <input
+        id="plannedDay"
+        type="number"
+        min="1"
+        max="31"
+        inputmode="numeric"
+        placeholder="Jour du mois">
 
-      <label class="small"
-             style="display:flex;align-items:center;gap:8px;margin:10px 0;">
-        <input id="plannedRecurring"
-               type="checkbox"
-               style="width:auto;margin:0;">
-        Répéter automatiquement chaque mois
+      <label
+        style="
+          display:flex;
+          align-items:center;
+          gap:8px;
+          margin:8px 0 13px;
+          color:#c8d5e5;
+        ">
+
+        <input
+          id="plannedRecurring"
+          type="checkbox"
+          style="
+            width:auto;
+            margin:0;
+          ">
+
+        Tous les mois
+
       </label>
 
       <div class="row">
-        <button type="button"
-                class="btnSave"
-                onclick="addPlanned()">
+
+        <button
+          type="button"
+          class="btnSave"
+          onclick="addPlanned()">
           Enregistrer
         </button>
 
-        <button type="button"
-                class="btnSecondary"
-                onclick="togglePlannedForm(false)">
+        <button
+          type="button"
+          class="btnSecondary"
+          onclick="togglePlannedForm(false)">
           Annuler
         </button>
+
       </div>
 
     </div>
 
     <div id="plannedList"></div>
 
-  </section>
+  </div>
 
-  <section class="card chartBrowser" id="chartBrowser">
+  <div class="card" id="savingSection">
 
-    <div class="sectionTitle">📊 Historique et comparaison</div>
+    <h2>🐿️ Mon épargne</h2>
+
+    <div class="grid2">
+
+      <div class="stat">
+        <div class="small">
+          Épargne totale
+        </div>
+
+        <div
+          class="big green"
+          id="savingTotal">
+          0,00 €
+        </div>
+      </div>
+
+      <div class="stat">
+        <div class="small">
+          Objectif
+        </div>
+
+        <div
+          class="big blue"
+          id="savingGoalLabel">
+          0,00 €
+        </div>
+      </div>
+
+    </div>
+
+    <div style="margin-top:15px">
+
+      <div class="goalLine">
+
+        <div>
+          <strong id="savingCurrent">
+            0,00 €
+          </strong>
+        </div>
+
+        <div
+          class="small"
+          id="savingPercent">
+          Définissez votre prochain objectif.
+        </div>
+
+      </div>
+
+      <div class="progressTrack">
+        <div
+          class="progressBar"
+          id="savingProgress">
+        </div>
+      </div>
+
+    </div>
+
+    <div
+      class="challenge"
+      id="challengeText">
+    </div>
+
+    <div style="margin-top:14px">
+
+      <input
+        id="goalInput"
+        type="number"
+        step="0.01"
+        inputmode="decimal"
+        placeholder="Nouvel objectif d'épargne">
+
+      <button
+        type="button"
+        class="btnSave"
+        style="width:100%"
+        onclick="setGoal()">
+        Définir l'objectif
+      </button>
+
+    </div>
+
+    <div class="savingActions">
+
+      <button
+        type="button"
+        class="btnDanger"
+        onclick="undoLastSaving()">
+        ↩ Annuler la dernière épargne
+      </button>
+
+    </div>
+
+    <div class="soundLine">
+
+      <span
+        class="small"
+        id="soundStatus">
+        🔊 Son de victoire activé
+      </span>
+
+      <button
+        type="button"
+        class="miniButton"
+        onclick="toggleSound()">
+        Activer / couper
+      </button>
+
+    </div>
+
+  </div>
+
+  <div
+    class="card chartBrowser"
+    id="chartBrowser">
 
     <div class="monthHeader">
 
-      <button type="button"
-              class="monthArrow"
-              onclick="changeChartMonth(-1)">
-        ‹
-      </button>
+      <div>
 
-      <div class="monthCenter">
-        <div class="monthName" id="chartMonthName"></div>
-        <div class="monthStatus" id="chartMonthStatus"></div>
+        <h2
+          id="chartMonthName"
+          style="margin-bottom:2px">
+        </h2>
+
+        <div
+          class="small"
+          id="chartMonthStatus">
+        </div>
+
       </div>
 
-      <button type="button"
-              class="monthArrow"
-              onclick="changeChartMonth(1)">
-        ›
-      </button>
+      <div class="monthNav">
+
+        <button
+          type="button"
+          onclick="changeChartMonth(-1)">
+          ‹
+        </button>
+
+        <button
+          type="button"
+          onclick="changeChartMonth(1)">
+          ›
+        </button>
+
+      </div>
 
     </div>
 
-    <button type="button"
-            class="todayBtn"
-            id="todayBtn"
-            onclick="goToday()">
+    <button
+      type="button"
+      class="todayBtn"
+      id="todayBtn"
+      onclick="goToday()">
       Aujourd'hui
     </button>
 
-    <div class="monthSummary">
+    <div class="chartStats">
 
-      <div class="summaryBox">
-        <div>Revenus</div>
-        <strong class="green" id="chartIncome">0 €</strong>
+      <div class="chartStat">
+        <div class="small">Revenus</div>
+        <strong
+          class="green"
+          id="chartIncome">
+          0 €
+        </strong>
       </div>
 
-      <div class="summaryBox">
-        <div>Dépenses</div>
-        <strong class="red" id="chartExpense">0 €</strong>
+      <div class="chartStat">
+        <div class="small">Dépenses</div>
+        <strong
+          class="red"
+          id="chartExpense">
+          0 €
+        </strong>
       </div>
 
-      <div class="summaryBox">
-        <div>Solde</div>
-        <strong class="blue" id="chartSaving">0 €</strong>
+      <div class="chartStat">
+        <div class="small">Solde</div>
+        <strong
+          id="chartSaving">
+          0 €
+        </strong>
       </div>
 
     </div>
 
-    <div id="monthNoData" class="noData">
+    <div
+      class="noData"
+      id="monthNoData">
       Aucune donnée enregistrée pour ce mois.
     </div>
 
     <div id="chartsContent">
 
-      <div class="barArea">
+      <div class="barChart">
 
         <div class="barWrap">
-          <div class="barValue" id="barIncomeValue">0 €</div>
-          <div class="bar barIncome"
-               id="barIncome"></div>
-          <div class="barLabel">Revenus</div>
+
+          <div
+            class="barValue green"
+            id="barIncomeValue">
+          </div>
+
+          <div
+            class="bar income"
+            id="barIncome">
+          </div>
+
+          <div class="barLabel">
+            Revenus
+          </div>
+
         </div>
 
         <div class="barWrap">
-          <div class="barValue" id="barExpenseValue">0 €</div>
-          <div class="bar barExpense"
-               id="barExpense"></div>
-          <div class="barLabel">Dépenses</div>
+
+          <div
+            class="barValue red"
+            id="barExpenseValue">
+          </div>
+
+          <div
+            class="bar expense"
+            id="barExpense">
+          </div>
+
+          <div class="barLabel">
+            Dépenses
+          </div>
+
         </div>
 
       </div>
 
-      <div class="donutWrap">
+      <div class="donutArea">
 
-        <div class="donut" id="donut"></div>
+        <div
+          class="donut"
+          id="donut">
+        </div>
 
-        <div class="legend" id="legend"></div>
+        <div id="legend"></div>
 
       </div>
 
     </div>
 
-    <div class="swipeHint">
-      ← Glissez pour consulter les mois précédents →
+  </div>
+
+  <div class="card">
+
+    <h2>💡 Conseil ZEN</h2>
+
+    <div
+      id="tip"
+      style="line-height:1.55;color:#c8d5e5">
     </div>
 
-  </section>
+  </div>
 
-  <section class="card">
+  <div class="card" id="history">
 
-    <div class="sectionTitle">🧾 Opérations récentes</div>
+    <h2>🧾 Historique</h2>
 
     <div id="transactions"></div>
 
-  </section>
+  </div>
 
-  <section class="card">
+  <div class="card">
 
-    <div class="sectionTitle">💡 Conseil ZEN</div>
+    <h2>💾 Sauvegarde</h2>
 
-    <div id="tip"
-         style="line-height:1.5;color:#c8d5e5">
+    <div class="small" style="margin-bottom:12px">
+      Vos données restent enregistrées sur votre appareil.
+      Vous pouvez aussi créer une copie de sauvegarde.
     </div>
 
-  </section>
+    <div class="backupButtons">
 
-  <section class="card">
-
-    <div class="sectionTitle">💾 Sauvegarde</div>
-
-    <div class="small"
-         style="margin-bottom:10px;">
-      Vos données sont conservées localement sur votre appareil.
-    </div>
-
-    <div class="backupActions">
-
-      <button type="button"
-              class="btnSecondary"
-              onclick="exportData()">
+      <button
+        type="button"
+        class="btnSecondary"
+        onclick="exportData()">
         Exporter
       </button>
 
-      <button type="button"
-              class="btnSecondary"
-              onclick="document.getElementById('importFile').click()">
+      <label class="fileLabel">
         Importer
+
+        <input
+          type="file"
+          accept=".json,application/json"
+          onchange="importData(event)">
+      </label>
+
+    </div>
+
+  </div>
+
+  <div class="ad">
+    EMPLACEMENT PUBLICITAIRE
+  </div>
+
+</div>
+
+<div
+  class="monthOverlay"
+  id="monthOverlay">
+
+  <div class="monthCard">
+
+    <h2>📅 Nouveau mois</h2>
+
+    <div
+      id="monthMessage"
+      style="
+        line-height:1.5;
+        color:#c8d5e5;
+      ">
+    </div>
+
+    <div
+      class="monthRecurringList"
+      id="monthRecurringList">
+    </div>
+
+    <div
+      class="small"
+      style="margin-bottom:12px">
+
+      Voulez-vous activer ces dépenses
+      récurrentes pour ce mois ?
+
+      Elles seront réservées dans votre disponible.
+
+    </div>
+
+    <div class="row">
+
+      <button
+        type="button"
+        class="btnSave"
+        onclick="answerMonthRollover(true)">
+        Oui
+      </button>
+
+      <button
+        type="button"
+        class="btnSecondary"
+        onclick="answerMonthRollover(false)">
+        Non
       </button>
 
     </div>
 
-    <input id="importFile"
-           type="file"
-           accept=".json,application/json"
-           hidden
-           onchange="importData(event)">
+  </div>
 
-  </section>
+</div>
 
-  <section class="card">
-    <div class="ad">EMPLACEMENT PUBLICITAIRE</div>
-  </section>
+<div
+  class="victoryOverlay"
+  id="victoryOverlay">
 
-</main>
+  <div class="victoryCard">
 
-<nav>
+    <div class="victoryEmoji">
+      🐿️🎉
+    </div>
 
-  <button type="button"
-          onclick="window.scrollTo({top:0,behavior:'smooth'})">
+    <h2>Bravo !</h2>
+
+    <p id="victoryText"></p>
+
+    <button
+      type="button"
+      class="btnSave"
+      style="
+        width:100%;
+        margin-top:10px;
+      "
+      onclick="closeVictory()">
+      Continuer
+    </button>
+
+  </div>
+
+</div>
+
+<div class="bottomNav">
+
+  <button
+    type="button"
+    onclick="
+      window.scrollTo({
+        top:0,
+        behavior:'smooth'
+      })
+    ">
     <span>🏠</span>
     Accueil
   </button>
 
-  <button type="button"
-          onclick="document.getElementById('savingSection').scrollIntoView({behavior:'smooth'})">
-    <span>🐷</span>
+  <button
+    type="button"
+    onclick="
+      document
+      .getElementById('savingSection')
+      .scrollIntoView({
+        behavior:'smooth'
+      })
+    ">
+    <span>🐿️</span>
     Épargne
   </button>
 
-  <button type="button"
-          onclick="document.getElementById('chartBrowser').scrollIntoView({behavior:'smooth'})">
-    <span>📊</span>
-    Graphiques
-  </button>
-
-  <button type="button"
-          onclick="document.getElementById('transactions').scrollIntoView({behavior:'smooth'})">
+  <button
+    type="button"
+    onclick="
+      document
+      .getElementById('history')
+      .scrollIntoView({
+        behavior:'smooth'
+      })
+    ">
     <span>🧾</span>
     Historique
   </button>
-
-</nav>
-
-<div class="victoryOverlay" id="victoryOverlay">
-
-  <div class="victoryCard">
-
-    <div class="trophy">🏆</div>
-
-    <h2>Bravo ! 🎉</h2>
-
-    <p id="victoryText">
-      Objectif d'épargne atteint !
-    </p>
-
-    <button type="button"
-            class="btnSave"
-            onclick="closeVictory()">
-      Continuer mon défi
-    </button>
-
-  </div>
 
 </div>
 
@@ -1067,6 +1417,7 @@ const donutColors = [
 let data = loadData();
 
 let transactionType = "expense";
+let expenseSource = "current";
 let chartMonthOffset = 0;
 let touchStartX = 0;
 let touchStartY = 0;
@@ -1077,71 +1428,184 @@ let touchStartY = 0;
 ================================ */
 
 function defaultData(){
+
   return {
+
     transactions:[],
+
     planned:[],
+
     goal:0,
+
     soundEnabled:true,
-    celebratedGoals:0
+
+    celebratedGoals:0,
+
+    lastOpenedPeriod:null,
+
+    recurringDecisions:{}
+
   };
+
 }
+
 
 function normalizeData(raw){
 
   const d = {
+
     ...defaultData(),
+
     ...(raw || {})
+
   };
 
+
   if(!Array.isArray(d.transactions)){
+
     d.transactions = [];
+
   }
 
+
   if(!Array.isArray(d.planned)){
+
     d.planned = [];
+
   }
+
+
+  if(
+
+    !d.recurringDecisions ||
+
+    typeof d.recurringDecisions !== "object"
+
+  ){
+
+    d.recurringDecisions = {};
+
+  }
+
 
   d.goal = Number(d.goal) || 0;
 
+
   if(typeof d.soundEnabled !== "boolean"){
+
     d.soundEnabled = true;
+
   }
 
+
   d.celebratedGoals =
+
     Number(d.celebratedGoals) || 0;
 
+
+  /*
+  Les anciennes opérations v2.4
+  n'avaient pas de "source".
+
+  Elles sont donc considérées comme
+  provenant du compte courant.
+  */
+
+  d.transactions =
+
+    d.transactions.map(tx=>({
+
+      ...tx,
+
+      source:tx.source || "current"
+
+    }));
+
+
+  /*
+  Migration des anciennes
+  dépenses prévues.
+  */
+
+  d.planned =
+
+    d.planned.map(p=>({
+
+      ...p,
+
+      skippedPeriods:
+
+        Array.isArray(p.skippedPeriods)
+
+        ? p.skippedPeriods
+
+        : [],
+
+
+      activatedPeriods:
+
+        Array.isArray(p.activatedPeriods)
+
+        ? p.activatedPeriods
+
+        : []
+
+    }));
+
+
   return d;
+
 }
+
 
 function loadData(){
 
   try{
 
     const raw =
-      localStorage.getItem(STORAGE_KEY);
+
+      localStorage.getItem(
+
+        STORAGE_KEY
+
+      );
+
 
     if(!raw){
+
       return defaultData();
+
     }
 
+
     return normalizeData(
+
       JSON.parse(raw)
+
     );
+
 
   }catch(e){
 
     console.error(e);
 
     return defaultData();
+
   }
+
 }
+
 
 function save(){
 
   localStorage.setItem(
+
     STORAGE_KEY,
+
     JSON.stringify(data)
+
   );
+
 }
 
 
@@ -1150,75 +1614,436 @@ function save(){
 ================================ */
 
 function $(id){
+
   return document.getElementById(id);
+
 }
+
 
 function euro(value){
 
   return new Intl.NumberFormat(
+
     "fr-BE",
+
     {
+
       style:"currency",
+
       currency:"EUR"
+
     }
-  ).format(Number(value) || 0);
+
+  ).format(
+
+    Number(value) || 0
+
+  );
+
 }
+
 
 function todayISO(){
 
   const d = new Date();
 
+
   const y = d.getFullYear();
 
+
   const m =
-    String(d.getMonth()+1)
-    .padStart(2,"0");
+
+    String(
+
+      d.getMonth()+1
+
+    ).padStart(2,"0");
+
 
   const day =
-    String(d.getDate())
-    .padStart(2,"0");
+
+    String(
+
+      d.getDate()
+
+    ).padStart(2,"0");
+
 
   return `${y}-${m}-${day}`;
+
 }
+
 
 function currentPeriod(){
 
   const d = new Date();
 
+
   return (
-    d.getFullYear() +
-    "-" +
-    String(d.getMonth()+1)
-    .padStart(2,"0")
+
+    d.getFullYear()
+
+    + "-"
+
+    + String(
+
+        d.getMonth()+1
+
+      ).padStart(2,"0")
+
   );
+
 }
+
+
+function periodName(period){
+
+  const [y,m] =
+
+    period
+
+    .split("-")
+
+    .map(Number);
+
+
+  return new Date(
+
+    y,
+
+    m-1,
+
+    1
+
+  )
+
+  .toLocaleDateString(
+
+    "fr-BE",
+
+    {
+
+      month:"long",
+
+      year:"numeric"
+
+    }
+
+  )
+
+  .replace(
+
+    /^./,
+
+    c=>c.toUpperCase()
+
+  );
+
+}
+
 
 function txPeriod(tx){
 
   if(!tx.date){
+
     return "";
+
   }
 
+
   return tx.date.slice(0,7);
+
 }
+
 
 function uid(){
 
   return (
-    Date.now().toString(36) +
+
+    Date.now().toString(36)
+
+    +
+
     Math.random()
+
     .toString(36)
+
     .slice(2)
+
   );
+
 }
+
 
 function escapeHtml(str){
 
   return String(str ?? "")
+
   .replaceAll("&","&amp;")
+
   .replaceAll("<","&lt;")
+
   .replaceAll(">","&gt;")
+
   .replaceAll('"',"&quot;");
+
+}
+
+
+/* ================================
+   CHANGEMENT DE MOIS
+================================ */
+
+function initializeMonthState(){
+
+  const period =
+
+    currentPeriod();
+
+
+  /*
+  Première installation ou migration
+  depuis la v2.4.
+
+  On conserve les dépenses récurrentes
+  existantes pour le mois actuel.
+  */
+
+  if(!data.lastOpenedPeriod){
+
+    data.lastOpenedPeriod = period;
+
+
+    data.planned.forEach(p=>{
+
+      if(
+
+        p.recurring &&
+
+        !p.activatedPeriods.includes(
+
+          period
+
+        )
+
+      ){
+
+        p.activatedPeriods.push(
+
+          period
+
+        );
+
+      }
+
+    });
+
+
+    save();
+
+    return;
+
+  }
+
+
+  /*
+  Si nous sommes passés dans
+  un nouveau mois.
+  */
+
+  if(
+
+    data.lastOpenedPeriod !== period
+
+  ){
+
+    data.lastOpenedPeriod = period;
+
+    save();
+
+  }
+
+
+  /*
+  Si aucune décision n'a encore
+  été prise pour les dépenses
+  récurrentes de ce mois.
+  */
+
+  if(
+
+    data.recurringDecisions[period]
+
+    === undefined
+
+  ){
+
+    const recurring =
+
+      data.planned.filter(
+
+        p=>p.recurring
+
+      );
+
+
+    if(recurring.length){
+
+      showMonthRollover();
+
+    }
+
+    else{
+
+      data.recurringDecisions[period]
+
+        = false;
+
+      save();
+
+    }
+
+  }
+
+}
+
+
+function showMonthRollover(){
+
+  const period =
+
+    currentPeriod();
+
+
+  const recurring =
+
+    data.planned.filter(
+
+      p=>p.recurring
+
+    );
+
+
+  $("monthMessage").innerHTML =
+
+    `Bienvenue en
+     <strong>
+     ${escapeHtml(periodName(period))}
+     </strong>.
+     <br><br>
+     Les revenus et dépenses affichés
+     repartent automatiquement à
+     <strong>0 €</strong>
+     pour ce nouveau mois.
+     <br>
+     Votre épargne totale, elle,
+     est conservée.`;
+
+
+  $("monthRecurringList").innerHTML =
+
+    recurring.map(p=>`
+
+      <div class="monthRecurringRow">
+
+        <div>
+
+          <strong>
+            ${escapeHtml(plannedLabel(p))}
+          </strong>
+
+          <div class="small">
+            Le ${p.day}
+          </div>
+
+        </div>
+
+        <strong>
+          ${euro(p.amount)}
+        </strong>
+
+      </div>
+
+    `).join("");
+
+
+  $("monthOverlay")
+
+  .classList
+
+  .add("show");
+
+}
+
+
+function answerMonthRollover(yes){
+
+  const period =
+
+    currentPeriod();
+
+
+  data.recurringDecisions[period]
+
+    = !!yes;
+
+
+  data.planned
+
+  .filter(p=>p.recurring)
+
+  .forEach(p=>{
+
+
+    p.activatedPeriods =
+
+      p.activatedPeriods
+
+      .filter(x=>x!==period);
+
+
+    p.skippedPeriods =
+
+      p.skippedPeriods
+
+      .filter(x=>x!==period);
+
+
+    if(yes){
+
+      p.activatedPeriods.push(
+
+        period
+
+      );
+
+    }
+
+    else{
+
+      p.skippedPeriods.push(
+
+        period
+
+      );
+
+    }
+
+  });
+
+
+  save();
+
+
+  $("monthOverlay")
+
+  .classList
+
+  .remove("show");
+
+
+  render();
+
 }
 
 
@@ -1230,96 +2055,296 @@ function openTransactionForm(type){
 
   transactionType = type;
 
+  expenseSource = "current";
+
+
   $("txDate").value =
+
     todayISO();
+
 
   $("txLabel").value = "";
 
+
   $("txAmount").value = "";
+
 
   populateCategories();
 
+
+  updateSourceUI();
+
+
   $("form")
+
   .classList
+
   .add("show");
 
+
   setTimeout(
+
     ()=>$("txLabel").focus(),
+
     50
+
   );
+
 }
+
 
 function closeTransactionForm(){
 
   $("form")
+
   .classList
+
   .remove("show");
 
+
   if(document.activeElement){
+
     document.activeElement.blur();
+
   }
+
 }
+
 
 function populateCategories(){
 
   const list =
+
     transactionType === "income"
+
     ? incomeCategories
+
     : expenseCategories;
 
+
   $("txCategory").innerHTML =
+
     list.map(
-      c=>`<option>${escapeHtml(c)}</option>`
+
+      c=>
+
+      `<option>
+
+       ${escapeHtml(c)}
+
+       </option>`
+
     ).join("");
+
 }
+
+
+function setExpenseSource(source){
+
+  expenseSource =
+
+    source === "saving"
+
+    ? "saving"
+
+    : "current";
+
+
+  updateSourceUI();
+
+}
+
+
+function updateSourceUI(){
+
+  const box =
+
+    $("sourceBox");
+
+
+  if(!box){
+
+    return;
+
+  }
+
+
+  box.classList.toggle(
+
+    "show",
+
+    transactionType === "expense"
+
+  );
+
+
+  $("sourceCurrent")
+
+  .classList.toggle(
+
+    "active",
+
+    expenseSource === "current"
+
+  );
+
+
+  $("sourceSaving")
+
+  .classList.toggle(
+
+    "active",
+
+    expenseSource === "saving"
+
+  );
+
+
+  $("sourceHelp").textContent =
+
+    expenseSource === "saving"
+
+    ?
+
+    `Cette dépense sera retirée de votre épargne (${euro(totalSaving())} disponible).`
+
+    :
+
+    "Cette dépense diminuera le compte courant.";
+
+}
+
 
 function addTx(){
 
   const amount =
-    Number($("txAmount").value);
+
+    Number(
+
+      $("txAmount").value
+
+    );
+
 
   const category =
+
     $("txCategory").value;
 
+
   const label =
-    $("txLabel").value.trim()
+
+    $("txLabel")
+
+    .value
+
+    .trim()
+
     || category;
 
+
   const date =
+
     $("txDate").value
+
     || todayISO();
 
-  if(!amount || amount <= 0){
+
+  if(
+
+    !amount ||
+
+    amount <= 0
+
+  ){
 
     alert(
+
       "Indique un montant valide."
+
     );
 
     return;
+
   }
 
+
+  /*
+  Impossible de dépenser davantage
+  que l'épargne réellement disponible.
+  */
+
+  if(
+
+    transactionType === "expense"
+
+    &&
+
+    expenseSource === "saving"
+
+    &&
+
+    amount > totalSaving()
+
+  ){
+
+    alert(
+
+      `Votre épargne disponible est de ${euro(totalSaving())}.`
+
+    );
+
+    return;
+
+  }
+
+
   const beforeCompleted =
+
     completedGoalsCount();
 
+
   data.transactions.push({
+
     id:uid(),
+
     type:transactionType,
+
     label,
+
     amount,
+
     category,
+
     date,
+
+    source:
+
+      transactionType === "expense"
+
+      ? expenseSource
+
+      : "current",
+
     createdAt:Date.now()
+
   });
+
 
   save();
 
+
   closeTransactionForm();
+
 
   render();
 
+
   checkSavingVictory(
+
     beforeCompleted
+
   );
+
 }
 
 
@@ -1330,251 +2355,748 @@ function addTx(){
 function togglePlannedForm(show){
 
   $("plannedForm")
+
   .classList
+
   .toggle("show",show);
 
-  if(!show &&
-     document.activeElement){
+
+  if(
+
+    !show &&
+
+    document.activeElement
+
+  ){
 
     document.activeElement.blur();
+
   }
+
 }
+
 
 function addPlanned(){
 
   const category =
+
     $("plannedCategory").value;
 
+
   const detail =
+
     $("plannedDetail")
+
     .value
+
     .trim();
 
+
   const amount =
+
     Number(
+
       $("plannedAmount").value
+
     );
+
 
   const day =
+
     Number(
+
       $("plannedDay").value
+
     );
+
 
   const recurring =
+
     $("plannedRecurring").checked;
 
-  if(!amount || amount <= 0){
-
-    alert(
-      "Indique un montant valide."
-    );
-
-    return;
-  }
 
   if(
-    !day ||
-    day < 1 ||
-    day > 31
+
+    !amount ||
+
+    amount <= 0
+
   ){
 
     alert(
-      "Indique un jour entre 1 et 31."
+
+      "Indique un montant valide."
+
     );
 
     return;
+
   }
 
+
+  if(
+
+    !day ||
+
+    day < 1 ||
+
+    day > 31
+
+  ){
+
+    alert(
+
+      "Indique un jour entre 1 et 31."
+
+    );
+
+    return;
+
+  }
+
+
   data.planned.push({
+
     id:uid(),
+
     category,
+
     detail,
+
     amount,
+
     day,
+
     recurring,
-    createdPeriod:currentPeriod(),
-    paidPeriod:null
+
+    createdPeriod:
+
+      currentPeriod(),
+
+    paidPeriod:null,
+
+    activatedPeriods:
+
+      recurring
+
+      ? [currentPeriod()]
+
+      : [],
+
+    skippedPeriods:[]
+
   });
 
-  $("plannedDetail").value="";
-  $("plannedAmount").value="";
-  $("plannedDay").value="";
-  $("plannedRecurring").checked=false;
+
+  $("plannedDetail").value = "";
+
+  $("plannedAmount").value = "";
+
+  $("plannedDay").value = "";
+
+  $("plannedRecurring").checked = false;
+
 
   save();
 
+
   togglePlannedForm(false);
 
+
   render();
+
 }
+
+
+function isPlannedActiveForPeriod(
+
+  p,
+
+  period = currentPeriod()
+
+){
+
+  if(p.recurring){
+
+
+    if(
+
+      (p.skippedPeriods || [])
+
+      .includes(period)
+
+    ){
+
+      return false;
+
+    }
+
+
+    return (
+
+      (p.activatedPeriods || [])
+
+      .includes(period)
+
+      &&
+
+      p.paidPeriod !== period
+
+    );
+
+  }
+
+
+  return (
+
+    !p.paidPeriod
+
+    &&
+
+    p.createdPeriod === period
+
+  );
+
+}
+
 
 function activePlanned(){
 
   const period =
+
     currentPeriod();
 
-  return data.planned.filter(p=>{
 
-    if(
-      p.recurring &&
-      p.paidPeriod !== period
-    ){
-      return true;
-    }
+  return data.planned.filter(
 
-    if(
-      !p.recurring &&
-      !p.paidPeriod
-    ){
-      return true;
-    }
+    p=>
 
-    return false;
-  });
+      isPlannedActiveForPeriod(
+
+        p,
+
+        period
+
+      )
+
+  );
+
 }
+
 
 function plannedLabel(p){
 
   return (
+
     p.detail
-    ? `${p.category} – ${p.detail}`
-    : p.category
+
+    ?
+
+    `${p.category} – ${p.detail}`
+
+    :
+
+    p.category
+
   );
+
 }
+
 
 function payPlanned(id){
 
   const p =
+
     data.planned.find(
+
       x=>x.id===id
+
     );
 
+
   if(!p){
+
     return;
+
   }
 
+
   const beforeCompleted =
+
     completedGoalsCount();
 
+
   data.transactions.push({
+
     id:uid(),
+
     type:"expense",
+
     label:plannedLabel(p),
+
     amount:Number(p.amount),
+
     category:
+
       p.category === "Abonnement"
+
       ? "Abonnements"
+
       : p.category,
+
     date:todayISO(),
+
+    source:"current",
+
+    plannedId:p.id,
+
     createdAt:Date.now()
+
   });
+
+
+  p.paidPeriod =
+
+    currentPeriod();
+
+
+  save();
+
+
+  render();
+
+
+  checkSavingVictory(
+
+    beforeCompleted
+
+  );
+
+}
+
+
+/*
+Annuler une échéance uniquement
+pour le mois actuel.
+
+Elle reviendra automatiquement
+le mois suivant si elle est récurrente.
+*/
+
+function skipPlannedThisMonth(id){
+
+  const p =
+
+    data.planned.find(
+
+      x=>x.id===id
+
+    );
+
+
+  if(!p){
+
+    return;
+
+  }
+
+
+  if(
+
+    !confirm(
+
+      `Annuler l'échéance « ${plannedLabel(p)} » uniquement pour ${periodName(currentPeriod())} ?`
+
+    )
+
+  ){
+
+    return;
+
+  }
+
 
   if(p.recurring){
 
-    p.paidPeriod =
-      currentPeriod();
 
-  }else{
+    if(
 
-    p.paidPeriod =
-      currentPeriod();
+      !p.skippedPeriods.includes(
+
+        currentPeriod()
+
+      )
+
+    ){
+
+      p.skippedPeriods.push(
+
+        currentPeriod()
+
+      );
+
+    }
+
+
+    p.activatedPeriods =
+
+      p.activatedPeriods
+
+      .filter(
+
+        x=>x!==currentPeriod()
+
+      );
+
   }
+
+  else{
+
+    p.paidPeriod =
+
+      currentPeriod();
+
+  }
+
 
   save();
 
+
   render();
 
-  checkSavingVictory(
-    beforeCompleted
-  );
 }
+
+
+/*
+Permet de corriger une erreur :
+si on a annulé l'échéance du mois,
+on peut la rétablir.
+*/
+
+function restorePlannedThisMonth(id){
+
+  const p =
+
+    data.planned.find(
+
+      x=>x.id===id
+
+    );
+
+
+  if(
+
+    !p ||
+
+    !p.recurring
+
+  ){
+
+    return;
+
+  }
+
+
+  p.skippedPeriods =
+
+    p.skippedPeriods
+
+    .filter(
+
+      x=>x!==currentPeriod()
+
+    );
+
+
+  if(
+
+    !p.activatedPeriods.includes(
+
+      currentPeriod()
+
+    )
+
+  ){
+
+    p.activatedPeriods.push(
+
+      currentPeriod()
+
+    );
+
+  }
+
+
+  save();
+
+
+  render();
+
+}
+
+
+/*
+Suppression définitive de la dépense
+prévue, contrairement à
+"Ce mois : annuler".
+*/
 
 function deletePlanned(id){
 
-  if(
-    !confirm(
-      "Supprimer cette dépense prévue ?"
-    )
-  ){
-    return;
-  }
+  const p =
 
-  data.planned =
-    data.planned.filter(
-      p=>p.id!==id
+    data.planned.find(
+
+      x=>x.id===id
+
     );
 
+
+  if(!p){
+
+    return;
+
+  }
+
+
+  if(
+
+    !confirm(
+
+      `Supprimer définitivement « ${plannedLabel(p)} » de vos dépenses prévues ?`
+
+    )
+
+  ){
+
+    return;
+
+  }
+
+
+  data.planned =
+
+    data.planned.filter(
+
+      x=>x.id!==id
+
+    );
+
+
   save();
+
+
   render();
+
 }
+
 
 function renderPlanned(){
 
+  const period =
+
+    currentPeriod();
+
+
   const list =
+
     activePlanned()
+
     .slice()
+
     .sort(
+
       (a,b)=>a.day-b.day
+
     );
+
+
+  const skipped =
+
+    data.planned.filter(
+
+      p=>
+
+        p.recurring
+
+        &&
+
+        (p.skippedPeriods || [])
+
+        .includes(period)
+
+    );
+
+
+  let html = "";
+
 
   if(!list.length){
 
-    $("plannedList").innerHTML =
-      `<div class="small"
-            style="padding:15px 0 2px;">
-         Aucune dépense prévue.
+    html +=
+
+      `<div
+        class="small"
+        style="padding:15px 0 2px;">
+
+        Aucune dépense prévue active.
+
        </div>`;
 
-    return;
   }
 
+  else{
+
+    html +=
+
+      list.map(p=>`
+
+        <div class="plannedItem">
+
+          <div class="txMain">
+
+            <div class="txTitle">
+
+              ${escapeHtml(plannedLabel(p))}
+
+            </div>
+
+            <div class="txMeta">
+
+              Le ${p.day}
+
+              •
+
+              ${
+
+                p.recurring
+
+                ? "Tous les mois"
+
+                : "Une seule fois"
+
+              }
+
+            </div>
+
+          </div>
+
+          <div style="text-align:right">
+
+            <div class="txValue red">
+
+              ${euro(p.amount)}
+
+            </div>
+
+            <div style="margin-top:7px">
+
+              <button
+                type="button"
+                class="miniButton"
+                onclick="payPlanned('${p.id}')">
+
+                Payée
+
+              </button>
+
+              <button
+                type="button"
+                class="miniButton"
+                onclick="skipPlannedThisMonth('${p.id}')">
+
+                Ce mois : annuler
+
+              </button>
+
+              <button
+                type="button"
+                class="miniButton"
+                onclick="deletePlanned('${p.id}')">
+
+                ✕
+
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      `).join("");
+
+  }
+
+
+  if(skipped.length){
+
+    html +=
+
+      `<div
+        class="small"
+        style="margin-top:14px">
+
+        Échéances annulées ce mois :
+
+       </div>`;
+
+
+    html +=
+
+      skipped.map(p=>`
+
+        <div class="plannedItem">
+
+          <div class="txMain">
+
+            <div class="txTitle">
+
+              ${escapeHtml(plannedLabel(p))}
+
+            </div>
+
+            <div class="txMeta">
+
+              Non réservée ce mois
+              •
+              reviendra le mois suivant
+
+            </div>
+
+          </div>
+
+          <div style="text-align:right">
+
+            <div class="txValue">
+
+              ${euro(p.amount)}
+
+            </div>
+
+            <button
+              type="button"
+              class="miniButton"
+              style="margin-top:7px"
+              onclick="restorePlannedThisMonth('${p.id}')">
+
+              Rétablir
+
+            </button>
+
+          </div>
+
+        </div>
+
+      `).join("");
+
+  }
+
+
   $("plannedList").innerHTML =
-    list.map(p=>`
 
-      <div class="plannedItem">
+    html;
 
-        <div class="txMain">
-
-          <div class="txTitle">
-            ${escapeHtml(plannedLabel(p))}
-          </div>
-
-          <div class="txMeta">
-            Le ${p.day} •
-            ${p.recurring
-              ?"Tous les mois"
-              :"Une seule fois"}
-          </div>
-
-        </div>
-
-        <div style="text-align:right">
-
-          <div class="txValue red">
-            ${euro(p.amount)}
-          </div>
-
-          <div style="margin-top:7px">
-
-            <button type="button"
-                    class="miniButton"
-                    onclick="payPlanned('${p.id}')">
-              Payée
-            </button>
-
-            <button type="button"
-                    class="miniButton"
-                    onclick="deletePlanned('${p.id}')">
-              ✕
-            </button>
-
-          </div>
-
-        </div>
-
-      </div>
-
-    `).join("");
 }
 
 
@@ -1582,273 +3104,656 @@ function renderPlanned(){
    ÉPARGNE
 ================================ */
 
-function savingTransactions(){
+/*
+Sommes réellement transférées
+du compte courant vers l'épargne.
+*/
+
+function savingDeposits(){
 
   return data.transactions.filter(
-    tx =>
-      tx.type === "expense" &&
+
+    tx=>
+
+      tx.type === "expense"
+
+      &&
+
       tx.category === "Épargne"
+
+      &&
+
+      tx.source !== "saving"
+
   );
+
 }
+
+
+/*
+Dépenses payées directement
+avec l'argent déjà épargné.
+*/
+
+function savingWithdrawals(){
+
+  return data.transactions.filter(
+
+    tx=>
+
+      tx.type === "expense"
+
+      &&
+
+      tx.source === "saving"
+
+  );
+
+}
+
+
+function totalSavingDeposits(){
+
+  return savingDeposits()
+
+  .reduce(
+
+    (sum,tx)=>
+
+      sum + Number(tx.amount || 0),
+
+    0
+
+  );
+
+}
+
+
+function totalSavingWithdrawals(){
+
+  return savingWithdrawals()
+
+  .reduce(
+
+    (sum,tx)=>
+
+      sum + Number(tx.amount || 0),
+
+    0
+
+  );
+
+}
+
+
+/*
+Épargne réelle actuellement disponible.
+
+Exemple :
+1000 € mis de côté
+- 300 € dépensés depuis l'épargne
+= 700 € d'épargne réelle.
+*/
 
 function totalSaving(){
 
-  return savingTransactions()
-    .reduce(
-      (sum,tx)=>
-        sum + Number(tx.amount || 0),
-      0
-    );
+  return Math.max(
+
+    0,
+
+    totalSavingDeposits()
+
+    -
+
+    totalSavingWithdrawals()
+
+  );
+
 }
 
-/*
-L'épargne totale est indépendante
-du défi en cours.
-
-Exemple :
-objectif 1000
-épargne totale 2200
-
-=> 2 défis terminés
-=> progression actuelle 200 / 1000
-*/
 
 function completedGoalsCount(){
 
-  if(!data.goal || data.goal<=0){
+  if(
+
+    !data.goal ||
+
+    data.goal <= 0
+
+  ){
+
     return 0;
+
   }
 
+
   return Math.floor(
-    totalSaving() / data.goal
+
+    totalSaving()
+
+    /
+
+    data.goal
+
   );
+
 }
+
 
 function currentSavingProgress(){
 
   const total =
+
     totalSaving();
 
-  if(!data.goal || data.goal<=0){
+
+  if(
+
+    !data.goal ||
+
+    data.goal <= 0
+
+  ){
+
     return total;
+
   }
 
-  const remainder =
-    total % data.goal;
 
-  /*
-  Si on tombe exactement sur un
-  objectif atteint, le prochain
-  défi commence à 0.
-  */
+  return (
 
-  return remainder;
+    total
+
+    %
+
+    data.goal
+
+  );
+
 }
+
 
 function setGoal(){
 
   const goal =
+
     Number(
+
       $("goalInput").value
+
     );
 
-  if(!goal || goal<=0){
+
+  if(
+
+    !goal ||
+
+    goal <= 0
+
+  ){
 
     alert(
+
       "Indique un objectif supérieur à 0 €."
+
     );
 
     return;
+
   }
+
 
   data.goal = goal;
 
-  /*
-  On recalcule le nombre d'objectifs
-  déjà franchis avec le nouvel objectif
-  pour éviter une célébration artificielle.
-  */
 
   data.celebratedGoals =
+
     completedGoalsCount();
 
-  $("goalInput").value="";
+
+  $("goalInput").value = "";
+
 
   save();
+
+
   render();
+
 }
+
+
+/*
+NOUVEAU :
+annuler directement la dernière
+somme mise en épargne.
+*/
+
+function undoLastSaving(){
+
+  const list =
+
+    savingDeposits()
+
+    .slice()
+
+    .sort(
+
+      (a,b)=>
+
+        Number(b.createdAt || 0)
+
+        -
+
+        Number(a.createdAt || 0)
+
+    );
+
+
+  const tx = list[0];
+
+
+  if(!tx){
+
+    alert(
+
+      "Aucune opération d'épargne à annuler."
+
+    );
+
+    return;
+
+  }
+
+
+  if(
+
+    !confirm(
+
+      `Annuler votre dernière mise en épargne de ${euro(tx.amount)} (« ${tx.label} ») ?
+
+Le montant sera recrédité au compte courant et l'épargne sera recalculée.`
+
+    )
+
+  ){
+
+    return;
+
+  }
+
+
+  data.transactions =
+
+    data.transactions.filter(
+
+      t=>t.id!==tx.id
+
+    );
+
+
+  data.celebratedGoals =
+
+    Math.min(
+
+      data.celebratedGoals,
+
+      completedGoalsCount()
+
+    );
+
+
+  save();
+
+
+  render();
+
+}
+
 
 function renderSavings(){
 
   const total =
+
     totalSaving();
 
+
+  const deposits =
+
+    totalSavingDeposits();
+
+
+  const withdrawals =
+
+    totalSavingWithdrawals();
+
+
   const goal =
+
     Number(data.goal) || 0;
 
+
   const completed =
+
     completedGoalsCount();
 
+
   const current =
+
     currentSavingProgress();
 
+
   $("savingTotal").textContent =
+
     euro(total);
 
+
   $("savingGoalLabel").textContent =
+
     euro(goal);
 
-  if(goal<=0){
+
+  if(goal <= 0){
 
     $("savingCurrent").textContent =
+
       euro(total);
 
-    $("savingProgress").style.width =
-      "0%";
+
+    $("savingProgress")
+
+    .style.width = "0%";
+
 
     $("savingPercent").textContent =
+
       "Définissez votre prochain objectif.";
 
-    $("challengeText").textContent =
-      "Chaque dépense enregistrée dans la catégorie « Épargne » fera progresser votre défi.";
+
+    $("challengeText").innerHTML =
+
+      `Épargne versée :
+       <strong>${euro(deposits)}</strong>
+       •
+       reprise depuis l'épargne :
+       <strong>${euro(withdrawals)}</strong>.`;
+
 
     return;
+
   }
+
 
   $("savingCurrent").textContent =
+
     euro(current);
 
+
   const percent =
+
     Math.min(
+
       100,
-      (current/goal)*100
+
+      (current / goal) * 100
+
     );
 
-  $("savingProgress").style.width =
-    percent+"%";
+
+  $("savingProgress")
+
+  .style.width =
+
+    percent + "%";
+
 
   $("savingPercent").textContent =
+
     `${Math.round(percent)} % du prochain objectif`;
 
+
   const remaining =
+
     Math.max(
+
       0,
-      goal-current
+
+      goal - current
+
     );
 
-  if(completed===0){
+
+  if(completed === 0){
 
     $("challengeText").innerHTML =
-      `🎯 Il vous reste <strong>${euro(remaining)}</strong> pour réussir votre premier défi.`;
 
-  }else{
+      `🎯 Il vous reste
+       <strong>${euro(remaining)}</strong>
+       pour réussir votre premier défi.
 
-    $("challengeText").innerHTML =
-      `🏆 ${completed} objectif${completed>1?"s":""} atteint${completed>1?"s":""} •
-       Plus que <strong>${euro(remaining)}</strong> pour le prochain.`;
+       <br>
+
+       <span class="small">
+
+       Épargne nette :
+       ${euro(total)}
+       •
+       retraits :
+       ${euro(withdrawals)}
+
+       </span>`;
+
   }
+
+  else{
+
+    $("challengeText").innerHTML =
+
+      `🏆 ${completed}
+       objectif${completed>1?"s":""}
+       atteint${completed>1?"s":""}
+
+       •
+
+       Plus que
+       <strong>${euro(remaining)}</strong>
+       pour le prochain.
+
+       <br>
+
+       <span class="small">
+
+       Épargne nette :
+       ${euro(total)}
+       •
+       retraits :
+       ${euro(withdrawals)}
+
+       </span>`;
+
+  }
+
+
+  updateSourceUI();
+
 }
 
+
 function checkSavingVictory(
+
   previousCompleted
+
 ){
 
   const now =
+
     completedGoalsCount();
 
+
   if(
-    !data.goal ||
+
+    !data.goal
+
+    ||
+
     now <= previousCompleted
+
   ){
+
     return;
+
   }
+
 
   data.celebratedGoals = now;
 
+
   save();
 
+
   showVictory(
+
     now - previousCompleted
+
   );
+
 }
 
+
 function showVictory(
+
   numberReached = 1
+
 ){
 
   const total =
+
     totalSaving();
 
+
   const goal =
+
     Number(data.goal) || 0;
 
+
   const current =
+
     currentSavingProgress();
 
+
   let text =
+
     `Vous venez d'atteindre votre objectif de ${euro(goal)} !`;
 
-  if(numberReached>1){
+
+  if(numberReached > 1){
 
     text =
+
       `Incroyable ! Vous venez de franchir ${numberReached} objectifs d'épargne d'un coup !`;
+
   }
+
 
   text +=
-    `<br><br>Épargne totale : <strong>${euro(total)}</strong>`;
 
-  if(current>0){
+    `<br><br>
+     Épargne totale :
+     <strong>${euro(total)}</strong>`;
+
+
+  if(current > 0){
 
     text +=
-      `<br>${euro(current)} est déjà comptabilisé sur votre prochain défi.`;
 
-  }else{
+      `<br>
+       ${euro(current)}
+       est déjà comptabilisé
+       sur votre prochain défi.`;
 
-    text +=
-      `<br>Un nouveau défi commence maintenant à 0 €.`;
   }
 
+  else{
+
+    text +=
+
+      `<br>
+       Un nouveau défi commence
+       maintenant à 0 €.`;
+
+  }
+
+
   $("victoryText").innerHTML =
+
     text;
 
+
   $("victoryOverlay")
+
   .classList
+
   .add("show");
+
 
   createConfetti();
 
+
   if(data.soundEnabled){
+
     playVictorySound();
+
   }
+
 }
+
 
 function closeVictory(){
 
   $("victoryOverlay")
+
   .classList
+
   .remove("show");
 
+
   document
+
   .querySelectorAll(".confetti")
-  .forEach(x=>x.remove());
+
+  .forEach(
+
+    x=>x.remove()
+
+  );
+
 }
+
 
 function toggleSound(){
 
   data.soundEnabled =
+
     !data.soundEnabled;
+
 
   save();
 
+
   renderSound();
+
 }
+
 
 function renderSound(){
 
   $("soundStatus").textContent =
+
     data.soundEnabled
+
     ? "🔊 Son de victoire activé"
+
     : "🔇 Son de victoire coupé";
+
 }
 
 
@@ -1861,74 +3766,143 @@ function playVictorySound(){
   try{
 
     const AudioContext =
-      window.AudioContext ||
+
+      window.AudioContext
+
+      ||
+
       window.webkitAudioContext;
 
+
     if(!AudioContext){
+
       return;
+
     }
 
+
     const ctx =
+
       new AudioContext();
 
+
     const notes = [
-      {f:523.25,t:0,d:.16},
-      {f:659.25,t:.16,d:.16},
-      {f:783.99,t:.32,d:.20},
-      {f:1046.50,t:.52,d:.42}
+
+      {
+        f:523.25,
+        t:0,
+        d:.16
+      },
+
+      {
+        f:659.25,
+        t:.16,
+        d:.16
+      },
+
+      {
+        f:783.99,
+        t:.32,
+        d:.20
+      },
+
+      {
+        f:1046.50,
+        t:.52,
+        d:.42
+      }
+
     ];
+
 
     notes.forEach(n=>{
 
+
       const osc =
+
         ctx.createOscillator();
 
+
       const gain =
+
         ctx.createGain();
 
+
       osc.type =
+
         "sine";
 
+
       osc.frequency.value =
+
         n.f;
 
+
       gain.gain.setValueAtTime(
-        0.0001,
-        ctx.currentTime+n.t
-      );
 
-      gain.gain.exponentialRampToValueAtTime(
-        .22,
-        ctx.currentTime+n.t+.02
-      );
-
-      gain.gain.exponentialRampToValueAtTime(
         .0001,
-        ctx.currentTime+n.t+n.d
+
+        ctx.currentTime+n.t
+
       );
+
+
+      gain.gain.exponentialRampToValueAtTime(
+
+        .22,
+
+        ctx.currentTime+n.t+.02
+
+      );
+
+
+      gain.gain.exponentialRampToValueAtTime(
+
+        .0001,
+
+        ctx.currentTime+n.t+n.d
+
+      );
+
 
       osc.connect(gain);
 
+
       gain.connect(
+
         ctx.destination
+
       );
+
 
       osc.start(
+
         ctx.currentTime+n.t
+
       );
 
+
       osc.stop(
+
         ctx.currentTime+n.t+n.d+.05
+
       );
+
     });
+
 
   }catch(e){
 
     console.log(
+
       "Son non disponible",
+
       e
+
     );
+
   }
+
 }
 
 
@@ -1939,265 +3913,738 @@ function playVictorySound(){
 function createConfetti(){
 
   const colors = [
+
     "#4ee2a2",
+
     "#5aa9ff",
+
     "#ffd369",
+
     "#ff6b78",
+
     "#ad8cff",
+
     "#ffffff"
+
   ];
 
-  for(let i=0;i<80;i++){
+
+  for(
+
+    let i=0;
+
+    i<80;
+
+    i++
+
+  ){
 
     const c =
+
       document.createElement("div");
 
+
     c.className =
+
       "confetti";
 
+
     c.style.left =
+
       Math.random()*100+"vw";
 
+
     c.style.background =
+
       colors[
+
         Math.floor(
-          Math.random()*colors.length
+
+          Math.random()
+
+          *
+
+          colors.length
+
         )
+
       ];
 
+
     c.style.animationDuration =
-      (2.2+Math.random()*2.5)+"s";
+
+      (
+
+        2.2
+
+        +
+
+        Math.random()*2.5
+
+      )
+
+      +"s";
+
 
     c.style.animationDelay =
-      (Math.random()*.6)+"s";
+
+      (
+
+        Math.random()*.6
+
+      )
+
+      +"s";
+
 
     c.style.transform =
+
       `rotate(${Math.random()*360}deg)`;
+
 
     document.body.appendChild(c);
 
+
     setTimeout(
+
       ()=>c.remove(),
+
       5500
+
     );
+
   }
+
 }
 
 
 /* ================================
-   CALCUL DU MOIS ACTUEL
+   CALCULS DU MOIS
 ================================ */
 
-function monthTransactions(
-  period
-){
+function monthTransactions(period){
 
   return data.transactions.filter(
-    tx=>txPeriod(tx)===period
+
+    tx=>
+
+      txPeriod(tx) === period
+
   );
+
 }
 
-function totalsForPeriod(
-  period
-){
+
+function totalsForPeriod(period){
 
   const txs =
+
     monthTransactions(period);
 
+
   let inc = 0;
+
   let exp = 0;
+
 
   txs.forEach(tx=>{
 
-    if(tx.type==="income"){
-      inc += Number(tx.amount) || 0;
+
+    const amount =
+
+      Number(tx.amount) || 0;
+
+
+    if(tx.type === "income"){
+
+      inc += amount;
+
     }
 
-    if(tx.type==="expense"){
-      exp += Number(tx.amount) || 0;
+
+    else if(
+
+      tx.type === "expense"
+
+    ){
+
+      exp += amount;
+
     }
+
   });
 
+
   return {
+
     inc,
+
     exp
+
   };
+
 }
+
+
+/*
+Uniquement les dépenses réellement
+payées depuis le compte courant.
+*/
+
+function currentAccountExpenseForPeriod(
+
+  period
+
+){
+
+  return monthTransactions(period)
+
+  .filter(
+
+    tx=>
+
+      tx.type === "expense"
+
+      &&
+
+      tx.source !== "saving"
+
+  )
+
+  .reduce(
+
+    (sum,tx)=>
+
+      sum + Number(tx.amount || 0),
+
+    0
+
+  );
+
+}
+
+
+function currentAccountIncomeForPeriod(
+
+  period
+
+){
+
+  return monthTransactions(period)
+
+  .filter(
+
+    tx=>tx.type === "income"
+
+  )
+
+  .reduce(
+
+    (sum,tx)=>
+
+      sum + Number(tx.amount || 0),
+
+    0
+
+  );
+
+}
+
 
 function renderDashboard(){
 
   const period =
+
     currentPeriod();
 
+
   const totals =
+
     totalsForPeriod(period);
 
+
   const reserved =
+
     activePlanned()
+
     .reduce(
-      (s,p)=>
-        s+Number(p.amount||0),
+
+      (sum,p)=>
+
+        sum + Number(p.amount || 0),
+
       0
+
     );
+
+
+  /*
+  Une dépense payée avec l'épargne
+  compte bien comme dépense du mois,
+  mais elle ne diminue PAS une
+  deuxième fois le compte courant.
+  */
+
+  const currentIncome =
+
+    currentAccountIncomeForPeriod(
+
+      period
+
+    );
+
+
+  const currentExpenses =
+
+    currentAccountExpenseForPeriod(
+
+      period
+
+    );
+
 
   const balance =
-    totals.inc -
-    totals.exp;
+
+    currentIncome
+
+    -
+
+    currentExpenses;
+
 
   const real =
-    balance -
+
+    balance
+
+    -
+
     reserved;
 
+
   const now =
+
     new Date();
 
+
   const daysInMonth =
+
     new Date(
+
       now.getFullYear(),
+
       now.getMonth()+1,
+
       0
+
     ).getDate();
 
+
   const remainingDays =
+
     Math.max(
+
       1,
-      daysInMonth-now.getDate()+1
+
+      daysInMonth
+
+      -
+
+      now.getDate()
+
+      +
+
+      1
+
     );
 
+
   const daily =
-    Math.max(0,real) /
+
+    Math.max(
+
+      0,
+
+      real
+
+    )
+
+    /
+
     remainingDays;
 
+
   $("incomeTotal").textContent =
+
     euro(totals.inc);
 
+
   $("expenseTotal").textContent =
+
     euro(totals.exp);
 
+
   $("realAvailable").textContent =
+
     euro(real);
 
+
   $("reservedText").textContent =
+
     `${euro(reserved)} réservé pour les dépenses prévues`;
 
+
   $("dailyBudget").textContent =
+
     euro(daily);
 
+
   $("daysText").textContent =
+
     `${remainingDays} jour${remainingDays>1?"s":""} restant${remainingDays>1?"s":""}`;
 
+
   $("realAvailable")
+
   .className =
-    "big " +
-    (real>=0
-      ?"blue"
-      :"red");
+
+    "big "
+
+    +
+
+    (
+
+      real >= 0
+
+      ? "blue"
+
+      : "red"
+
+    );
+
 }
 
 
 /* ================================
-   HISTORIQUE
+   HISTORIQUE / ANNULATION
 ================================ */
 
 function deleteTx(id){
 
   const tx =
+
     data.transactions.find(
+
       t=>t.id===id
+
     );
+
 
   if(!tx){
+
     return;
+
   }
+
+
+  let message =
+
+    `Annuler « ${tx.label} » ?`;
+
 
   if(
-    !confirm(
-      `Supprimer « ${tx.label} » ?`
-    )
+
+    tx.type === "expense"
+
+    &&
+
+    tx.source === "saving"
+
   ){
-    return;
+
+    message +=
+
+      `
+
+${euro(tx.amount)} sera remis dans votre épargne.`;
+
   }
 
-  const beforeCompleted =
-    completedGoalsCount();
+
+  else if(
+
+    tx.type === "expense"
+
+  ){
+
+    message +=
+
+      `
+
+${euro(tx.amount)} sera recrédité dans le calcul du compte courant.`;
+
+  }
+
+
+  else{
+
+    message +=
+
+      `
+
+Ce revenu sera retiré du calcul du mois.`;
+
+  }
+
+
+  if(!confirm(message)){
+
+    return;
+
+  }
+
 
   data.transactions =
+
     data.transactions.filter(
+
       t=>t.id!==id
+
     );
 
+
   /*
-  Si on supprime une opération
-  d'épargne, l'épargne totale et
-  le défi sont recalculés
-  automatiquement.
+  Si l'opération venait d'une
+  dépense prévue marquée "Payée",
+  l'échéance est réactivée.
   */
 
-  const afterCompleted =
-    completedGoalsCount();
+  if(tx.plannedId){
 
-  if(
-    afterCompleted <
-    data.celebratedGoals
-  ){
-    data.celebratedGoals =
-      afterCompleted;
+    const p =
+
+      data.planned.find(
+
+        x=>x.id===tx.plannedId
+
+      );
+
+
+    if(
+
+      p
+
+      &&
+
+      p.paidPeriod === txPeriod(tx)
+
+    ){
+
+      p.paidPeriod = null;
+
+
+      if(
+
+        p.recurring
+
+        &&
+
+        !p.activatedPeriods.includes(
+
+          txPeriod(tx)
+
+        )
+
+      ){
+
+        p.activatedPeriods.push(
+
+          txPeriod(tx)
+
+        );
+
+      }
+
+    }
+
   }
 
+
+  data.celebratedGoals =
+
+    Math.min(
+
+      data.celebratedGoals,
+
+      completedGoalsCount()
+
+    );
+
+
   save();
+
+
   render();
+
 }
+
 
 function renderTransactions(){
 
   const list =
+
     data.transactions
+
     .slice()
+
     .sort(
+
       (a,b)=>{
+
+
         const ad =
-          new Date(a.date).getTime();
+
+          new Date(a.date)
+
+          .getTime();
+
 
         const bd =
-          new Date(b.date).getTime();
 
-        if(ad!==bd){
+          new Date(b.date)
+
+          .getTime();
+
+
+        if(ad !== bd){
+
           return bd-ad;
+
         }
 
+
         return (
-          Number(b.createdAt||0) -
-          Number(a.createdAt||0)
+
+          Number(b.createdAt || 0)
+
+          -
+
+          Number(a.createdAt || 0)
+
         );
+
       }
+
     )
+
     .slice(0,30);
+
 
   if(!list.length){
 
     $("transactions").innerHTML =
+
       `<div class="small">
-         Aucune opération enregistrée.
+
+       Aucune opération enregistrée.
+
        </div>`;
 
     return;
+
   }
 
+
   $("transactions").innerHTML =
+
     list.map(tx=>{
 
-      const saving =
-        tx.type==="expense" &&
-        tx.category==="Épargne";
+
+      const isDeposit =
+
+        tx.type === "expense"
+
+        &&
+
+        tx.category === "Épargne"
+
+        &&
+
+        tx.source !== "saving";
+
+
+      const fromSaving =
+
+        tx.type === "expense"
+
+        &&
+
+        tx.source === "saving";
+
 
       let icon =
-        tx.type==="income"
-        ?"💰"
-        :"💸";
 
-      if(saving){
-        icon="🐷";
+        tx.type === "income"
+
+        ? "💰"
+
+        : "💸";
+
+
+      if(isDeposit){
+
+        icon = "🐷";
+
       }
+
+
+      if(fromSaving){
+
+        icon = "🐿️";
+
+      }
+
+
+      let meta =
+
+        `${escapeHtml(tx.category)}
+         •
+         ${
+
+           new Date(
+
+             tx.date+"T12:00:00"
+
+           )
+
+           .toLocaleDateString(
+
+             "fr-BE"
+
+           )
+
+         }`;
+
+
+      if(fromSaving){
+
+        meta +=
+
+          " • Payée avec l'épargne";
+
+      }
+
+      else if(
+
+        tx.type === "expense"
+
+      ){
+
+        meta +=
+
+          " • Compte courant";
+
+      }
+
 
       return `
 
@@ -2206,39 +4653,49 @@ function renderTransactions(){
           <div class="txMain">
 
             <div class="txTitle">
+
               ${icon}
+
               ${escapeHtml(tx.label)}
+
             </div>
 
             <div class="txMeta">
-              ${escapeHtml(tx.category)}
-              •
-              ${new Date(tx.date+"T12:00:00")
-                .toLocaleDateString("fr-BE")}
+
+              ${meta}
+
             </div>
 
           </div>
 
           <div style="text-align:right">
 
-            <div class="txValue
-              ${tx.type==="income"
+            <div
+              class="txValue
+              ${
+                tx.type==="income"
                 ?"green"
-                :"red"}">
+                :"red"
+              }">
 
-              ${tx.type==="income"
+              ${
+                tx.type==="income"
                 ?"+"
-                :"−"}
+                :"−"
+              }
 
               ${euro(tx.amount)}
 
             </div>
 
-            <button type="button"
-                    class="miniButton"
-                    style="margin-top:7px"
-                    onclick="deleteTx('${tx.id}')">
-              Supprimer
+            <button
+              type="button"
+              class="miniButton"
+              style="margin-top:7px"
+              onclick="deleteTx('${tx.id}')">
+
+              Annuler
+
             </button>
 
           </div>
@@ -2248,6 +4705,7 @@ function renderTransactions(){
       `;
 
     }).join("");
+
 }
 
 
@@ -2258,316 +4716,610 @@ function renderTransactions(){
 function chartDate(){
 
   const now =
+
     new Date();
 
+
   return new Date(
+
     now.getFullYear(),
-    now.getMonth()+chartMonthOffset,
+
+    now.getMonth()
+
+    +
+
+    chartMonthOffset,
+
     1
+
   );
+
 }
+
 
 function chartPeriod(){
 
   const d =
+
     chartDate();
 
+
   return (
-    d.getFullYear() +
-    "-" +
-    String(d.getMonth()+1)
-    .padStart(2,"0")
+
+    d.getFullYear()
+
+    +
+
+    "-"
+
+    +
+
+    String(
+
+      d.getMonth()+1
+
+    ).padStart(2,"0")
+
   );
+
 }
 
+
 function changeChartMonth(
+
   direction
+
 ){
 
   const next =
-    chartMonthOffset +
+
+    chartMonthOffset
+
+    +
+
     direction;
 
-  /*
-  0 = mois actuel
-  -11 = 11 mois avant
-  */
 
-  if(next>0){
+  if(
+
+    next > 0
+
+    ||
+
+    next < -11
+
+  ){
+
     return;
+
   }
 
-  if(next<-11){
-    return;
-  }
 
-  chartMonthOffset =
-    next;
+  chartMonthOffset = next;
+
 
   renderCharts();
+
 }
+
 
 function goToday(){
 
-  chartMonthOffset=0;
+  chartMonthOffset = 0;
+
 
   renderCharts();
+
 }
+
 
 function plannedForCurrentChart(){
 
-  if(chartMonthOffset!==0){
+  if(
+
+    chartMonthOffset !== 0
+
+  ){
+
     return [];
+
   }
+
 
   return activePlanned();
+
 }
+
 
 function normalizeCategory(
+
   category
+
 ){
 
-  if(category==="Abonnement"){
+  if(
+
+    category === "Abonnement"
+
+  ){
+
     return "Abonnements";
+
   }
 
-  return category || "Autre";
+
+  return (
+
+    category
+
+    ||
+
+    "Autre"
+
+  );
+
 }
+
 
 function renderCharts(){
 
   const d =
+
     chartDate();
 
+
   const period =
+
     chartPeriod();
 
+
   const actual =
+
     monthTransactions(period);
 
+
   let inc = 0;
+
   let expActual = 0;
+
 
   const categories = {};
 
+
   actual.forEach(tx=>{
 
-    const amount =
-      Number(tx.amount)||0;
 
-    if(tx.type==="income"){
+    const amount =
+
+      Number(tx.amount) || 0;
+
+
+    if(
+
+      tx.type === "income"
+
+    ){
 
       inc += amount;
 
-    }else{
+    }
+
+    else{
 
       expActual += amount;
 
+
       const cat =
+
         normalizeCategory(
+
           tx.category
+
         );
 
+
       categories[cat] =
-        (categories[cat]||0)
-        + amount;
+
+        (
+
+          categories[cat]
+
+          || 0
+
+        )
+
+        +
+
+        amount;
+
     }
+
   });
 
-  /*
-  Les dépenses prévues ne sont ajoutées
-  au graphique QUE pour le mois actuel.
 
-  Quand elles sont marquées "Payée",
-  elles deviennent une vraie transaction
-  et disparaissent d'activePlanned(),
-  donc jamais de double comptage.
+  /*
+  Pour le mois actuel seulement,
+  les dépenses prévues encore
+  non payées sont ajoutées.
   */
 
   const planned =
+
     plannedForCurrentChart();
+
 
   let plannedTotal = 0;
 
+
   planned.forEach(p=>{
 
+
     const amount =
-      Number(p.amount)||0;
+
+      Number(p.amount) || 0;
+
 
     plannedTotal += amount;
 
+
     const cat =
+
       normalizeCategory(
+
         p.category
+
       );
+
 
     categories[cat] =
-      (categories[cat]||0)
-      + amount;
+
+      (
+
+        categories[cat]
+
+        || 0
+
+      )
+
+      +
+
+      amount;
+
   });
 
+
   const displayedExpense =
-    expActual +
+
+    expActual
+
+    +
+
     plannedTotal;
 
+
   const balance =
-    inc -
+
+    inc
+
+    -
+
     displayedExpense;
 
+
   $("chartMonthName").textContent =
+
     d.toLocaleDateString(
+
       "fr-BE",
+
       {
+
         month:"long",
+
         year:"numeric"
+
       }
-    ).replace(
+
+    )
+
+    .replace(
+
       /^./,
+
       c=>c.toUpperCase()
+
     );
+
 
   $("chartMonthStatus").textContent =
-    chartMonthOffset===0
-    ? "Mois actuel • dépenses prévues incluses"
-    : "Historique enregistré";
+
+    chartMonthOffset === 0
+
+    ?
+
+    "Mois actuel • dépenses prévues incluses"
+
+    :
+
+    "Historique enregistré";
+
 
   $("todayBtn").style.display =
-    chartMonthOffset===0
-    ?"none"
-    :"block";
+
+    chartMonthOffset === 0
+
+    ? "none"
+
+    : "block";
+
 
   $("chartIncome").textContent =
+
     euro(inc);
+
 
   $("chartExpense").textContent =
+
     euro(displayedExpense);
+
 
   $("chartSaving").textContent =
+
     euro(balance);
 
-  $("chartSaving")
-  .className =
-    balance>=0
-    ?"green"
-    :"red";
+
+  $("chartSaving").className =
+
+    balance >= 0
+
+    ? "green"
+
+    : "red";
+
 
   const noData =
-    inc===0 &&
-    displayedExpense===0;
+
+    inc === 0
+
+    &&
+
+    displayedExpense === 0;
+
 
   $("monthNoData").style.display =
+
     noData
-    ?"block"
-    :"none";
+
+    ? "block"
+
+    : "none";
+
 
   $("chartsContent").style.display =
+
     noData
-    ?"none"
-    :"block";
+
+    ? "none"
+
+    : "block";
+
 
   if(noData){
+
     return;
+
   }
+
 
   const max =
+
     Math.max(
+
       inc,
+
       displayedExpense,
+
       1
+
     );
+
 
   const incomeHeight =
+
     Math.max(
+
       3,
+
       (inc/max)*145
+
     );
+
 
   const expenseHeight =
+
     Math.max(
+
       3,
+
       (displayedExpense/max)*145
+
     );
+
 
   $("barIncome").style.height =
-    incomeHeight+"px";
+
+    incomeHeight + "px";
+
 
   $("barExpense").style.height =
-    expenseHeight+"px";
+
+    expenseHeight + "px";
+
 
   $("barIncomeValue").textContent =
+
     euro(inc);
 
+
   $("barExpenseValue").textContent =
+
     euro(displayedExpense);
 
+
   renderDonut(categories);
+
 }
 
-function renderDonut(
-  categories
-){
+
+function renderDonut(categories){
 
   const entries =
-    Object.entries(categories)
-    .filter(([,v])=>v>0)
-    .sort((a,b)=>b[1]-a[1]);
 
-  const total =
-    entries.reduce(
-      (s,[,v])=>s+v,
-      0
+    Object.entries(categories)
+
+    .filter(
+
+      ([,value])=>value>0
+
+    )
+
+    .sort(
+
+      (a,b)=>b[1]-a[1]
+
     );
 
-  if(total<=0){
+
+  const total =
+
+    entries.reduce(
+
+      (
+
+        sum,
+
+        [,value]
+
+      )=>
+
+        sum + value,
+
+      0
+
+    );
+
+
+  if(total <= 0){
 
     $("donut").style.background =
+
       "#203a5d";
 
+
     $("legend").innerHTML =
+
       `<div class="small">
-         Aucune dépense.
+
+       Aucune dépense.
+
        </div>`;
 
+
     return;
+
   }
 
+
   let angle = 0;
+
+
   const parts = [];
 
+
   entries.forEach(
-    ([name,value],i)=>{
+
+    (
+
+      [name,value],
+
+      i
+
+    )=>{
+
 
       const start =
+
         angle;
 
+
       const percentage =
-        value/total;
+
+        value / total;
+
 
       angle +=
-        percentage*360;
+
+        percentage * 360;
+
 
       const color =
+
         donutColors[
-          i % donutColors.length
+
+          i
+
+          %
+
+          donutColors.length
+
         ];
 
+
       parts.push(
+
         `${color} ${start}deg ${angle}deg`
+
       );
+
     }
+
   );
 
+
   $("donut").style.background =
+
     `conic-gradient(${parts.join(",")})`;
 
+
   $("legend").innerHTML =
+
     entries.map(
-      ([name,value],i)=>{
+
+      (
+
+        [name,value],
+
+        i
+
+      )=>{
+
 
         const percent =
+
           Math.round(
-            (value/total)*100
+
+            (
+
+              value / total
+
+            )
+
+            *
+
+            100
+
           );
+
 
         return `
 
@@ -2575,21 +5327,32 @@ function renderDonut(
 
             <div class="legendLeft">
 
-              <span class="dot"
-                    style="background:${donutColors[i%donutColors.length]}">
+              <span
+                class="dot"
+                style="
+                  background:
+                  ${donutColors[i%donutColors.length]}
+                ">
               </span>
 
               <span>
+
                 ${escapeHtml(name)}
+
               </span>
 
             </div>
 
             <strong>
+
               ${euro(value)}
+
               <span class="small">
+
                 (${percent}%)
+
               </span>
+
             </strong>
 
           </div>
@@ -2597,64 +5360,121 @@ function renderDonut(
         `;
 
       }
+
     ).join("");
+
 }
 
 
 /* ================================
-   SWIPE GRAPHIQUE
+   SWIPE GRAPHIQUES
 ================================ */
 
 $("chartBrowser")
+
 .addEventListener(
+
   "touchstart",
+
   e=>{
 
+
     const touch =
+
       e.changedTouches[0];
+
 
     touchStartX =
+
       touch.clientX;
 
+
     touchStartY =
+
       touch.clientY;
+
   },
-  {passive:true}
+
+  {
+
+    passive:true
+
+  }
+
 );
 
+
 $("chartBrowser")
+
 .addEventListener(
+
   "touchend",
+
   e=>{
 
+
     const touch =
+
       e.changedTouches[0];
 
+
     const dx =
-      touch.clientX -
+
+      touch.clientX
+
+      -
+
       touchStartX;
 
+
     const dy =
-      touch.clientY -
+
+      touch.clientY
+
+      -
+
       touchStartY;
 
+
     if(
-      Math.abs(dx)<55 ||
-      Math.abs(dx) <= Math.abs(dy)
+
+      Math.abs(dx) < 55
+
+      ||
+
+      Math.abs(dx)
+
+      <=
+
+      Math.abs(dy)
+
     ){
+
       return;
+
     }
 
-    if(dx<0){
+
+    if(dx < 0){
 
       changeChartMonth(-1);
 
-    }else{
+    }
+
+    else{
 
       changeChartMonth(1);
+
     }
+
   },
-  {passive:true}
+
+  {
+
+    passive:true
+
+  }
+
 );
 
 
@@ -2665,54 +5485,153 @@ $("chartBrowser")
 function renderTip(){
 
   const period =
+
     currentPeriod();
 
+
   const totals =
+
     totalsForPeriod(period);
 
-  const savingMonth =
+
+  const deposited =
+
     monthTransactions(period)
+
     .filter(
-      t=>
-        t.type==="expense" &&
-        t.category==="Épargne"
+
+      tx=>
+
+        tx.type === "expense"
+
+        &&
+
+        tx.category === "Épargne"
+
+        &&
+
+        tx.source !== "saving"
+
     )
+
     .reduce(
-      (s,t)=>s+Number(t.amount||0),
+
+      (sum,tx)=>
+
+        sum + Number(tx.amount || 0),
+
       0
+
     );
 
+
+  const withdrawn =
+
+    monthTransactions(period)
+
+    .filter(
+
+      tx=>
+
+        tx.type === "expense"
+
+        &&
+
+        tx.source === "saving"
+
+    )
+
+    .reduce(
+
+      (sum,tx)=>
+
+        sum + Number(tx.amount || 0),
+
+      0
+
+    );
+
+
+  const savingMonth =
+
+    deposited
+
+    -
+
+    withdrawn;
+
+
   let tip =
+
     "Commencez par enregistrer vos revenus et vos dépenses pour obtenir un aperçu clair de votre budget.";
 
-  if(totals.inc>0){
+
+  if(totals.inc > 0){
+
 
     const rate =
-      savingMonth /
-      totals.inc *
+
+      savingMonth
+
+      /
+
+      totals.inc
+
+      *
+
       100;
 
-    if(savingMonth>0){
+
+    if(savingMonth > 0){
 
       tip =
-        `Vous avez réellement mis ${euro(savingMonth)} de côté ce mois-ci, soit ${Math.round(rate)} % de vos revenus. Continuez votre défi à votre rythme.`;
 
-    }else if(
-      totals.exp > totals.inc
+        `Votre épargne nette a augmenté de ${euro(savingMonth)} ce mois-ci, soit ${Math.round(rate)} % de vos revenus.`;
+
+    }
+
+
+    else if(
+
+      savingMonth < 0
+
     ){
 
       tip =
-        "Vos dépenses enregistrées dépassent actuellement vos revenus du mois. Regardez d'abord les catégories les plus importantes avant de fixer une somme d'épargne.";
 
-    }else{
+        `Vous avez repris ${euro(Math.abs(savingMonth))} de plus dans votre épargne que vous n'en avez ajouté ce mois-ci. Votre épargne totale a été recalculée.`;
+
+    }
+
+
+    else if(
+
+      totals.exp > totals.inc
+
+    ){
 
       tip =
-        "Vous n'avez pas encore enregistré d'opération dans la catégorie « Épargne » ce mois-ci. Même une petite somme fera avancer votre défi.";
+
+        "Vos dépenses enregistrées dépassent actuellement vos revenus du mois. Regardez d'abord les catégories les plus importantes.";
+
     }
+
+
+    else{
+
+      tip =
+
+        "Votre épargne nette n'a pas encore augmenté ce mois-ci. Même une petite somme fera avancer votre défi.";
+
+    }
+
   }
 
+
   $("tip").textContent =
+
     tip;
+
 }
 
 
@@ -2723,90 +5642,160 @@ function renderTip(){
 function exportData(){
 
   const content =
+
     JSON.stringify(
+
       data,
+
       null,
+
       2
+
     );
+
 
   const blob =
+
     new Blob(
+
       [content],
+
       {
+
         type:"application/json"
+
       }
+
     );
 
+
   const url =
+
     URL.createObjectURL(blob);
 
+
   const a =
+
     document.createElement("a");
 
-  a.href=url;
+
+  a.href = url;
+
 
   a.download =
+
     `mon-budget-zen-${todayISO()}.json`;
+
 
   document.body.appendChild(a);
 
+
   a.click();
+
 
   a.remove();
 
+
   URL.revokeObjectURL(url);
+
 }
+
 
 function importData(event){
 
   const file =
+
     event.target.files[0];
 
+
   if(!file){
+
     return;
+
   }
 
+
   const reader =
+
     new FileReader();
+
 
   reader.onload = ()=>{
 
+
     try{
 
+
       const imported =
-        JSON.parse(reader.result);
+
+        JSON.parse(
+
+          reader.result
+
+        );
+
 
       if(
+
         !confirm(
+
           "Remplacer les données actuelles par cette sauvegarde ?"
+
         )
+
       ){
-        event.target.value="";
+
+        event.target.value = "";
+
         return;
+
       }
 
+
       data =
-        normalizeData(imported);
+
+        normalizeData(
+
+          imported
+
+        );
+
 
       save();
 
+
+      initializeMonthState();
+
+
       render();
 
+
       alert(
+
         "Sauvegarde importée avec succès."
+
       );
+
 
     }catch(e){
 
+
       alert(
+
         "Ce fichier de sauvegarde n'est pas valide."
+
       );
+
     }
 
-    event.target.value="";
+
+    event.target.value = "";
+
   };
 
+
   reader.readAsText(file);
+
 }
 
 
@@ -2829,6 +5818,9 @@ function render(){
   renderCharts();
 
   renderTip();
+
+  updateSourceUI();
+
 }
 
 
@@ -2837,33 +5829,50 @@ function render(){
 ================================ */
 
 document.addEventListener(
+
   "DOMContentLoaded",
+
   ()=>{
 
+
     $("txDate").value =
+
       todayISO();
 
+
     /*
-    Si une ancienne sauvegarde possède
-    déjà de l'épargne, on initialise
-    silencieusement les objectifs déjà
-    franchis pour ne pas lancer une
-    animation au simple démarrage.
+    Empêche une ancienne épargne
+    d'afficher soudainement une
+    célébration après la mise à jour.
     */
 
     if(
-      data.goal>0 &&
-      data.celebratedGoals===0
+
+      data.goal > 0
+
+      &&
+
+      data.celebratedGoals === 0
+
     ){
 
       data.celebratedGoals =
+
         completedGoalsCount();
 
+
       save();
+
     }
 
+
+    initializeMonthState();
+
+
     render();
+
   }
+
 );
 </script>
 
