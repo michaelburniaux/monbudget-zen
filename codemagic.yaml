@@ -109,7 +109,7 @@ workflows:
       - name: Set iOS build number
         script: |
           cd ios/App
-          agvtool new-version -all 13
+          agvtool new-version -all 14
 
       - name: Apply Apple signing
         script: |
