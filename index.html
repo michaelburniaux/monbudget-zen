@@ -725,7 +725,7 @@ select:focus{
 
   <div class="header">
     <h1>💶 Mon Budget ZEN</h1>
-    <p>Mes économies • v2.6</p>
+    <p>Mes économies • v2.6.1</p>
 
     <div
       class="headerClock"
@@ -1917,38 +1917,81 @@ function renderClock(){
 
 function txDateTimeLabel(tx){
 
-  const dateText =
-    new Date(
-      tx.date + "T12:00:00"
-    )
-    .toLocaleDateString(
-      "fr-BE"
-    );
+  /*
+  On affiche en priorité la date ET l'heure
+  auxquelles l'opération a réellement été
+  enregistrée dans l'application.
+  */
+
+  const createdAt =
+    Number(tx.createdAt);
 
 
-  if(Number(tx.createdAt) > 0){
+  if(
+    createdAt > 0 &&
+    !Number.isNaN(createdAt)
+  ){
 
-    const timeText =
-      new Date(
-        Number(tx.createdAt)
-      )
-      .toLocaleTimeString(
-        "fr-BE",
-        {
-          hour:"2-digit",
-          minute:"2-digit"
-        }
+    const recordedDate =
+      new Date(createdAt);
+
+
+    if(!Number.isNaN(recordedDate.getTime())){
+
+      const dateText =
+        recordedDate
+        .toLocaleDateString(
+          "fr-BE"
+        );
+
+
+      const timeText =
+        recordedDate
+        .toLocaleTimeString(
+          "fr-BE",
+          {
+            hour:"2-digit",
+            minute:"2-digit"
+          }
+        );
+
+
+      return (
+        `${dateText} • ${timeText}`
       );
 
-
-    return (
-      `${dateText} • ${timeText}`
-    );
+    }
 
   }
 
 
-  return dateText;
+  /*
+  Compatibilité avec les anciennes opérations :
+  si elles n'avaient pas encore createdAt,
+  on utilise leur date bancaire enregistrée.
+  */
+
+  if(tx.date){
+
+    const oldDate =
+      new Date(
+        tx.date + "T12:00:00"
+      );
+
+
+    if(!Number.isNaN(oldDate.getTime())){
+
+      return oldDate
+        .toLocaleDateString(
+          "fr-BE"
+        );
+
+    }
+
+  }
+
+
+  return "Date non disponible";
 
 }
 
