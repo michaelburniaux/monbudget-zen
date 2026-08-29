@@ -699,6 +699,41 @@ select:focus{
   margin-top:9px;
 }
 
+
+.budgetCard,.invoiceItem{
+  background:#091a31;
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:13px;
+  margin-top:10px;
+}
+.budgetHead,.invoiceHead{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  align-items:flex-start;
+}
+.budgetActions,.invoiceActions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin-top:10px;
+}
+.archiveTitle{
+  margin-top:18px;
+  padding-top:14px;
+  border-top:1px solid var(--border);
+  font-weight:800;
+}
+.photoPreview{
+  width:72px;
+  height:72px;
+  object-fit:cover;
+  border-radius:12px;
+  border:1px solid var(--border);
+  margin-top:8px;
+}
+
 @media(max-width:520px){
   .donutArea{
     grid-template-columns:1fr;
@@ -725,7 +760,7 @@ select:focus{
 
   <div class="header">
     <h1>💶 Mon Budget ZEN</h1>
-    <p>Mes économies • v2.6.1</p>
+    <p>Mes économies • v2.7</p>
 
     <div
       class="headerClock"
@@ -1088,6 +1123,71 @@ select:focus{
       </button>
 
     </div>
+
+  </div>
+
+  <div class="card" id="budgetingSection">
+
+    <h2>🎯 Budgétisation</h2>
+
+    <div class="small">
+      Mettez de l'argent de côté pour un achat précis : pompe à chaleur, voiture, vacances, travaux…
+    </div>
+
+    <button
+      type="button"
+      class="btnSecondary"
+      style="width:100%;margin-top:12px"
+      onclick="toggleBudgetForm(true)">
+      + Créer un objectif d'achat
+    </button>
+
+    <div class="formBox" id="budgetForm" style="margin-top:12px">
+      <input id="budgetLabel" type="text" placeholder="Ex. Pompe à chaleur">
+      <input id="budgetTarget" type="number" step="0.01" inputmode="decimal" placeholder="Montant nécessaire">
+      <div class="row">
+        <button type="button" class="btnSave" onclick="addBudgetGoal()">Créer</button>
+        <button type="button" class="btnSecondary" onclick="toggleBudgetForm(false)">Annuler</button>
+      </div>
+    </div>
+
+    <div id="budgetList"></div>
+
+    <div class="archiveTitle">✅ Achats réalisés grâce à la budgétisation</div>
+    <div id="purchasedBudgetList"></div>
+
+  </div>
+
+  <div class="card" id="invoiceSection">
+
+    <h2>📸 Factures & documents</h2>
+
+    <div class="small">
+      Photographiez une facture et conservez son image dans l'application. Elle peut ensuite être placée dans « À payer prochainement » puis dans « Payé ».
+    </div>
+
+    <label class="fileLabel" style="margin-top:12px">
+      📷 Photographier / choisir une facture
+      <input id="invoicePhoto" type="file" accept="image/*" capture="environment" onchange="prepareInvoicePhoto(event)">
+    </label>
+
+    <div class="formBox" id="invoiceForm" style="margin-top:12px">
+      <div class="small" style="margin-bottom:8px">Identification de la facture</div>
+      <img id="invoicePreview" class="photoPreview" alt="Aperçu">
+      <input id="invoiceLabel" type="text" placeholder="Ex. Facture électricité">
+      <input id="invoiceAmount" type="number" step="0.01" inputmode="decimal" placeholder="Montant à payer">
+      <input id="invoiceDueDate" type="date">
+      <div class="row">
+        <button type="button" class="btnSave" onclick="saveInvoice()">Ajouter à « À payer »</button>
+        <button type="button" class="btnSecondary" onclick="cancelInvoiceForm()">Annuler</button>
+      </div>
+    </div>
+
+    <div class="archiveTitle">⏳ À payer prochainement</div>
+    <div id="invoiceUpcoming"></div>
+
+    <div class="archiveTitle">🗂️ Payé — archive photos/images</div>
+    <div id="invoicePaid"></div>
 
   </div>
 
@@ -1475,6 +1575,7 @@ const expenseCategories = [
   "Shopping",
   "Impôts",
   "Épargne",
+  "Budgétisation",
   "Autre"
 ];
 
@@ -1522,7 +1623,13 @@ function defaultData(){
 
     lastOpenedPeriod:null,
 
-    recurringDecisions:{}
+    recurringDecisions:{},
+
+    budgets:[],
+
+    purchasedBudgets:[],
+
+    invoices:[]
 
   };
 
@@ -1550,6 +1657,27 @@ function normalizeData(raw){
   if(!Array.isArray(d.planned)){
 
     d.planned = [];
+
+  }
+
+
+  if(!Array.isArray(d.budgets)){
+
+    d.budgets = [];
+
+  }
+
+
+  if(!Array.isArray(d.purchasedBudgets)){
+
+    d.purchasedBudgets = [];
+
+  }
+
+
+  if(!Array.isArray(d.invoices)){
+
+    d.invoices = [];
 
   }
 
@@ -6603,6 +6731,236 @@ function importData(event){
 }
 
 
+
+/* ================================
+   BUDGÉTISATION D'ACHATS
+================================ */
+
+function toggleBudgetForm(show){
+  $("budgetForm").classList.toggle("show",show);
+  if(show){
+    setTimeout(()=>$("budgetLabel").focus(),50);
+  }else if(document.activeElement){
+    document.activeElement.blur();
+  }
+}
+
+function addBudgetGoal(){
+  const label=$("budgetLabel").value.trim();
+  const target=Number($("budgetTarget").value);
+  if(!label){ alert("Indiquez ce que vous souhaitez acheter."); return; }
+  if(!target || target<=0){ alert("Indiquez un montant objectif valide."); return; }
+  data.budgets.push({id:uid(),label,target,createdAt:Date.now()});
+  $("budgetLabel").value="";
+  $("budgetTarget").value="";
+  save();
+  toggleBudgetForm(false);
+  render();
+}
+
+function budgetContributions(id){
+  return data.transactions.filter(tx=>
+    tx.type==="expense" &&
+    tx.category==="Budgétisation" &&
+    tx.budgetId===id
+  );
+}
+
+function budgetSaved(id){
+  return budgetContributions(id).reduce((sum,tx)=>sum+Number(tx.amount||0),0);
+}
+
+function addBudgetContribution(id){
+  const b=data.budgets.find(x=>x.id===id);
+  if(!b) return;
+  const raw=prompt(`Combien voulez-vous réserver pour « ${b.label} » ?`);
+  if(raw===null) return;
+  const amount=Number(String(raw).replace(",","."));
+  if(!amount || amount<=0){ alert("Montant invalide."); return; }
+  const before=budgetSaved(id);
+  data.transactions.push({
+    id:uid(),
+    type:"expense",
+    label:`Budgétisation – ${b.label}`,
+    amount,
+    category:"Budgétisation",
+    date:todayISO(),
+    source:"current",
+    budgetId:id,
+    createdAt:Date.now()
+  });
+  save();
+  render();
+  if(before < Number(b.target) && budgetSaved(id)>=Number(b.target)){
+    showBudgetVictory(b);
+  }
+}
+
+function undoBudgetContribution(id){
+  const list=budgetContributions(id).slice().sort((a,b)=>Number(b.createdAt||0)-Number(a.createdAt||0));
+  const tx=list[0];
+  if(!tx){ alert("Aucun versement à annuler pour cet objectif."); return; }
+  if(!confirm(`Annuler le dernier versement de ${euro(tx.amount)} ?`)) return;
+  data.transactions=data.transactions.filter(x=>x.id!==tx.id);
+  save();
+  render();
+}
+
+function deleteBudgetGoal(id){
+  const b=data.budgets.find(x=>x.id===id);
+  if(!b) return;
+  const saved=budgetSaved(id);
+  if(saved>0){
+    alert("Cet objectif contient déjà de l'argent réservé. Annulez d'abord ses versements avant de le supprimer.");
+    return;
+  }
+  if(!confirm(`Supprimer l'objectif « ${b.label} » ?`)) return;
+  data.budgets=data.budgets.filter(x=>x.id!==id);
+  save();
+  render();
+}
+
+function showBudgetVictory(b){
+  $("victoryText").innerHTML=`Ça y est, vous pouvez acheter votre <strong>${escapeHtml(b.label)}</strong> !<br><br>Votre objectif de <strong>${euro(b.target)}</strong> est atteint.`;
+  $("victoryOverlay").classList.add("show");
+  createConfetti();
+  if(data.soundEnabled) playVictorySound();
+}
+
+function markBudgetPurchased(id){
+  const b=data.budgets.find(x=>x.id===id);
+  if(!b) return;
+  const saved=budgetSaved(id);
+  if(saved<Number(b.target)){
+    if(!confirm(`L'objectif n'est pas encore atteint (${euro(saved)} sur ${euro(b.target)}). Marquer quand même cet achat comme réalisé ?`)) return;
+  }else if(!confirm(`Confirmer l'achat de « ${b.label} » ?`)) return;
+  data.purchasedBudgets.unshift({
+    id:uid(),
+    originalId:b.id,
+    label:b.label,
+    target:Number(b.target),
+    funded:saved,
+    purchasedAt:Date.now(),
+    purchasedDate:todayISO()
+  });
+  data.budgets=data.budgets.filter(x=>x.id!==id);
+  save();
+  render();
+}
+
+function renderBudgets(){
+  const active=data.budgets||[];
+  $("budgetList").innerHTML=active.length ? active.map(b=>{
+    const saved=budgetSaved(b.id);
+    const pct=Math.min(100,(saved/Number(b.target))*100);
+    const ready=saved>=Number(b.target);
+    return `<div class="budgetCard">
+      <div class="budgetHead"><div><strong>🎯 ${escapeHtml(b.label)}</strong><div class="small">${euro(saved)} sur ${euro(b.target)}</div></div><strong class="${ready?'green':'blue'}">${Math.round(pct)} %</strong></div>
+      <div class="progressTrack" style="margin-top:10px"><div class="progressBar" style="width:${pct}%"></div></div>
+      <div class="small" style="margin-top:8px">${ready?`🎉 Ça y est, vous pouvez acheter votre « ${escapeHtml(b.label)} » !`:`Il reste ${euro(Math.max(0,Number(b.target)-saved))}.`}</div>
+      <div class="budgetActions">
+        <button type="button" class="miniButton" onclick="addBudgetContribution('${b.id}')">+ Ajouter</button>
+        <button type="button" class="miniButton" onclick="undoBudgetContribution('${b.id}')">↩ Annuler le dernier versement</button>
+        ${ready?`<button type="button" class="miniButton" onclick="markBudgetPurchased('${b.id}')">✅ Achat effectué</button>`:''}
+        <button type="button" class="miniButton" onclick="deleteBudgetGoal('${b.id}')">✕</button>
+      </div>
+    </div>`;
+  }).join("") : `<div class="small" style="padding:14px 0">Aucun objectif d'achat actif.</div>`;
+
+  const bought=data.purchasedBudgets||[];
+  $("purchasedBudgetList").innerHTML=bought.length ? bought.map(x=>`<div class="budgetCard"><strong>✅ ${escapeHtml(x.label)}</strong><div class="small">Acheté le ${new Date((x.purchasedDate||todayISO())+'T12:00:00').toLocaleDateString('fr-BE')} • ${euro(x.funded||x.target)}</div></div>`).join("") : `<div class="small" style="padding:12px 0">Aucun achat archivé pour le moment.</div>`;
+}
+
+/* ================================
+   FACTURES / ARCHIVE PHOTOS
+================================ */
+
+let pendingInvoiceImage=null;
+
+function prepareInvoicePhoto(event){
+  const file=event.target.files && event.target.files[0];
+  if(!file) return;
+  if(!file.type.startsWith("image/")){ alert("Choisissez une photo ou une image."); return; }
+  const reader=new FileReader();
+  reader.onload=()=>{
+    pendingInvoiceImage=reader.result;
+    $("invoicePreview").src=pendingInvoiceImage;
+    $("invoiceDueDate").value=todayISO();
+    $("invoiceForm").classList.add("show");
+    setTimeout(()=>$("invoiceLabel").focus(),50);
+  };
+  reader.readAsDataURL(file);
+}
+
+function cancelInvoiceForm(){
+  pendingInvoiceImage=null;
+  $("invoiceForm").classList.remove("show");
+  $("invoicePhoto").value="";
+  $("invoiceLabel").value="";
+  $("invoiceAmount").value="";
+  $("invoiceDueDate").value="";
+}
+
+function saveInvoice(){
+  const label=$("invoiceLabel").value.trim();
+  const amount=Number($("invoiceAmount").value);
+  const dueDate=$("invoiceDueDate").value;
+  if(!pendingInvoiceImage){ alert("Ajoutez d'abord une photo."); return; }
+  if(!label){ alert("Indiquez le nom de la facture."); return; }
+  if(!amount || amount<=0){ alert("Indiquez le montant à payer."); return; }
+  if(!dueDate){ alert("Indiquez la date d'échéance."); return; }
+  try{
+    data.invoices.push({id:uid(),label,amount,dueDate,status:"upcoming",image:pendingInvoiceImage,createdAt:Date.now(),paidAt:null});
+    save();
+  }catch(e){
+    alert("La photo est trop volumineuse pour le stockage local. Essayez une photo moins lourde.");
+    return;
+  }
+  cancelInvoiceForm();
+  render();
+}
+
+function markInvoicePaid(id){
+  const inv=data.invoices.find(x=>x.id===id);
+  if(!inv) return;
+  if(!confirm(`Marquer « ${inv.label} » comme payée ?`)) return;
+  inv.status="paid";
+  inv.paidAt=Date.now();
+  save();
+  render();
+}
+
+function restoreInvoice(id){
+  const inv=data.invoices.find(x=>x.id===id);
+  if(!inv) return;
+  inv.status="upcoming";
+  inv.paidAt=null;
+  save();
+  render();
+}
+
+function deleteInvoice(id){
+  const inv=data.invoices.find(x=>x.id===id);
+  if(!inv || !confirm(`Supprimer définitivement « ${inv.label} » et sa photo ?`)) return;
+  data.invoices=data.invoices.filter(x=>x.id!==id);
+  save();
+  render();
+}
+
+function invoiceHtml(inv,paid){
+  const due=inv.dueDate?new Date(inv.dueDate+'T12:00:00').toLocaleDateString('fr-BE'):"—";
+  const paidDate=inv.paidAt?new Date(inv.paidAt).toLocaleDateString('fr-BE'):"";
+  return `<div class="invoiceItem"><div class="invoiceHead"><div><strong>${paid?'✅':'🧾'} ${escapeHtml(inv.label)}</strong><div class="small">${paid?`Payée le ${paidDate}`:`À payer pour le ${due}`} • ${euro(inv.amount)}</div>${inv.image?`<img class="photoPreview" src="${inv.image}" alt="${escapeHtml(inv.label)}">`:''}</div><strong class="${paid?'green':'red'}">${euro(inv.amount)}</strong></div><div class="invoiceActions">${paid?`<button type="button" class="miniButton" onclick="restoreInvoice('${inv.id}')">↩ Remettre à payer</button>`:`<button type="button" class="miniButton" onclick="markInvoicePaid('${inv.id}')">✓ Payée</button>`}<button type="button" class="miniButton" onclick="deleteInvoice('${inv.id}')">✕ Supprimer</button></div></div>`;
+}
+
+function renderInvoices(){
+  const upcoming=(data.invoices||[]).filter(x=>x.status!=="paid").sort((a,b)=>String(a.dueDate).localeCompare(String(b.dueDate)));
+  const paid=(data.invoices||[]).filter(x=>x.status==="paid").sort((a,b)=>Number(b.paidAt||0)-Number(a.paidAt||0));
+  $("invoiceUpcoming").innerHTML=upcoming.length?upcoming.map(x=>invoiceHtml(x,false)).join(""):`<div class="small" style="padding:12px 0">Aucune facture à payer.</div>`;
+  $("invoicePaid").innerHTML=paid.length?paid.map(x=>invoiceHtml(x,true)).join(""):`<div class="small" style="padding:12px 0">Aucune facture payée archivée.</div>`;
+}
+
+
 /* ================================
    RENDU GÉNÉRAL
 ================================ */
@@ -6622,6 +6980,10 @@ function render(){
   renderCharts();
 
   renderTip();
+
+  renderBudgets();
+
+  renderInvoices();
 
   updateSourceUI();
 
