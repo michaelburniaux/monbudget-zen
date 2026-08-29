@@ -104,26 +104,45 @@ workflows:
 
       - name: Configure Camera and Photo Library permissions
         script: |
-          /usr/libexec/PlistBuddy \
-            -c "Add :NSCameraUsageDescription string Mon Budget ZEN utilise l'appareil photo pour photographier et archiver vos factures." \
-            ios/App/App/Info.plist || \
-          /usr/libexec/PlistBuddy \
-            -c "Set :NSCameraUsageDescription Mon Budget ZEN utilise l'appareil photo pour photographier et archiver vos factures." \
-            ios/App/App/Info.plist
+          python3 <<'PYTHON'
+          import plistlib
+          from pathlib import Path
 
-          /usr/libexec/PlistBuddy \
-            -c "Add :NSPhotoLibraryUsageDescription string Mon Budget ZEN utilise votre photothèque pour importer et archiver vos factures." \
-            ios/App/App/Info.plist || \
-          /usr/libexec/PlistBuddy \
-            -c "Set :NSPhotoLibraryUsageDescription Mon Budget ZEN utilise votre photothèque pour importer et archiver vos factures." \
-            ios/App/App/Info.plist
+          plist_path = Path("ios/App/App/Info.plist")
+          if not plist_path.exists():
+              raise SystemExit(f"ERREUR : {plist_path} introuvable")
 
-          /usr/libexec/PlistBuddy \
-            -c "Add :NSPhotoLibraryAddUsageDescription string Mon Budget ZEN peut enregistrer les photos de factures dans votre photothèque lorsque vous le demandez." \
-            ios/App/App/Info.plist || \
-          /usr/libexec/PlistBuddy \
-            -c "Set :NSPhotoLibraryAddUsageDescription Mon Budget ZEN peut enregistrer les photos de factures dans votre photothèque lorsque vous le demandez." \
-            ios/App/App/Info.plist
+          with plist_path.open("rb") as f:
+              plist = plistlib.load(f)
+
+          plist["NSCameraUsageDescription"] = "Mon Budget ZEN utilise l'appareil photo pour photographier et archiver vos factures."
+          plist["NSPhotoLibraryUsageDescription"] = "Mon Budget ZEN utilise votre photothèque pour importer et archiver vos factures."
+          plist["NSPhotoLibraryAddUsageDescription"] = "Mon Budget ZEN peut enregistrer les photos de factures dans votre photothèque lorsque vous le demandez."
+
+          with plist_path.open("wb") as f:
+              plistlib.dump(plist, f, fmt=plistlib.FMT_XML, sort_keys=False)
+
+          print("OK : permissions caméra et photothèque écrites directement dans Info.plist.")
+          PYTHON
+
+          # Deuxième sécurité : inscrire aussi les valeurs dans les réglages Xcode.
+          PBXPROJ="ios/App/App.xcodeproj/project.pbxproj"
+          python3 <<'PYTHON'
+          from pathlib import Path
+
+          p = Path("ios/App/App.xcodeproj/project.pbxproj")
+          text = p.read_text()
+          marker = "INFOPLIST_KEY_NSCameraUsageDescription"
+          if marker not in text:
+              text = text.replace(
+                  "buildSettings = {",
+                  "buildSettings = {\n\t\t\t\tINFOPLIST_KEY_NSCameraUsageDescription = \"Mon Budget ZEN utilise l'appareil photo pour photographier et archiver vos factures.\";\n\t\t\t\tINFOPLIST_KEY_NSPhotoLibraryUsageDescription = \"Mon Budget ZEN utilise votre photothèque pour importer et archiver vos factures.\";",
+              )
+              p.write_text(text)
+              print("OK : sécurité supplémentaire ajoutée aux réglages Xcode.")
+          else:
+              print("OK : réglages Xcode déjà présents.")
+          PYTHON
 
       - name: Verify permissions before build
         script: |
@@ -149,7 +168,7 @@ workflows:
       - name: Set iOS build number
         script: |
           cd ios/App
-          agvtool new-version -all 18
+          agvtool new-version -all 19
 
       - name: Apply Apple signing
         script: |
