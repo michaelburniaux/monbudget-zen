@@ -78,6 +78,9 @@ workflows:
             --scheme "$XCODE_SCHEME"
 
     artifacts:
+        publishing:
+      app_store_connect:
+        auth: integration
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
       - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
