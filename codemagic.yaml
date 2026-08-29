@@ -60,6 +60,11 @@ workflows:
       - name: Install dependencies
         script: |
           npm install
+          npm install @pantrist/capacitor-plugin-ml-kit-text-recognition@7
+
+      - name: Verify OCR dependency
+        script: |
+          node -e "const p=require('./node_modules/@pantrist/capacitor-plugin-ml-kit-text-recognition/package.json'); if(!String(p.version).startsWith('7.')){ console.error('ERREUR : le module OCR doit être en version 7.x pour Capacitor 7. Version trouvée : '+p.version); process.exit(1); } console.log('OK : module OCR installé en version '+p.version);"
 
       - name: Prepare web files
         script: |
@@ -83,6 +88,16 @@ workflows:
       - name: Sync Capacitor plugins
         script: |
           npx cap sync ios
+
+      - name: Verify OCR plugin is detected by Capacitor
+        script: |
+          echo "=== Plugins Capacitor iOS ==="
+          npx cap ls ios || true
+          if [ ! -d "node_modules/@pantrist/capacitor-plugin-ml-kit-text-recognition" ]; then
+            echo "ERREUR : le module OCR est absent de node_modules."
+            exit 1
+          fi
+          echo "OK : module OCR présent. Capacitor l'intégrera pendant la synchronisation iOS."
 
       - name: Verify Camera plugin is installed
         script: |
