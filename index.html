@@ -760,7 +760,7 @@ select:focus{
 
   <div class="header">
     <h1>💶 Mon Budget ZEN</h1>
-    <p>Mes économies • v2.7.3</p>
+    <p>Mes économies • v2.7.4</p>
 
     <div
       class="headerClock"
@@ -832,6 +832,26 @@ select:focus{
       class="actionButton expenseButton"
       onclick="openTransactionForm('expense')">
       − Ajouter une dépense
+    </button>
+
+  </div>
+
+  <div class="row" style="margin-top:10px">
+
+    <button
+      type="button"
+      class="miniButton"
+      style="flex:1"
+      onclick="undoLastExpense()">
+      ↩ Annuler la dernière dépense
+    </button>
+
+    <button
+      type="button"
+      class="miniButton"
+      style="flex:1"
+      onclick="undoLastSaving()">
+      ↩ Annuler la dernière épargne
     </button>
 
   </div>
@@ -2818,6 +2838,60 @@ function addTx(){
 }
 
 
+/*
+Annule la dernière dépense réelle (hors mise en épargne).
+La fonction peut être utilisée plusieurs fois de suite : après chaque
+annulation, la dépense précédente devient automatiquement la dernière.
+Les versements de budgétisation sont inclus : leur objectif est donc
+également recalculé immédiatement.
+*/
+function undoLastExpense(){
+
+  const list=data.transactions
+    .filter(tx=>
+      tx.type === "expense" &&
+      tx.category !== "Épargne"
+    )
+    .slice()
+    .sort((a,b)=>{
+      const timeA=Number(a.createdAt || 0);
+      const timeB=Number(b.createdAt || 0);
+      if(timeB!==timeA) return timeB-timeA;
+      return String(b.id || "").localeCompare(String(a.id || ""));
+    });
+
+  const tx=list[0];
+
+  if(!tx){
+    alert("Aucune dépense à annuler.");
+    return;
+  }
+
+  const budgetText=
+    tx.category === "Budgétisation"
+    ? " Le montant sera aussi retiré de l’objectif de budgétisation concerné."
+    : tx.source === "saving"
+      ? " Le montant sera recrédité à votre épargne."
+      : " Le montant sera recrédité au disponible.";
+
+  if(!confirm(
+    `Annuler la dernière dépense de ${euro(tx.amount)} (« ${tx.label} ») ?${budgetText}\n\nVous pourrez appuyer de nouveau sur le bouton pour revenir encore d’une dépense en arrière.`
+  )){
+    return;
+  }
+
+  data.transactions=data.transactions.filter(t=>t.id!==tx.id);
+
+  data.celebratedGoals=Math.min(
+    data.celebratedGoals,
+    completedGoalsCount()
+  );
+
+  save();
+  render();
+}
+
+
 /* ================================
    DÉPENSES PRÉVUES
 ================================ */
@@ -3841,7 +3915,7 @@ function undoLastSaving(){
 
       `Annuler votre dernière mise en épargne de ${euro(tx.amount)} (« ${tx.label} ») ?
 
-Le montant sera recrédité au compte courant et l'épargne sera recalculée.`
+Le montant sera recrédité au compte courant et l'épargne sera recalculée.\n\nVous pourrez appuyer de nouveau sur le bouton pour revenir encore d’une épargne en arrière.`
 
     )
 
@@ -7037,50 +7111,109 @@ let pendingInvoiceImage=null;
 
 function getNativeCameraPlugin(){
   try{
-    return window.Capacitor &&
-      window.Capacitor.Plugins &&
-      window.Capacitor.Plugins.Camera
-      ? window.Capacitor.Plugins.Camera
-      : null;
+    const cap=window.Capacitor;
+
+    if(!cap) return null;
+
+    if(cap.Plugins && cap.Plugins.Camera){
+      return cap.Plugins.Camera;
+    }
+
+    /*
+    Capacitor 7 peut exposer le plugin via registerPlugin plutôt que
+    directement dans Capacitor.Plugins. Cette voie évite de tomber
+    inutilement sur le sélecteur HTML dans l'application native.
+    */
+    if(typeof cap.registerPlugin === "function"){
+      return cap.registerPlugin("Camera");
+    }
+
+    return null;
   }catch(e){
+    console.error("Camera plugin detection error",e);
     return null;
   }
+}
+
+function nativePhotoToInvoice(photo){
+  return new Promise((resolve,reject)=>{
+    if(!photo){
+      reject(new Error("Aucune photo reçue"));
+      return;
+    }
+
+    if(photo.dataUrl){
+      prepareInvoiceDataUrl(photo.dataUrl);
+      resolve();
+      return;
+    }
+
+    const source=photo.webPath || photo.path;
+
+    if(!source){
+      reject(new Error("Chemin de photo introuvable"));
+      return;
+    }
+
+    /*
+    On demande maintenant un URI au plugin natif. C'est beaucoup plus
+    léger et plus stable que de faire transiter une grande image Base64
+    directement dans le pont iOS.
+    */
+    fetch(source)
+      .then(response=>{
+        if(!response.ok) throw new Error("Lecture de la photo impossible");
+        return response.blob();
+      })
+      .then(blob=>{
+        const reader=new FileReader();
+        reader.onload=()=>{
+          prepareInvoiceDataUrl(reader.result);
+          resolve();
+        };
+        reader.onerror=()=>reject(new Error("Conversion de la photo impossible"));
+        reader.readAsDataURL(blob);
+      })
+      .catch(reject);
+  });
 }
 
 async function openInvoiceCamera(){
   const Camera=getNativeCameraPlugin();
 
-  if(!Camera){
-    /* Navigateur/PWA : on retombe proprement sur le sélecteur de fichiers. */
-    $("invoicePhotoFallback").click();
+  if(!Camera || typeof Camera.getPhoto !== "function"){
+    alert("La caméra native n'est pas encore disponible dans cette version de l'application.");
     return;
   }
 
   try{
-    if(Camera.requestPermissions){
-      await Camera.requestPermissions({permissions:["camera"]});
-    }
-
+    /*
+    Ne pas appeler requestPermissions() juste avant getPhoto().
+    Sur iOS, getPhoto déclenche lui-même la demande système au moment
+    approprié. Cela évite les écrans d'autorisation qui se superposent.
+    */
     const photo=await Camera.getPhoto({
       quality:75,
       allowEditing:false,
-      resultType:"dataUrl",
+      resultType:"uri",
       source:"CAMERA",
       direction:"REAR",
       width:1600,
       height:1600,
       correctOrientation:true,
-      saveToGallery:false
+      saveToGallery:false,
+      presentationStyle:"fullscreen"
     });
 
-    if(photo && photo.dataUrl){
-      prepareInvoiceDataUrl(photo.dataUrl);
-    }
+    await nativePhotoToInvoice(photo);
   }catch(e){
     console.error("Camera error",e);
     const message=String((e && e.message) || e || "");
-    if(!/cancel/i.test(message)){
-      alert("Impossible d'ouvrir l'appareil photo. Vérifiez l'autorisation Caméra dans Réglages > Mon Budget ZEN.");
+
+    if(!/cancel|user cancelled|canceled/i.test(message)){
+      alert(
+        "Impossible de prendre la photo. Si l'accès Caméra a déjà été refusé, ouvrez Réglages > Mon Budget ZEN > Caméra et autorisez-le."
+      );
     }
   }
 }
@@ -7094,14 +7227,36 @@ async function openInvoiceGallery(){
   }
 
   try{
-    if(Camera.requestPermissions){
-      await Camera.requestPermissions({permissions:["photos"]});
+    /*
+    pickImages utilise le sélecteur de photos iOS. On ne réclame plus
+    l'accès complet à toute la photothèque avant de l'ouvrir : l'utilisateur
+    choisit simplement la photo qu'il souhaite transmettre à l'application.
+    */
+    if(typeof Camera.pickImages === "function"){
+      const result=await Camera.pickImages({
+        quality:75,
+        width:1600,
+        height:1600,
+        limit:1,
+        correctOrientation:true
+      });
+
+      const photo=result && Array.isArray(result.photos)
+        ? result.photos[0]
+        : null;
+
+      if(photo){
+        await nativePhotoToInvoice(photo);
+      }
+
+      return;
     }
 
+    /* Compatibilité de secours si pickImages n'est pas exposé. */
     const photo=await Camera.getPhoto({
       quality:75,
       allowEditing:false,
-      resultType:"dataUrl",
+      resultType:"uri",
       source:"PHOTOS",
       width:1600,
       height:1600,
@@ -7109,14 +7264,13 @@ async function openInvoiceGallery(){
       saveToGallery:false
     });
 
-    if(photo && photo.dataUrl){
-      prepareInvoiceDataUrl(photo.dataUrl);
-    }
+    await nativePhotoToInvoice(photo);
   }catch(e){
     console.error("Photo library error",e);
     const message=String((e && e.message) || e || "");
-    if(!/cancel/i.test(message)){
-      alert("Impossible d'ouvrir la photothèque. Vérifiez l'autorisation Photos dans Réglages > Mon Budget ZEN.");
+
+    if(!/cancel|user cancelled|canceled/i.test(message)){
+      alert("Impossible d'importer cette photo. Essayez une autre image.");
     }
   }
 }
