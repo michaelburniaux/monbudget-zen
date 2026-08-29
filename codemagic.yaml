@@ -10,7 +10,7 @@ workflows:
 
     scripts:
 
-      - name: Install Capacitor
+      - name: Install dependencies
         script: |
           npm install
 
@@ -57,7 +57,7 @@ workflows:
 
     scripts:
 
-      - name: Install Capacitor and AdMob
+      - name: Install dependencies
         script: |
           npm install
 
@@ -67,7 +67,7 @@ workflows:
           mkdir -p www
           cp index.html privacy.html about.html manifest.webmanifest sw.js ads.txt www/
 
-      - name: Create iOS project without AdMob plugin
+      - name: Create iOS project without AdMob
         script: |
           npm uninstall @capacitor-community/admob
           npx cap add ios
@@ -76,9 +76,12 @@ workflows:
         script: |
           sed -i '' "s/platform :ios, '[0-9.]*'/platform :ios, '15.0'/" ios/App/Podfile
 
-      - name: Reinstall AdMob and sync iOS
+      - name: Reinstall AdMob
         script: |
           npm install @capacitor-community/admob@7
+
+      - name: Sync Capacitor plugins
+        script: |
           npx cap sync ios
 
       - name: Configure AdMob iOS
@@ -106,10 +109,17 @@ workflows:
             -c "Set :NSPhotoLibraryUsageDescription Mon Budget ZEN utilise votre photothèque pour importer et archiver vos factures." \
             ios/App/App/Info.plist
 
+          /usr/libexec/PlistBuddy \
+            -c "Add :NSPhotoLibraryAddUsageDescription string Mon Budget ZEN peut enregistrer les photos de factures dans votre photothèque lorsque vous le demandez." \
+            ios/App/App/Info.plist || \
+          /usr/libexec/PlistBuddy \
+            -c "Set :NSPhotoLibraryAddUsageDescription Mon Budget ZEN peut enregistrer les photos de factures dans votre photothèque lorsque vous le demandez." \
+            ios/App/App/Info.plist
+
       - name: Set iOS build number
         script: |
           cd ios/App
-          agvtool new-version -all 14
+          agvtool new-version -all 15
 
       - name: Apply Apple signing
         script: |
