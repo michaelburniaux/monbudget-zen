@@ -7352,6 +7352,154 @@ function getNativeTextRecognitionPlugin(){
   }
 }
 
+
+function getNativeLocalNotificationsPlugin(){
+  try{
+    const cap=window.Capacitor;
+    if(!cap) return null;
+    if(cap.Plugins && cap.Plugins.LocalNotifications){
+      return cap.Plugins.LocalNotifications;
+    }
+    if(typeof cap.registerPlugin === "function"){
+      return cap.registerPlugin("LocalNotifications");
+    }
+    return null;
+  }catch(e){
+    console.error("Local notifications plugin detection error",e);
+    return null;
+  }
+}
+
+function notificationIdForDocument(documentId){
+  const source=String(documentId||"document");
+  let hash=0;
+  for(let i=0;i<source.length;i++){
+    hash=((hash<<5)-hash)+source.charCodeAt(i);
+    hash|=0;
+  }
+  return 100000 + (Math.abs(hash)%1900000000);
+}
+
+function reminderStartForDocument(inv){
+  if(!inv || !inv.dueDate) return null;
+
+  const due=new Date(inv.dueDate+"T09:00:00");
+  if(Number.isNaN(due.getTime())) return null;
+
+  const today=new Date();
+  const tomorrow=new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    today.getDate()+1,
+    9,0,0,0
+  );
+
+  const sevenDaysBefore=new Date(due);
+  sevenDaysBefore.setDate(sevenDaysBefore.getDate()-7);
+  sevenDaysBefore.setHours(9,0,0,0);
+
+  let start=sevenDaysBefore>tomorrow ? sevenDaysBefore : tomorrow;
+
+  /*
+    Si l'échéance est déjà passée, on commence dès demain.
+    Le rappel se répète ensuite chaque jour jusqu'à ce que
+    le document soit marqué payé / traité.
+  */
+  if(due<tomorrow) start=tomorrow;
+
+  return start;
+}
+
+function reminderBodyForDocument(inv){
+  const due=inv && inv.dueDate
+    ? new Date(inv.dueDate+"T12:00:00").toLocaleDateString("fr-BE")
+    : "";
+  const amount=Number(inv && inv.amount)>0 ? ` • ${euro(inv.amount)}` : "";
+  return `À payer / traiter : ${inv.label}${amount}${due?` • échéance ${due}`:""}. Ouvrez Mon Budget ZEN pour le vérifier.`;
+}
+
+async function cancelDocumentReminder(documentId){
+  const LocalNotifications=getNativeLocalNotificationsPlugin();
+  if(!LocalNotifications || !documentId) return;
+
+  try{
+    await LocalNotifications.cancel({
+      notifications:[{id:notificationIdForDocument(documentId)}]
+    });
+  }catch(e){
+    console.warn("Impossible d'annuler le rappel local",e);
+  }
+}
+
+async function scheduleDocumentReminder(inv,askPermission=true){
+  if(!inv || inv.status!=="upcoming" || !inv.dueDate) return false;
+
+  const LocalNotifications=getNativeLocalNotificationsPlugin();
+  if(!LocalNotifications){
+    console.warn("LocalNotifications indisponible dans ce build.");
+    return false;
+  }
+
+  try{
+    let permission=await LocalNotifications.checkPermissions();
+
+    if(permission.display!=="granted" && askPermission){
+      permission=await LocalNotifications.requestPermissions();
+    }
+
+    if(permission.display!=="granted"){
+      return false;
+    }
+
+    await cancelDocumentReminder(inv.id);
+
+    const start=reminderStartForDocument(inv);
+    if(!start) return false;
+
+    await LocalNotifications.schedule({
+      notifications:[{
+        id:notificationIdForDocument(inv.id),
+        title:"Mon Budget ZEN — rappel",
+        body:reminderBodyForDocument(inv),
+        schedule:{
+          at:start,
+          repeats:true,
+          every:"day"
+        },
+        extra:{
+          documentId:inv.id,
+          section:"documents"
+        }
+      }]
+    });
+
+    return true;
+  }catch(e){
+    console.error("Erreur de programmation du rappel",e);
+    return false;
+  }
+}
+
+async function refreshExistingDocumentReminders(){
+  const LocalNotifications=getNativeLocalNotificationsPlugin();
+  if(!LocalNotifications) return;
+
+  try{
+    const permission=await LocalNotifications.checkPermissions();
+    if(permission.display!=="granted") return;
+
+    const upcoming=(data.invoices||[]).filter(
+      inv=>inv.status==="upcoming" && inv.dueDate
+    );
+
+    for(const inv of upcoming){
+      await scheduleDocumentReminder(inv,false);
+    }
+  }catch(e){
+    console.warn("Actualisation des rappels impossible",e);
+  }
+}
+
 function nativePhotoToInvoice(photo){
   return new Promise((resolve,reject)=>{
     if(!photo){ reject(new Error("Aucune photo reçue")); return; }
@@ -7801,7 +7949,7 @@ function addDocumentExpense(inv){
   });
 }
 
-function saveAnalyzedDocument(targetStatus){
+async function saveAnalyzedDocument(targetStatus){
   if(!pendingInvoiceImage){ alert("Ajoutez d'abord une photo."); return; }
   const label=$("invoiceLabel").value.trim()||"Document";
   const amount=Number($("invoiceAmount").value)||0;
@@ -7809,14 +7957,18 @@ function saveAnalyzedDocument(targetStatus){
   const type=$("invoiceDocumentType").value||"autre";
   const category=$("invoiceCategory").value||"Autre";
   const includeBudget=$("invoiceIncludeBudget").checked && amount>0 && targetStatus!=="archive";
+
   if(targetStatus==="upcoming" && !dueDate && !confirm("Aucune date d'échéance n'est indiquée. Classer quand même ce document dans « À payer / à traiter » ?")) return;
+
   const analysis=pendingDocumentAnalysis||{};
   const inv={
     id:uid(),label,amount,dueDate,status:targetStatus,image:pendingInvoiceImage,createdAt:Date.now(),
     paidAt:targetStatus==="paid"?Date.now():null,documentType:type,category,includeBudget,
     ocrText:analysis.text||"",summary:analysis.summary||"",advice:analysis.advice||"",
-    urgency:urgencyForDocument(type,dueDate)
+    urgency:urgencyForDocument(type,dueDate),
+    reminderEnabled:false
   };
+
   try{
     data.invoices.push(inv);
     if(targetStatus==="paid") addDocumentExpense(inv);
@@ -7827,6 +7979,16 @@ function saveAnalyzedDocument(targetStatus){
     alert("La photo est trop volumineuse pour le stockage local. Essayez une photo moins lourde.");
     return;
   }
+
+  /*
+    Le document est déjà sauvegardé avant de demander l'autorisation.
+    Un refus de notifications ne fait donc jamais perdre la facture.
+  */
+  if(targetStatus==="upcoming" && dueDate){
+    inv.reminderEnabled=await scheduleDocumentReminder(inv,true);
+    try{ save(); }catch(e){ console.warn("État du rappel non sauvegardé",e); }
+  }
+
   cancelInvoiceForm();
   render();
 }
@@ -7834,30 +7996,45 @@ function saveAnalyzedDocument(targetStatus){
 /* Compatibilité : ancien bouton / ancien code */
 function saveInvoice(){ saveAnalyzedDocument("upcoming"); }
 
-function markInvoicePaid(id){
+async function markInvoicePaid(id){
   const inv=data.invoices.find(x=>x.id===id);
   if(!inv) return;
   if(!confirm(`Marquer « ${inv.label} » comme payé / traité ?`)) return;
+
+  await cancelDocumentReminder(id);
+
   inv.status="paid";
   inv.paidAt=Date.now();
+  inv.reminderEnabled=false;
   addDocumentExpense(inv);
   save();
   render();
 }
 
-function restoreInvoice(id){
+async function restoreInvoice(id){
   const inv=data.invoices.find(x=>x.id===id);
   if(!inv) return;
+
   inv.status="upcoming";
   inv.paidAt=null;
   data.transactions=(data.transactions||[]).filter(tx=>tx.documentId!==id);
+
+  if(inv.dueDate){
+    inv.reminderEnabled=await scheduleDocumentReminder(inv,true);
+  }else{
+    inv.reminderEnabled=false;
+  }
+
   save();
   render();
 }
 
-function deleteInvoice(id){
+async function deleteInvoice(id){
   const inv=data.invoices.find(x=>x.id===id);
   if(!inv || !confirm(`Supprimer définitivement « ${inv.label} » et sa photo ?`)) return;
+
+  await cancelDocumentReminder(id);
+
   data.invoices=data.invoices.filter(x=>x.id!==id);
   data.transactions=(data.transactions||[]).filter(tx=>tx.documentId!==id);
   save();
@@ -7872,8 +8049,11 @@ function invoiceHtml(inv,mode){
   const amountText=Number(inv.amount)>0?euro(inv.amount):"Sans montant";
   const meta=mode==="paid"?`Payé / traité le ${paidDate}`:mode==="archive"?"Archivé sans impact budget":`Échéance : ${due}`;
   const linked=inv.includeBudget?`<span class="docChip">💰 Budget</span>`:`<span class="docChip">📁 Hors budget</span>`;
+  const reminder=(mode==="upcoming" && inv.dueDate)
+    ? `<span class="docChip">${inv.reminderEnabled?"🔔 Rappel quotidien":"🔕 Rappel non autorisé"}</span>`
+    : "";
   const advice=(inv.summary||inv.advice)?`<details style="margin-top:10px"><summary class="small" style="cursor:pointer">🤖 Voir l'explication et les démarches</summary>${inv.summary?`<div class="assistantAdvice" style="margin-top:8px"><strong>${escapeHtml(inv.summary)}</strong></div>`:''}${inv.advice?`<div class="assistantAdvice" style="margin-top:8px">${escapeHtml(inv.advice)}</div>`:''}</details>`:"";
-  return `<div class="invoiceItem"><div class="invoiceHead"><div><strong>${mode==='paid'?'✅':mode==='archive'?'📁':'🧾'} ${escapeHtml(inv.label)}</strong><div class="small">${escapeHtml(typeLabel)} • ${escapeHtml(meta)} • ${escapeHtml(amountText)}</div><div class="docMetaLine"><span class="docChip">${escapeHtml(inv.category||'Autre')}</span>${linked}${mode==='upcoming'?`<span class="urgencyBadge urgency-${urgency.key}">${escapeHtml(urgency.label)}</span>`:''}</div>${inv.image?`<img class="photoPreview" src="${inv.image}" alt="${escapeHtml(inv.label)}">`:''}${advice}</div>${Number(inv.amount)>0?`<strong class="${mode==='paid'?'green':mode==='archive'?'blue':'red'}">${euro(inv.amount)}</strong>`:''}</div><div class="invoiceActions">${mode==='upcoming'?`<button type="button" class="miniButton" onclick="markInvoicePaid('${inv.id}')">✓ Payé / traité</button>`:''}${mode==='paid'?`<button type="button" class="miniButton" onclick="restoreInvoice('${inv.id}')">↩ Remettre à traiter</button>`:''}<button type="button" class="miniButton" onclick="deleteInvoice('${inv.id}')">✕ Supprimer</button></div></div>`;
+  return `<div class="invoiceItem"><div class="invoiceHead"><div><strong>${mode==='paid'?'✅':mode==='archive'?'📁':'🧾'} ${escapeHtml(inv.label)}</strong><div class="small">${escapeHtml(typeLabel)} • ${escapeHtml(meta)} • ${escapeHtml(amountText)}</div><div class="docMetaLine"><span class="docChip">${escapeHtml(inv.category||'Autre')}</span>${linked}${reminder}${mode==='upcoming'?`<span class="urgencyBadge urgency-${urgency.key}">${escapeHtml(urgency.label)}</span>`:''}</div>${inv.image?`<img class="photoPreview" src="${inv.image}" alt="${escapeHtml(inv.label)}">`:''}${advice}</div>${Number(inv.amount)>0?`<strong class="${mode==='paid'?'green':mode==='archive'?'blue':'red'}">${euro(inv.amount)}</strong>`:''}</div><div class="invoiceActions">${mode==='upcoming'?`<button type="button" class="miniButton" onclick="markInvoicePaid('${inv.id}')">✓ Payé / traité</button>`:''}${mode==='paid'?`<button type="button" class="miniButton" onclick="restoreInvoice('${inv.id}')">↩ Remettre à traiter</button>`:''}<button type="button" class="miniButton" onclick="deleteInvoice('${inv.id}')">✕ Supprimer</button></div></div>`;
 }
 
 function renderInvoices(){
@@ -7974,6 +8154,13 @@ document.addEventListener(
 
 
     render();
+
+    /*
+      Réactive silencieusement les rappels des documents encore à traiter
+      uniquement si l'utilisateur a déjà accordé l'autorisation iOS.
+      Aucune demande de permission n'apparaît au démarrage.
+    */
+    refreshExistingDocumentReminders();
 
   }
 
