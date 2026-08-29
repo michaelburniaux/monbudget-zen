@@ -1370,7 +1370,7 @@ select:focus{
       </div>
 
       <input id="invoiceAmount" type="number" step="0.01" inputmode="decimal" placeholder="Montant (si le document en contient un)">
-      <input id="invoiceDueDate" type="date">
+      <input id="invoiceDueDate" type="date"><div class="small muted" style="margin-top:6px">🔎 Vérifiez toujours l’échéance détectée : l’OCR peut confondre une ancienne date avec la date limite de paiement.</div>
 
       <label class="assistantCheck">
         <input id="invoiceIncludeBudget" type="checkbox">
@@ -7949,16 +7949,85 @@ function addDocumentExpense(inv){
   });
 }
 
+
+function formatDateFr(dateString){
+  if(!dateString) return "";
+  const d=new Date(dateString+"T12:00:00");
+  if(Number.isNaN(d.getTime())) return dateString;
+  return d.toLocaleDateString("fr-BE");
+}
+
+function daysFromToday(dateString){
+  if(!dateString) return null;
+  const d=new Date(dateString+"T12:00:00");
+  if(Number.isNaN(d.getTime())) return null;
+  const now=new Date();
+  const today=new Date(now.getFullYear(),now.getMonth(),now.getDate(),12,0,0,0);
+  return Math.round((d-today)/86400000);
+}
+
+function verifyDetectedDueDateBeforeSave(targetStatus){
+  /*
+    On vérifie toujours la date lorsque le document est classé
+    "À payer / à traiter". L'OCR peut confondre une ancienne date,
+    une date de document ou une échéance.
+  */
+  if(targetStatus!=="upcoming") return true;
+
+  const dueInput=$("invoiceDueDate");
+  const dueDate=dueInput ? dueInput.value : "";
+
+  if(!dueDate){
+    return confirm(
+      "Aucune date d'échéance n'a été détectée.\n\n" +
+      "Voulez-vous quand même classer ce document dans « À payer / à traiter » ?"
+    );
+  }
+
+  const delta=daysFromToday(dueDate);
+  let message=
+    "VÉRIFICATION DE L'ÉCHÉANCE\n\n" +
+    "L'application a détecté : " + formatDateFr(dueDate) + "\n\n";
+
+  if(delta!==null && delta < 0){
+    const daysLate=Math.abs(delta);
+    message +=
+      "⚠️ Cette date est déjà dépassée de " + daysLate + " jour" +
+      (daysLate>1?"s":"") + ".\n" +
+      "L'OCR a peut-être lu une ancienne date du document.\n\n";
+  }else if(delta!==null && delta > 1095){
+    message +=
+      "⚠️ Cette échéance est située à plus de 3 ans.\n" +
+      "Vérifiez qu'il s'agit bien de la date d'échéance.\n\n";
+  }
+
+  message +=
+    "Cette date est-elle correcte ?\n\n" +
+    "OK = oui, continuer\n" +
+    "Annuler = non, revenir modifier la date";
+
+  const ok=confirm(message);
+
+  if(!ok && dueInput){
+    try{
+      dueInput.scrollIntoView({behavior:"smooth",block:"center"});
+      dueInput.focus();
+    }catch(e){}
+  }
+
+  return ok;
+}
+
 async function saveAnalyzedDocument(targetStatus){
   if(!pendingInvoiceImage){ alert("Ajoutez d'abord une photo."); return; }
+
+  if(!verifyDetectedDueDateBeforeSave(targetStatus)) return;
   const label=$("invoiceLabel").value.trim()||"Document";
   const amount=Number($("invoiceAmount").value)||0;
   const dueDate=$("invoiceDueDate").value||"";
   const type=$("invoiceDocumentType").value||"autre";
   const category=$("invoiceCategory").value||"Autre";
   const includeBudget=$("invoiceIncludeBudget").checked && amount>0 && targetStatus!=="archive";
-
-  if(targetStatus==="upcoming" && !dueDate && !confirm("Aucune date d'échéance n'est indiquée. Classer quand même ce document dans « À payer / à traiter » ?")) return;
 
   const analysis=pendingDocumentAnalysis||{};
   const inv={
