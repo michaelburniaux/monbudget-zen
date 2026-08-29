@@ -760,7 +760,7 @@ select:focus{
 
   <div class="header">
     <h1>💶 Mon Budget ZEN</h1>
-    <p>Mes économies • v2.7</p>
+    <p>Mes économies • v2.7.1</p>
 
     <div
       class="headerClock"
@@ -1168,7 +1168,7 @@ select:focus{
 
     <label class="fileLabel" style="margin-top:12px">
       📷 Photographier / choisir une facture
-      <input id="invoicePhoto" type="file" accept="image/*" capture="environment" onchange="prepareInvoicePhoto(event)">
+      <input id="invoicePhoto" type="file" accept="image/*" onchange="prepareInvoicePhoto(event)">
     </label>
 
     <div class="formBox" id="invoiceForm" style="margin-top:12px">
@@ -6797,12 +6797,34 @@ function addBudgetContribution(id){
 }
 
 function undoBudgetContribution(id){
-  const list=budgetContributions(id).slice().sort((a,b)=>Number(b.createdAt||0)-Number(a.createdAt||0));
+  const list=budgetContributions(id)
+    .slice()
+    .sort((a,b)=>Number(b.createdAt||0)-Number(a.createdAt||0));
+
   const tx=list[0];
-  if(!tx){ alert("Aucun versement à annuler pour cet objectif."); return; }
-  if(!confirm(`Annuler le dernier versement de ${euro(tx.amount)} ?`)) return;
-  data.transactions=data.transactions.filter(x=>x.id!==tx.id);
+
+  if(!tx){
+    alert("Aucun versement à annuler pour cet objectif.");
+    return;
+  }
+
+  if(!confirm(`Annuler le dernier versement de ${euro(tx.amount)} ? Ce montant sera aussi retiré des dépenses du mois et recrédité au disponible.`)){
+    return;
+  }
+
+  const index=data.transactions.findIndex(x=>x.id===tx.id);
+
+  if(index!==-1){
+    data.transactions.splice(index,1);
+  }
+
   save();
+
+  /*
+  Le versement de budgétisation est une vraie dépense du mois.
+  En supprimant l'opération d'origine, tous les totaux sont recalculés :
+  dépenses, disponible, budget journalier, graphiques et historique.
+  */
   render();
 }
 
@@ -6879,16 +6901,72 @@ let pendingInvoiceImage=null;
 
 function prepareInvoicePhoto(event){
   const file=event.target.files && event.target.files[0];
-  if(!file) return;
-  if(!file.type.startsWith("image/")){ alert("Choisissez une photo ou une image."); return; }
+
+  if(!file){
+    return;
+  }
+
+  if(!file.type.startsWith("image/")){
+    alert("Choisissez une photo ou une image.");
+    event.target.value="";
+    return;
+  }
+
+  /*
+  Les photos prises par un iPhone peuvent dépasser plusieurs Mo.
+  On les réduit avant de les conserver afin d'éviter de saturer
+  le stockage local de l'application.
+  */
   const reader=new FileReader();
+
   reader.onload=()=>{
-    pendingInvoiceImage=reader.result;
-    $("invoicePreview").src=pendingInvoiceImage;
-    $("invoiceDueDate").value=todayISO();
-    $("invoiceForm").classList.add("show");
-    setTimeout(()=>$("invoiceLabel").focus(),50);
+    const img=new Image();
+
+    img.onload=()=>{
+      try{
+        const maxSide=1600;
+        let width=img.width;
+        let height=img.height;
+
+        if(width>maxSide || height>maxSide){
+          const ratio=Math.min(maxSide/width,maxSide/height);
+          width=Math.round(width*ratio);
+          height=Math.round(height*ratio);
+        }
+
+        const canvas=document.createElement("canvas");
+        canvas.width=width;
+        canvas.height=height;
+
+        const ctx=canvas.getContext("2d");
+        ctx.drawImage(img,0,0,width,height);
+
+        pendingInvoiceImage=canvas.toDataURL("image/jpeg",0.72);
+        $("invoicePreview").src=pendingInvoiceImage;
+        $("invoiceDueDate").value=todayISO();
+        $("invoiceForm").classList.add("show");
+
+        setTimeout(()=>$("invoiceLabel").focus(),50);
+      }catch(e){
+        console.error(e);
+        alert("Impossible de préparer cette photo. Essayez une autre image.");
+        event.target.value="";
+      }
+    };
+
+    img.onerror=()=>{
+      alert("Impossible de lire cette image.");
+      event.target.value="";
+    };
+
+    img.src=reader.result;
   };
+
+  reader.onerror=()=>{
+    alert("Impossible de lire cette image.");
+    event.target.value="";
+  };
+
   reader.readAsDataURL(file);
 }
 
