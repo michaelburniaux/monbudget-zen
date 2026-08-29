@@ -1,414 +1,2157 @@
-<!doctype html><html lang="fr"><head><meta charset="utf-8">
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#06101d"><meta name="apple-mobile-web-app-capable" content="yes">
-<link rel="manifest" href="manifest.webmanifest"><title>Mon Budget & Mes Économies</title>
+<meta name="theme-color" content="#06101d">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="manifest" href="manifest.webmanifest">
+<title>Mon Budget & Mes Économies</title>
+
 <style>
-*{box-sizing:border-box}body{margin:0;background:#06101d;color:#f5f7fb;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-main{max-width:820px;margin:auto;padding:18px 14px 95px}h1{font-size:34px;margin:5px 0 0}.sub,.muted{color:#9ba9bf}.head{display:flex;justify-content:space-between;align-items:center}.datetime{text-align:right;color:#c7d1e0}.datetime b{display:block;color:#9d72ff;font-size:20px}
-.card{background:linear-gradient(145deg,#0b1828,#071321);border:1px solid #26364b;border-radius:20px;padding:17px;margin:13px 0;box-shadow:0 8px 30px #0003}
-.balance{text-align:center}.balance .big{font-size:42px;font-weight:900;color:#38d66b;margin:9px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.stat{text-align:center;border-right:1px solid #26364b}.stat:last-child{border:0}.stat b{display:block;font-size:19px;margin-top:5px}.green{color:#38d66b}.red{color:#ff4555}.blue{color:#2e8cff}.purple{color:#9c65ff}
-.twocol{display:grid;grid-template-columns:1fr 1fr;gap:10px}.value{font-size:28px;font-weight:900;margin:8px 0}.progress{height:9px;background:#273448;border-radius:9px;overflow:hidden}.progress i{display:block;height:100%;background:#3189ff;border-radius:9px}.progress.purple i{background:#9c65ff}
-.actions{display:grid;grid-template-columns:1fr 1fr;gap:9px}.actions button{padding:15px;border:0;border-radius:15px;font-size:17px;font-weight:850}.inc{background:#d8f7df}.exp{background:#ffe0e2}
-.form{display:none}.form.show{display:block}.form input,.form select,.form button{width:100%;padding:13px;margin:5px 0;border:0;border-radius:12px;font-size:16px}.form input,.form select{background:#1b2a3e;color:white}.form button{font-weight:800}
-.sectionTitle{display:flex;justify-content:space-between;align-items:center;margin:22px 5px 8px}.sectionTitle h2{font-size:19px;margin:0}
-.charts{display:grid;grid-template-columns:1.05fr .95fr;gap:10px}.chartCard{margin:0;min-width:0}
-.bars{height:210px;display:flex;align-items:flex-end;justify-content:space-around;border-bottom:1px solid #314057;padding:25px 7px 0}.group{height:100%;display:flex;align-items:flex-end;gap:6px;position:relative;padding-bottom:25px}.bar{width:29px;min-height:2px;border-radius:5px 5px 0 0;background:#2385ff}.bar.old{background:#59677a}.group label{position:absolute;bottom:2px;left:50%;transform:translateX(-50%);font-size:11px;color:#aab6c8;white-space:nowrap}.legend{font-size:11px;color:#aab6c8;margin-top:8px}
-.donutWrap{display:flex;justify-content:center;margin:12px}.donut{width:155px;height:155px;border-radius:50%;position:relative;background:#26364b}.donut:after{content:"";position:absolute;inset:34px;background:#091624;border-radius:50%}.donutCenter{position:absolute;z-index:2;inset:0;display:grid;place-content:center;text-align:center;font-weight:850}.cat{display:grid;grid-template-columns:1fr auto;gap:6px;font-size:12px;margin:5px 0}.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px}
-.tip{border-color:#33445b}.tip h3{color:#ffc83d;margin:0 0 7px}
-.tx,.plannedRow{display:flex;justify-content:space-between;gap:10px;border-top:1px solid #26364b;padding:11px 0;align-items:center}.tx:first-child,.plannedRow:first-child{border:0}.meta{font-size:12px;color:#8f9db2}
-.orange{color:#ffb13b}.plannedSummary{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0 12px}.mini{background:#101f31;border-radius:14px;padding:12px;text-align:center}.mini b{display:block;font-size:20px;margin-top:4px}
-.plannedForm{display:none;margin-top:10px}.plannedForm.show{display:block}.plannedForm input,.plannedForm select,.plannedForm button{width:100%;padding:13px;margin:5px 0;border:0;border-radius:12px;font-size:16px}.plannedForm input,.plannedForm select{background:#1b2a3e;color:white}
-.checkline{display:flex;align-items:center;gap:8px;color:#cbd5e1;margin:7px 2px}.checkline input{width:auto}.addPlanned{background:#253a56;color:white;border:0;border-radius:12px;padding:12px 14px;font-weight:800}.rowBtns{display:flex;gap:5px}.smallBtn{border:0;border-radius:9px;padding:7px 9px;font-weight:800}.paidBtn{background:#d8f7df}.delBtn{background:#ffe0e2}
-details summary{font-weight:800}.settings button,.settings input{width:100%;padding:12px;margin:5px 0;border:0;border-radius:12px}.ad{text-align:center;border:1px dashed #45566c;border-radius:12px;padding:10px;color:#8391a5;font-size:10px}
-nav{position:fixed;bottom:0;left:0;right:0;background:#071321eF;border-top:1px solid #26364b;display:flex;justify-content:space-around;padding:9px 5px calc(9px + env(safe-area-inset-bottom));backdrop-filter:blur(14px);z-index:5}nav button{background:none;border:0;color:#a7b3c4;font-size:11px}nav span{display:block;font-size:22px;margin-bottom:2px}.plusbtn span{background:#3189ff;color:white;width:45px;height:45px;border-radius:50%;display:grid;place-content:center;margin:-24px auto 2px;font-size:31px}
-@media(max-width:570px){.charts{grid-template-columns:1fr}.twocol{grid-template-columns:1fr 1fr}h1{font-size:31px}.datetime{font-size:12px}.stats{font-size:13px}.stat b{font-size:16px}}
-</style></head><body><main>
+*{box-sizing:border-box}
+body{margin:0;background:#06101d;color:#f5f7fb;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+main{max-width:820px;margin:auto;padding:18px 14px 95px}
+h1{font-size:34px;margin:5px 0 0}
+.sub,.muted{color:#9ba9bf}
+.head{display:flex;justify-content:space-between;align-items:center}
+.datetime{text-align:right;color:#c7d1e0}
+.datetime b{display:block;color:#9d72ff;font-size:20px}
 
-<header class="head"><div><h1>Mon Budget</h1><div class="sub">Mes économies • v2.2</div></div><div class="datetime"><span id="date"></span><b id="time"></b></div></header>
+.card{
+ background:linear-gradient(145deg,#0b1828,#071321);
+ border:1px solid #26364b;
+ border-radius:20px;
+ padding:17px;
+ margin:13px 0;
+ box-shadow:0 8px 30px #0003
+}
 
-<section class="card balance"><div class="muted">Solde du mois</div><div class="big" id="balance">0,00 €</div><div class="stats"><div class="stat">↓ Revenus<b class="green" id="income">0 €</b></div><div class="stat">↑ Dépenses<b class="red" id="expense">0 €</b></div><div class="stat">🐷 Épargne<b class="blue" id="rate">0 %</b></div></div></section>
+.balance{text-align:center}
+.balance .big{font-size:42px;font-weight:900;color:#38d66b;margin:9px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.stat{text-align:center;border-right:1px solid #26364b}
+.stat:last-child{border:0}
+.stat b{display:block;font-size:19px;margin-top:5px}
 
-<section class="actions"><button type="button" class="inc" onclick="openForm('income')">+ Revenu</button><button type="button" class="exp" onclick="openForm('expense')">− Dépense</button></section>
+.green{color:#38d66b}
+.red{color:#ff4555}
+.blue{color:#2e8cff}
+.purple{color:#9c65ff}
+.orange{color:#ffb13b}
 
-<section id="form" class="card form"><h3 id="formTitle"></h3><input id="amount" type="number" inputmode="decimal" placeholder="Montant €"><select id="category"></select><input id="label" placeholder="Description (facultatif)"><button type="button" onclick="addTx()">Enregistrer</button><button type="button" onclick="closeTransactionForm()">Annuler</button></section>
+.twocol{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.value{font-size:28px;font-weight:900;margin:8px 0}
+
+.progress{
+ height:9px;
+ background:#273448;
+ border-radius:9px;
+ overflow:hidden
+}
+.progress i{
+ display:block;
+ height:100%;
+ background:#3189ff;
+ border-radius:9px
+}
+.progress.purple i{background:#9c65ff}
+
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.actions button{
+ padding:15px;
+ border:0;
+ border-radius:15px;
+ font-size:17px;
+ font-weight:850
+}
+.inc{background:#d8f7df}
+.exp{background:#ffe0e2}
+
+.form{display:none}
+.form.show{display:block}
+.form input,.form select,.form button{
+ width:100%;
+ padding:13px;
+ margin:5px 0;
+ border:0;
+ border-radius:12px;
+ font-size:16px
+}
+.form input,.form select{background:#1b2a3e;color:white}
+.form button{font-weight:800}
+
+.sectionTitle{
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ margin:22px 5px 8px
+}
+.sectionTitle h2{font-size:19px;margin:0}
+
+/* ===== NAVIGATION DES GRAPHIQUES ===== */
+
+.chartBrowser{
+ touch-action:pan-y;
+ user-select:none;
+ -webkit-user-select:none
+}
+
+.monthHeader{
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ gap:10px;
+ margin:4px 2px 12px
+}
+
+.monthInfo{
+ min-width:0;
+ flex:1;
+ text-align:center
+}
+
+.monthInfo b{
+ display:block;
+ font-size:21px;
+ text-transform:capitalize
+}
+
+.monthInfo small{
+ color:#8f9db2
+}
+
+.todayBtn{
+ border:1px solid #39506d;
+ background:#13253a;
+ color:#dce7f5;
+ border-radius:11px;
+ padding:8px 11px;
+ font-weight:800;
+ font-size:12px;
+ white-space:nowrap
+}
+
+.todayBtn:disabled{
+ opacity:.35
+}
+
+.monthArrow{
+ background:none;
+ border:0;
+ color:#9c65ff;
+ font-size:27px;
+ padding:5px 9px;
+ min-width:38px
+}
+
+.monthArrow:disabled{
+ opacity:.2
+}
+
+.swipeHint{
+ text-align:center;
+ color:#74849b;
+ font-size:11px;
+ margin:-4px 0 10px
+}
+
+.monthSummary{
+ display:grid;
+ grid-template-columns:repeat(3,1fr);
+ gap:7px;
+ margin-bottom:10px
+}
+
+.monthSummary .mini{
+ padding:10px 5px
+}
+
+.monthSummary .mini b{
+ font-size:16px
+}
+
+/* ===== GRAPHIQUES ===== */
+
+.charts{
+ display:grid;
+ grid-template-columns:1.05fr .95fr;
+ gap:10px
+}
+
+.chartCard{
+ margin:0;
+ min-width:0
+}
+
+.bars{
+ height:210px;
+ display:flex;
+ align-items:flex-end;
+ justify-content:space-around;
+ border-bottom:1px solid #314057;
+ padding:25px 7px 0
+}
+
+.group{
+ height:100%;
+ display:flex;
+ align-items:flex-end;
+ gap:6px;
+ position:relative;
+ padding-bottom:25px
+}
+
+.bar{
+ width:38px;
+ min-height:2px;
+ border-radius:5px 5px 0 0;
+ background:#2385ff
+}
+
+.bar.savings{
+ background:#9c65ff
+}
+
+.group label{
+ position:absolute;
+ bottom:2px;
+ left:50%;
+ transform:translateX(-50%);
+ font-size:11px;
+ color:#aab6c8;
+ white-space:nowrap
+}
+
+.barValue{
+ position:absolute;
+ top:-20px;
+ left:50%;
+ transform:translateX(-50%);
+ font-size:10px;
+ color:#cbd5e1;
+ white-space:nowrap
+}
+
+.barWrap{
+ position:relative;
+ display:flex;
+ align-items:flex-end;
+ height:100%
+}
+
+.legend{
+ font-size:11px;
+ color:#aab6c8;
+ margin-top:8px
+}
+
+.donutWrap{
+ display:flex;
+ justify-content:center;
+ margin:12px
+}
+
+.donut{
+ width:155px;
+ height:155px;
+ border-radius:50%;
+ position:relative;
+ background:#26364b
+}
+
+.donut:after{
+ content:"";
+ position:absolute;
+ inset:34px;
+ background:#091624;
+ border-radius:50%
+}
+
+.donutCenter{
+ position:absolute;
+ z-index:2;
+ inset:0;
+ display:grid;
+ place-content:center;
+ text-align:center;
+ font-weight:850
+}
+
+.cat{
+ display:grid;
+ grid-template-columns:1fr auto;
+ gap:6px;
+ font-size:12px;
+ margin:5px 0
+}
+
+.dot{
+ display:inline-block;
+ width:9px;
+ height:9px;
+ border-radius:50%;
+ margin-right:6px
+}
+
+.noMonthData{
+ text-align:center;
+ color:#8f9db2;
+ padding:16px 5px 4px;
+ font-size:13px
+}
+
+/* ===== RESTE ===== */
+
+.tip{border-color:#33445b}
+.tip h3{color:#ffc83d;margin:0 0 7px}
+
+.tx,.plannedRow{
+ display:flex;
+ justify-content:space-between;
+ gap:10px;
+ border-top:1px solid #26364b;
+ padding:11px 0;
+ align-items:center
+}
+
+.tx:first-child,.plannedRow:first-child{border:0}
+.meta{font-size:12px;color:#8f9db2}
+
+.plannedSummary{
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:8px;
+ margin:8px 0 12px
+}
+
+.mini{
+ background:#101f31;
+ border-radius:14px;
+ padding:12px;
+ text-align:center
+}
+
+.mini b{
+ display:block;
+ font-size:20px;
+ margin-top:4px
+}
+
+.plannedForm{display:none;margin-top:10px}
+.plannedForm.show{display:block}
+
+.plannedForm input,.plannedForm select,.plannedForm button{
+ width:100%;
+ padding:13px;
+ margin:5px 0;
+ border:0;
+ border-radius:12px;
+ font-size:16px
+}
+
+.plannedForm input,.plannedForm select{
+ background:#1b2a3e;
+ color:white
+}
+
+.checkline{
+ display:flex;
+ align-items:center;
+ gap:8px;
+ color:#cbd5e1;
+ margin:7px 2px
+}
+
+.checkline input{width:auto}
+
+.addPlanned{
+ background:#253a56;
+ color:white;
+ border:0;
+ border-radius:12px;
+ padding:12px 14px;
+ font-weight:800
+}
+
+.rowBtns{display:flex;gap:5px}
+
+.smallBtn{
+ border:0;
+ border-radius:9px;
+ padding:7px 9px;
+ font-weight:800
+}
+
+.paidBtn{background:#d8f7df}
+.delBtn{background:#ffe0e2}
+
+details summary{font-weight:800}
+
+.settings button,.settings input{
+ width:100%;
+ padding:12px;
+ margin:5px 0;
+ border:0;
+ border-radius:12px
+}
+
+.ad{
+ text-align:center;
+ border:1px dashed #45566c;
+ border-radius:12px;
+ padding:10px;
+ color:#8391a5;
+ font-size:10px
+}
+
+nav{
+ position:fixed;
+ bottom:0;
+ left:0;
+ right:0;
+ background:#071321eF;
+ border-top:1px solid #26364b;
+ display:flex;
+ justify-content:space-around;
+ padding:9px 5px calc(9px + env(safe-area-inset-bottom));
+ backdrop-filter:blur(14px);
+ z-index:5
+}
+
+nav button{
+ background:none;
+ border:0;
+ color:#a7b3c4;
+ font-size:11px
+}
+
+nav span{
+ display:block;
+ font-size:22px;
+ margin-bottom:2px
+}
+
+.plusbtn span{
+ background:#3189ff;
+ color:white;
+ width:45px;
+ height:45px;
+ border-radius:50%;
+ display:grid;
+ place-content:center;
+ margin:-24px auto 2px;
+ font-size:31px
+}
+
+@media(max-width:570px){
+ .charts{grid-template-columns:1fr}
+ .twocol{grid-template-columns:1fr 1fr}
+ h1{font-size:31px}
+ .datetime{font-size:12px}
+ .stats{font-size:13px}
+ .stat b{font-size:16px}
+ .monthSummary{grid-template-columns:repeat(3,1fr)}
+}
+</style>
+</head>
+
+<body>
+<main>
+
+<header class="head">
+ <div>
+  <h1>Mon Budget</h1>
+  <div class="sub">Mes économies • v2.3</div>
+ </div>
+
+ <div class="datetime">
+  <span id="date"></span>
+  <b id="time"></b>
+ </div>
+</header>
+
+<section class="card balance">
+ <div class="muted">Solde du mois</div>
+ <div class="big" id="balance">0,00 €</div>
+
+ <div class="stats">
+  <div class="stat">↓ Revenus<b class="green" id="income">0 €</b></div>
+  <div class="stat">↑ Dépenses<b class="red" id="expense">0 €</b></div>
+  <div class="stat">🐷 Épargne<b class="blue" id="rate">0 %</b></div>
+ </div>
+</section>
+
+<section class="actions">
+ <button type="button" class="inc" onclick="openForm('income')">+ Revenu</button>
+ <button type="button" class="exp" onclick="openForm('expense')">− Dépense</button>
+</section>
+
+<section id="form" class="card form">
+ <h3 id="formTitle"></h3>
+ <input id="amount" type="number" inputmode="decimal" placeholder="Montant €">
+ <select id="category"></select>
+ <input id="label" placeholder="Description (facultatif)">
+ <button type="button" onclick="addTx()">Enregistrer</button>
+ <button type="button" onclick="closeTransactionForm()">Annuler</button>
+</section>
 
 <section class="twocol">
-<div class="card">
-<b>Disponible réel</b>
-<div class="value blue" id="available">0 €</div>
-<p class="muted" id="reservedText"></p>
-<b class="muted">Budget conseillé par jour</b>
-<div class="value blue" id="daily">0 €</div>
-<div class="progress"><i id="dayProgress"></i></div>
-<p class="muted" id="days"></p>
-</div>
-<div class="card"><b>🎯 Objectif d’épargne</b><div class="value purple" id="goalValue">0 €</div><div class="progress purple"><i id="goalProgress"></i></div><p class="purple" id="goalPct"></p></div>
+
+ <div class="card">
+  <b>Disponible réel</b>
+  <div class="value blue" id="available">0 €</div>
+  <p class="muted" id="reservedText"></p>
+
+  <b class="muted">Budget conseillé par jour</b>
+  <div class="value blue" id="daily">0 €</div>
+
+  <div class="progress">
+   <i id="dayProgress"></i>
+  </div>
+
+  <p class="muted" id="days"></p>
+ </div>
+
+ <div class="card">
+  <b>🎯 Objectif d’épargne</b>
+  <div class="value purple" id="goalValue">0 €</div>
+
+  <div class="progress purple">
+   <i id="goalProgress"></i>
+  </div>
+
+  <p class="purple" id="goalPct"></p>
+ </div>
+
 </section>
 
-<div class="sectionTitle"><h2>📅 Dépenses à venir</h2></div>
+<div class="sectionTitle">
+ <h2>📅 Dépenses à venir</h2>
+</div>
+
 <section class="card">
-<div class="plannedSummary">
-<div class="mini"><span class="muted">À réserver</span><b class="orange" id="reserved">0 €</b></div>
-<div class="mini"><span class="muted">Échéances</span><b id="plannedCount">0</b></div>
-</div>
 
-<button type="button" class="addPlanned" onclick="togglePlannedForm()">+ Ajouter une dépense à venir</button>
+ <div class="plannedSummary">
+  <div class="mini">
+   <span class="muted">À réserver</span>
+   <b class="orange" id="reserved">0 €</b>
+  </div>
 
-<div id="plannedForm" class="plannedForm">
-<input id="plannedLabel" placeholder="Détail facultatif (ex. ING, Proximus…)">
-<input id="plannedAmount" type="number" inputmode="decimal" placeholder="Montant €">
-<select id="plannedCategory">
-<option>Logement</option><option>Crédit</option><option>Énergie</option>
-<option>Assurance</option><option>Abonnement</option><option>Transport</option>
-<option>Impôts</option><option>Santé</option><option>Autre</option>
-</select>
-<input id="plannedDay" type="number" inputmode="numeric" min="1" max="31" placeholder="Jour du mois (ex. 5)">
-<label class="checkline"><input id="plannedRecurring" type="checkbox" checked> Répéter automatiquement chaque mois</label>
-<button type="button" onclick="addPlanned()">Enregistrer l’échéance</button>
-<button type="button" onclick="togglePlannedForm(false)">Annuler</button>
-</div>
-<div id="plannedList"></div>
+  <div class="mini">
+   <span class="muted">Échéances</span>
+   <b id="plannedCount">0</b>
+  </div>
+ </div>
+
+ <button type="button" class="addPlanned" onclick="togglePlannedForm()">
+  + Ajouter une dépense à venir
+ </button>
+
+ <div id="plannedForm" class="plannedForm">
+
+  <input id="plannedLabel" placeholder="Détail facultatif (ex. ING, Proximus…)">
+
+  <input id="plannedAmount" type="number" inputmode="decimal" placeholder="Montant €">
+
+  <select id="plannedCategory">
+   <option>Logement</option>
+   <option>Crédit</option>
+   <option>Énergie</option>
+   <option>Assurance</option>
+   <option>Abonnement</option>
+   <option>Transport</option>
+   <option>Impôts</option>
+   <option>Santé</option>
+   <option>Autre</option>
+  </select>
+
+  <input id="plannedDay" type="number" inputmode="numeric" min="1" max="31" placeholder="Jour du mois (ex. 5)">
+
+  <label class="checkline">
+   <input id="plannedRecurring" type="checkbox" checked>
+   Répéter automatiquement chaque mois
+  </label>
+
+  <button type="button" onclick="addPlanned()">Enregistrer l’échéance</button>
+  <button type="button" onclick="togglePlannedForm(false)">Annuler</button>
+
+ </div>
+
+ <div id="plannedList"></div>
 </section>
 
-<div class="sectionTitle"><h2>📊 Ce mois-ci vs mois précédent</h2></div>
 
-<section class="charts">
-<div class="card chartCard"><b>Dépenses & Épargne (€)</b><div class="bars" id="bars"></div><div class="legend">■ Ce mois-ci &nbsp;&nbsp; ▪ Mois précédent</div></div>
-<div class="card chartCard"><b>Répartition des dépenses</b><div class="donutWrap"><div id="donut" class="donut"><div class="donutCenter"><span id="donutTotal">0 €</span><small>Total</small></div></div></div><div id="catLegend"></div></div>
+<div class="sectionTitle">
+ <h2>📊 Historique et comparaison</h2>
+</div>
+
+<section id="chartBrowser" class="chartBrowser">
+
+ <div class="card">
+
+  <div class="monthHeader">
+
+   <button
+    id="olderMonth"
+    type="button"
+    class="monthArrow"
+    onclick="changeChartMonth(-1)"
+    aria-label="Mois précédent">‹</button>
+
+   <div class="monthInfo">
+    <b id="chartMonthName">Ce mois-ci</b>
+    <small id="chartMonthStatus">Dépenses réelles + dépenses prévues</small>
+   </div>
+
+   <button
+    id="newerMonth"
+    type="button"
+    class="monthArrow"
+    onclick="changeChartMonth(1)"
+    aria-label="Mois suivant">›</button>
+
+  </div>
+
+  <div style="text-align:center;margin-bottom:9px">
+   <button
+    id="todayBtn"
+    type="button"
+    class="todayBtn"
+    onclick="goToday()">Aujourd’hui</button>
+  </div>
+
+  <div class="swipeHint">
+   ← Balaye pour parcourir les 12 derniers mois →
+  </div>
+
+  <div class="monthSummary">
+
+   <div class="mini">
+    <span class="muted">Revenus</span>
+    <b class="green" id="chartIncome">0 €</b>
+   </div>
+
+   <div class="mini">
+    <span class="muted">Dépenses</span>
+    <b class="red" id="chartExpense">0 €</b>
+   </div>
+
+   <div class="mini">
+    <span class="muted" id="chartSavingLabel">Reste prévu</span>
+    <b class="purple" id="chartSaving">0 €</b>
+   </div>
+
+  </div>
+
+  <div id="monthNoData" class="noMonthData" style="display:none">
+   Aucune donnée enregistrée pour ce mois.
+  </div>
+
+ </div>
+
+
+ <section class="charts">
+
+  <div class="card chartCard">
+
+   <b id="barChartTitle">Dépenses & reste (€)</b>
+
+   <div class="bars" id="bars"></div>
+
+   <div class="legend" id="barLegend">
+    Les échéances restantes sont incluses dans les prévisions du mois actuel.
+   </div>
+
+  </div>
+
+
+  <div class="card chartCard">
+
+   <b>Répartition des dépenses</b>
+
+   <div class="donutWrap">
+    <div id="donut" class="donut">
+
+     <div class="donutCenter">
+      <span id="donutTotal">0 €</span>
+      <small>Total</small>
+     </div>
+
+    </div>
+   </div>
+
+   <div id="catLegend"></div>
+
+  </div>
+
+ </section>
+
 </section>
 
-<section class="card tip"><h3>💡 Conseil du jour</h3><div id="tip"></div></section>
+
+<section class="card tip">
+ <h3>💡 Conseil du jour</h3>
+ <div id="tip"></div>
+</section>
+
 <div class="ad">EMPLACEMENT PUBLICITAIRE</div>
 
-<div class="sectionTitle"><h2>Dernières opérations</h2></div>
-<section class="card" id="transactions">Aucune opération.</section>
+<div class="sectionTitle">
+ <h2>Dernières opérations</h2>
+</div>
 
-<section class="card settings"><details><summary>⚙️ Réglages et sauvegarde</summary><div style="margin-top:10px"><label>Objectif d'épargne (€)</label><input id="goalInput" type="number" inputmode="decimal"><button type="button" onclick="saveGoal()">Enregistrer l'objectif</button><button type="button" onclick="exportData()">Exporter mes données</button><input id="importFile" type="file" accept=".json" onchange="importData(event)"><button type="button" onclick="clearData()">Effacer toutes les données</button></div></details></section>
+<section class="card" id="transactions">
+ Aucune opération.
+</section>
 
-<div style="text-align:center"><a style="color:#9ba9bf" href="privacy.html">Confidentialité</a> · <a style="color:#9ba9bf" href="about.html">À propos</a></div>
+<section class="card settings">
+
+ <details>
+
+  <summary>⚙️ Réglages et sauvegarde</summary>
+
+  <div style="margin-top:10px">
+
+   <label>Objectif d'épargne (€)</label>
+
+   <input id="goalInput" type="number" inputmode="decimal">
+
+   <button type="button" onclick="saveGoal()">
+    Enregistrer l'objectif
+   </button>
+
+   <button type="button" onclick="exportData()">
+    Exporter mes données
+   </button>
+
+   <input
+    id="importFile"
+    type="file"
+    accept=".json"
+    onchange="importData(event)">
+
+   <button type="button" onclick="clearData()">
+    Effacer toutes les données
+   </button>
+
+  </div>
+
+ </details>
+
+</section>
+
+<div style="text-align:center">
+ <a style="color:#9ba9bf" href="privacy.html">Confidentialité</a>
+ ·
+ <a style="color:#9ba9bf" href="about.html">À propos</a>
+</div>
 
 </main>
 
-<nav><button type="button" onclick="window.scrollTo({top:0,behavior:'smooth'})"><span>⌂</span>Accueil</button><button type="button" onclick="document.getElementById('transactions').scrollIntoView({behavior:'smooth'})"><span>☷</span>Opérations</button><button type="button" class="plusbtn" onclick="openForm('expense')"><span>+</span>Ajouter</button><button type="button" onclick="document.querySelector('.charts').scrollIntoView({behavior:'smooth'})"><span>▥</span>Graphiques</button><button type="button" onclick="document.querySelector('.settings').scrollIntoView({behavior:'smooth'})"><span>⚙</span>Réglages</button></nav>
+
+<nav>
+
+ <button type="button" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+  <span>⌂</span>
+  Accueil
+ </button>
+
+ <button type="button" onclick="document.getElementById('transactions').scrollIntoView({behavior:'smooth'})">
+  <span>☷</span>
+  Opérations
+ </button>
+
+ <button type="button" class="plusbtn" onclick="openForm('expense')">
+  <span>+</span>
+  Ajouter
+ </button>
+
+ <button type="button" onclick="document.getElementById('chartBrowser').scrollIntoView({behavior:'smooth'})">
+  <span>▥</span>
+  Graphiques
+ </button>
+
+ <button type="button" onclick="document.querySelector('.settings').scrollIntoView({behavior:'smooth'})">
+  <span>⚙</span>
+  Réglages
+ </button>
+
+</nav>
+
 
 <script>
+
 const KEY="budgetDataV1";
-let data={transactions:[],goal:0,planned:[]};
+
+let data={
+ transactions:[],
+ goal:0,
+ planned:[]
+};
 
 try{
  let x=JSON.parse(localStorage.getItem(KEY)||"null");
- if(x)data=x
+ if(x)data=x;
 }catch(e){}
 
 if(!Array.isArray(data.transactions))data.transactions=[];
 if(!Array.isArray(data.planned))data.planned=[];
 data.goal=Number(data.goal)||0;
 
-const $=x=>document.getElementById(x),
-money=n=>new Intl.NumberFormat("fr-BE",{style:"currency",currency:"EUR"}).format(n);
+const $=x=>document.getElementById(x);
+
+const money=n=>
+ new Intl.NumberFormat("fr-BE",{
+  style:"currency",
+  currency:"EUR"
+ }).format(Number(n)||0);
+
 
 const cats={
- income:["Salaire","Prime","Remboursement","Vente","Autre revenu"],
- expense:["Alimentation","Logement","Transport","Énergie","Loisirs","Abonnements","Santé","Shopping","Autre"]
+
+ income:[
+  "Salaire",
+  "Prime",
+  "Remboursement",
+  "Vente",
+  "Autre revenu"
+ ],
+
+ expense:[
+  "Alimentation",
+  "Logement",
+  "Transport",
+  "Énergie",
+  "Loisirs",
+  "Abonnements",
+  "Santé",
+  "Shopping",
+  "Autre"
+ ]
+
 };
 
+
 const tips=[
-"Attends 24 heures avant un achat non essentiel : l'envie disparaît souvent.",
-"Avant un crédit, compare le TAEG et surtout le montant total à rembourser.",
-"Passe régulièrement en revue tes abonnements : les petites dépenses récurrentes s'additionnent vite.",
-"Essaie de mettre une somme de côté dès qu'un revenu arrive, plutôt que d'épargner uniquement ce qui reste.",
-"Prévois une petite marge pour les imprévus : un budget trop serré est difficile à tenir."
+
+ "Attends 24 heures avant un achat non essentiel : l'envie disparaît souvent.",
+
+ "Avant un crédit, compare le TAEG et surtout le montant total à rembourser.",
+
+ "Passe régulièrement en revue tes abonnements : les petites dépenses récurrentes s'additionnent vite.",
+
+ "Essaie de mettre une somme de côté dès qu'un revenu arrive, plutôt que d'épargner uniquement ce qui reste.",
+
+ "Prévois une petite marge pour les imprévus : un budget trop serré est difficile à tenir."
+
 ];
 
-function save(){localStorage.setItem(KEY,JSON.stringify(data))}
+
+function save(){
+ localStorage.setItem(KEY,JSON.stringify(data));
+}
+
 
 function clock(){
+
  let n=new Date();
- $("time").textContent=n.toLocaleTimeString("fr-BE",{hour:"2-digit",minute:"2-digit"});
- $("date").textContent=n.toLocaleDateString("fr-BE",{weekday:"long",day:"numeric",month:"long",year:"numeric"})
+
+ $("time").textContent=
+  n.toLocaleTimeString("fr-BE",{
+   hour:"2-digit",
+   minute:"2-digit"
+  });
+
+ $("date").textContent=
+  n.toLocaleDateString("fr-BE",{
+   weekday:"long",
+   day:"numeric",
+   month:"long",
+   year:"numeric"
+  });
+
 }
+
 clock();
 setInterval(clock,1000);
 
+
+/* ==========================================================
+   DONNÉES MENSUELLES
+   ========================================================== */
+
 function totals(y,m){
+
  let a=data.transactions.filter(t=>{
+
   let d=new Date(t.date);
-  return d.getFullYear()==y&&d.getMonth()==m
+
+  return d.getFullYear()==y &&
+         d.getMonth()==m;
+
  });
- let inc=a.filter(t=>t.type=="income").reduce((s,t)=>s+Number(t.amount),0);
- let exp=a.filter(t=>t.type=="expense").reduce((s,t)=>s+Number(t.amount),0);
- return{inc,exp,save:inc-exp,a}
+
+ let inc=
+  a.filter(t=>t.type=="income")
+   .reduce((s,t)=>s+Number(t.amount),0);
+
+ let exp=
+  a.filter(t=>t.type=="expense")
+   .reduce((s,t)=>s+Number(t.amount),0);
+
+ return{
+  inc,
+  exp,
+  save:inc-exp,
+  a
+ };
+
 }
+
 
 function period(d=new Date()){
- return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")
+
+ return d.getFullYear()+"-"+
+        String(d.getMonth()+1).padStart(2,"0");
+
 }
+
 
 function activePlanned(){
+
  let p=period();
- return data.planned.filter(x=>x.paidPeriod!==p)
+
+ return data.planned.filter(x=>x.paidPeriod!==p);
+
 }
 
-function render(){
- let n=new Date();
- let c=totals(n.getFullYear(),n.getMonth());
- let pD=new Date(n.getFullYear(),n.getMonth()-1,1);
- let p=totals(pD.getFullYear(),pD.getMonth());
- let bal=c.save;
 
- let upcoming=activePlanned();
- let reserved=upcoming.reduce((a,x)=>a+Number(x.amount),0);
- let available=bal-reserved;
+/* ==========================================================
+   NAVIGATION GRAPHIQUES SUR 12 MOIS
+   0 = MOIS ACTUEL
+   -1 = MOIS PRÉCÉDENT
+   ...
+   -11 = 11 MOIS EN ARRIÈRE
+   ========================================================== */
 
- $("balance").textContent=money(bal);
- $("balance").style.color=bal>=0?"#38d66b":"#ff4555";
- $("income").textContent=money(c.inc);
- $("expense").textContent=money(c.exp);
- $("rate").textContent=(c.inc>0?Math.max(0,bal/c.inc*100):0).toFixed(1)+" %";
+let chartMonthOffset=0;
 
- let last=new Date(n.getFullYear(),n.getMonth()+1,0).getDate();
- let left=last-n.getDate()+1;
 
- $("available").textContent=money(available);
- $("available").style.color=available>=0?"#2e8cff":"#ff4555";
- $("reserved").textContent=money(reserved);
- $("plannedCount").textContent=upcoming.length;
+function chartDate(){
 
- $("reservedText").textContent=reserved
- ? money(reserved)+" réservés pour les échéances"
- : "Aucune échéance à réserver";
+ let now=new Date();
 
- $("daily").textContent=money(Math.max(0,available)/left);
- $("days").textContent="Jour "+n.getDate()+" / "+last+" • "+left+" jours restants";
- $("dayProgress").style.width=(n.getDate()/last*100)+"%";
+ return new Date(
+  now.getFullYear(),
+  now.getMonth()+chartMonthOffset,
+  1
+ );
 
- $("goalValue").textContent=money(data.goal);
- let gp=data.goal?Math.max(0,Math.min(100,bal/data.goal*100)):0;
- $("goalProgress").style.width=gp+"%";
- $("goalPct").textContent=gp.toFixed(1)+" % atteint";
- $("goalInput").value=data.goal||"";
+}
 
- $("plannedList").innerHTML=upcoming.length
- ? upcoming.slice().sort((a,b)=>a.day-b.day).map(x=>`
- <div class="plannedRow">
-  <div>
-   <b>${x.label}</b>
-   <div class="meta">Le ${x.day} · ${x.category}${x.recurring?" · chaque mois":" · une fois"}</div>
-  </div>
-  <div style="text-align:right">
-   <b class="orange">${money(x.amount)}</b>
-   <div class="rowBtns">
-    <button type="button" class="smallBtn paidBtn" onclick="payPlanned('${x.id}')">Payée</button>
-    <button type="button" class="smallBtn delBtn" onclick="deletePlanned('${x.id}')">×</button>
+
+function changeChartMonth(direction){
+
+ let next=chartMonthOffset+direction;
+
+ if(next>0)return;
+ if(next<-11)return;
+
+ chartMonthOffset=next;
+
+ renderCharts();
+
+}
+
+
+function goToday(){
+
+ chartMonthOffset=0;
+ renderCharts();
+
+}
+
+
+function plannedForCurrentChart(){
+
+ if(chartMonthOffset!==0)return [];
+
+ return activePlanned();
+
+}
+
+
+function renderCharts(){
+
+ let d=chartDate();
+
+ let monthData=
+  totals(
+   d.getFullYear(),
+   d.getMonth()
+  );
+
+ let isCurrent=
+  chartMonthOffset===0;
+
+ let upcoming=
+  plannedForCurrentChart();
+
+ let plannedTotal=
+  upcoming.reduce(
+   (sum,x)=>sum+Number(x.amount),
+   0
+  );
+
+ /*
+   Pour le mois courant :
+   dépenses du graphique =
+   dépenses déjà enregistrées
+   +
+   échéances pas encore payées.
+
+   Lorsqu'une échéance est payée,
+   elle disparaît de activePlanned()
+   et devient une vraie transaction.
+
+   Donc elle n'est jamais comptée deux fois.
+ */
+
+ let displayedExpense=
+  monthData.exp +
+  (isCurrent ? plannedTotal : 0);
+
+ let displayedSaving=
+  monthData.inc-displayedExpense;
+
+
+ /* ----- TITRE DU MOIS ----- */
+
+ let monthName=
+  d.toLocaleDateString(
+   "fr-BE",
+   {
+    month:"long",
+    year:"numeric"
+   }
+  );
+
+ $("chartMonthName").textContent=
+  monthName.charAt(0).toUpperCase()+
+  monthName.slice(1);
+
+
+ $("chartMonthStatus").textContent=
+  isCurrent
+  ? "Réel + échéances encore à venir"
+  : "Opérations réellement enregistrées";
+
+
+ $("todayBtn").disabled=isCurrent;
+
+ $("newerMonth").disabled=
+  chartMonthOffset===0;
+
+ $("olderMonth").disabled=
+  chartMonthOffset===-11;
+
+
+ /* ----- RÉSUMÉ ----- */
+
+ $("chartIncome").textContent=
+  money(monthData.inc);
+
+ $("chartExpense").textContent=
+  money(displayedExpense);
+
+ $("chartSavingLabel").textContent=
+  isCurrent
+  ? "Reste prévu"
+  : "Solde";
+
+ $("chartSaving").textContent=
+  money(displayedSaving);
+
+ $("chartSaving").style.color=
+  displayedSaving>=0
+  ? "#9c65ff"
+  : "#ff4555";
+
+
+ /* ----- ABSENCE DE DONNÉES ----- */
+
+ let hasData=
+  monthData.a.length>0 ||
+  (isCurrent && upcoming.length>0);
+
+ $("monthNoData").style.display=
+  hasData ? "none" : "block";
+
+
+ /* ----- BARRES ----- */
+
+ let expenseHeightValue=
+  Math.max(0,displayedExpense);
+
+ let savingHeightValue=
+  Math.max(0,displayedSaving);
+
+ let mx=
+  Math.max(
+   expenseHeightValue,
+   savingHeightValue,
+   1
+  );
+
+
+ function h(v){
+
+  return Math.max(
+   2,
+   Math.max(0,v)/mx*145
+  );
+
+ }
+
+
+ $("barChartTitle").textContent=
+  isCurrent
+  ? "Dépenses prévues & reste (€)"
+  : "Dépenses & solde (€)";
+
+
+ $("bars").innerHTML=`
+
+  <div class="group">
+
+   <div class="barWrap">
+
+    <div
+     class="bar"
+     style="height:${h(expenseHeightValue)}px">
+
+     <span class="barValue">
+      ${money(displayedExpense)}
+     </span>
+
+    </div>
+
    </div>
+
+   <label>Dépenses</label>
+
   </div>
- </div>`).join("")
- : "<p class='muted'>Ajoute ici ton loyer, tes crédits, abonnements et autres échéances.</p>";
 
- let mx=Math.max(c.exp,p.exp,Math.max(0,c.save),Math.max(0,p.save),1);
- function h(v){return Math.max(2,v/mx*155)}
 
- $("bars").innerHTML=
- `<div class="group"><div class="bar" style="height:${h(c.exp)}px"></div>
- <div class="bar old" style="height:${h(p.exp)}px"></div><label>Dépenses</label></div>
- <div class="group"><div class="bar" style="height:${h(Math.max(0,c.save))}px"></div>
- <div class="bar old" style="height:${h(Math.max(0,p.save))}px"></div><label>Épargne</label></div>`;
+  <div class="group">
 
- let g={};
- c.a.filter(t=>t.type=="expense").forEach(t=>g[t.category]=(g[t.category]||0)+Number(t.amount));
+   <div class="barWrap">
 
- let arr=Object.entries(g).sort((a,b)=>b[1]-a[1]);
- let colors=["#2385ff","#f17b32","#40b85a","#a247df","#ffd02f","#28798a","#ee4f5f","#8d9caf","#5bc9b5"];
- let total=c.exp,deg=0,parts=[];
+    <div
+     class="bar savings"
+     style="height:${h(savingHeightValue)}px">
+
+     <span class="barValue">
+      ${money(displayedSaving)}
+     </span>
+
+    </div>
+
+   </div>
+
+   <label>
+    ${isCurrent ? "Reste" : "Solde"}
+   </label>
+
+  </div>
+
+ `;
+
+
+ $("barLegend").textContent=
+  isCurrent
+  ? plannedTotal>0
+    ? money(monthData.exp)+" déjà payés + "+
+      money(plannedTotal)+" encore prévus."
+    : "Toutes les dépenses du mois sont actuellement enregistrées."
+  : "Données réellement enregistrées pour ce mois.";
+
+
+ /* ==========================================================
+    RÉPARTITION PAR CATÉGORIE
+    ========================================================== */
+
+ let categories={};
+
+
+ /*
+   Dépenses réellement payées
+ */
+
+ monthData.a
+  .filter(t=>t.type=="expense")
+  .forEach(t=>{
+
+   categories[t.category]=
+    (categories[t.category]||0)+
+    Number(t.amount);
+
+  });
+
+
+ /*
+   Échéances restantes :
+   seulement pour le mois courant.
+ */
+
+ if(isCurrent){
+
+  upcoming.forEach(x=>{
+
+   let category=x.category;
+
+   if(category==="Abonnement")
+    category="Abonnements";
+
+   categories[category]=
+    (categories[category]||0)+
+    Number(x.amount);
+
+  });
+
+ }
+
+
+ let arr=
+  Object.entries(categories)
+   .sort((a,b)=>b[1]-a[1]);
+
+
+ let colors=[
+  "#2385ff",
+  "#f17b32",
+  "#40b85a",
+  "#a247df",
+  "#ffd02f",
+  "#28798a",
+  "#ee4f5f",
+  "#8d9caf",
+  "#5bc9b5"
+ ];
+
+
+ let total=
+  arr.reduce(
+   (sum,[k,v])=>sum+v,
+   0
+  );
+
+
+ let deg=0;
+ let parts=[];
+
 
  arr.forEach(([k,v],i)=>{
-  let end=deg+(total?v/total*360:0);
-  parts.push(`${colors[i%colors.length]} ${deg}deg ${end}deg`);
-  deg=end
+
+  let end=
+   deg+
+   (total ? v/total*360 : 0);
+
+  parts.push(
+   `${colors[i%colors.length]} ${deg}deg ${end}deg`
+  );
+
+  deg=end;
+
  });
 
- $("donut").style.background=parts.length?`conic-gradient(${parts.join(",")})`:"#26364b";
- $("donutTotal").textContent=money(total);
 
- $("catLegend").innerHTML=arr.map(([k,v],i)=>
- `<div class="cat"><span><i class="dot" style="background:${colors[i%colors.length]}"></i>${k}</span>
- <b>${total?(v/total*100).toFixed(0):0}% · ${money(v)}</b></div>`
- ).join("")||'<span class="muted">Ajoute des dépenses pour remplir le graphique.</span>';
+ $("donut").style.background=
+  parts.length
+  ? `conic-gradient(${parts.join(",")})`
+  : "#26364b";
 
- $("tip").textContent=tips[Math.floor(Date.now()/86400000)%tips.length];
 
- let list=data.transactions.slice().reverse().slice(0,12);
+ $("donutTotal").textContent=
+  money(total);
 
- $("transactions").innerHTML=list.length?list.map((t,i)=>{
-  let d=new Date(t.date),idx=data.transactions.length-1-i;
-  return `<div class="tx"><div><b>${t.label||t.category}</b>
-  <div class="meta">${d.toLocaleDateString("fr-BE")} · ${d.toLocaleTimeString("fr-BE",{hour:"2-digit",minute:"2-digit"})} · ${t.category}</div></div>
-  <div><b class="${t.type=="income"?"green":"red"}">${t.type=="income"?"+":"−"}${money(t.amount)}</b>
-  <button type="button" onclick="delTx(${idx})">×</button></div></div>`
- }).join(""):"Aucune opération.";
+
+ $("catLegend").innerHTML=
+
+  arr.length
+
+  ? arr.map(([k,v],i)=>`
+
+    <div class="cat">
+
+     <span>
+
+      <i
+       class="dot"
+       style="background:${colors[i%colors.length]}">
+      </i>
+
+      ${k}
+
+     </span>
+
+     <b>
+      ${total ? (v/total*100).toFixed(0) : 0}%
+      ·
+      ${money(v)}
+     </b>
+
+    </div>
+
+   `).join("")
+
+  : '<span class="muted">Aucune dépense enregistrée pour ce mois.</span>';
+
 }
+
+
+/* ==========================================================
+   BALAYAGE GAUCHE / DROITE
+   ========================================================== */
+
+let swipeStartX=null;
+let swipeStartY=null;
+
+
+const chartBrowser=$("chartBrowser");
+
+
+chartBrowser.addEventListener(
+ "touchstart",
+ e=>{
+
+  if(!e.touches || !e.touches.length)return;
+
+  swipeStartX=e.touches[0].clientX;
+  swipeStartY=e.touches[0].clientY;
+
+ },
+ {passive:true}
+);
+
+
+chartBrowser.addEventListener(
+ "touchend",
+ e=>{
+
+  if(
+   swipeStartX===null ||
+   swipeStartY===null ||
+   !e.changedTouches ||
+   !e.changedTouches.length
+  )return;
+
+
+  let endX=
+   e.changedTouches[0].clientX;
+
+  let endY=
+   e.changedTouches[0].clientY;
+
+
+  let dx=endX-swipeStartX;
+  let dy=endY-swipeStartY;
+
+
+  swipeStartX=null;
+  swipeStartY=null;
+
+
+  /*
+    Il faut un vrai geste horizontal.
+    Cela évite de changer de mois pendant
+    un simple défilement vertical.
+  */
+
+  if(
+   Math.abs(dx)<55 ||
+   Math.abs(dx)<=Math.abs(dy)*1.25
+  )return;
+
+
+  /*
+    Balayer vers la gauche :
+    on va vers le mois précédent.
+
+    Balayer vers la droite :
+    on revient vers un mois plus récent.
+  */
+
+  if(dx<0)
+   changeChartMonth(-1);
+  else
+   changeChartMonth(1);
+
+ },
+ {passive:true}
+);
+
+
+/* ==========================================================
+   RENDU PRINCIPAL
+   ========================================================== */
+
+function render(){
+
+ let n=new Date();
+
+ let c=
+  totals(
+   n.getFullYear(),
+   n.getMonth()
+  );
+
+ let bal=c.save;
+
+ let upcoming=
+  activePlanned();
+
+ let reserved=
+  upcoming.reduce(
+   (a,x)=>a+Number(x.amount),
+   0
+  );
+
+ let available=
+  bal-reserved;
+
+
+ $("balance").textContent=
+  money(bal);
+
+ $("balance").style.color=
+  bal>=0
+  ? "#38d66b"
+  : "#ff4555";
+
+
+ $("income").textContent=
+  money(c.inc);
+
+ $("expense").textContent=
+  money(c.exp);
+
+
+ $("rate").textContent=
+  (
+   c.inc>0
+   ? Math.max(0,bal/c.inc*100)
+   : 0
+  ).toFixed(1)+" %";
+
+
+ let last=
+  new Date(
+   n.getFullYear(),
+   n.getMonth()+1,
+   0
+  ).getDate();
+
+
+ let left=
+  last-n.getDate()+1;
+
+
+ $("available").textContent=
+  money(available);
+
+
+ $("available").style.color=
+  available>=0
+  ? "#2e8cff"
+  : "#ff4555";
+
+
+ $("reserved").textContent=
+  money(reserved);
+
+
+ $("plannedCount").textContent=
+  upcoming.length;
+
+
+ $("reservedText").textContent=
+
+  reserved
+  ? money(reserved)+" réservés pour les échéances"
+  : "Aucune échéance à réserver";
+
+
+ $("daily").textContent=
+  money(
+   Math.max(0,available)/left
+  );
+
+
+ $("days").textContent=
+  "Jour "+
+  n.getDate()+
+  " / "+
+  last+
+  " • "+
+  left+
+  " jours restants";
+
+
+ $("dayProgress").style.width=
+  (n.getDate()/last*100)+"%";
+
+
+ $("goalValue").textContent=
+  money(data.goal);
+
+
+ let gp=
+  data.goal
+  ? Math.max(
+     0,
+     Math.min(
+      100,
+      bal/data.goal*100
+     )
+    )
+  : 0;
+
+
+ $("goalProgress").style.width=
+  gp+"%";
+
+
+ $("goalPct").textContent=
+  gp.toFixed(1)+" % atteint";
+
+
+ $("goalInput").value=
+  data.goal||"";
+
+
+ /* ----- ÉCHÉANCES ----- */
+
+ $("plannedList").innerHTML=
+
+  upcoming.length
+
+  ? upcoming
+     .slice()
+     .sort((a,b)=>a.day-b.day)
+     .map(x=>`
+
+      <div class="plannedRow">
+
+       <div>
+
+        <b>${x.label}</b>
+
+        <div class="meta">
+         Le ${x.day}
+         · ${x.category}
+         ${x.recurring ? " · chaque mois" : " · une fois"}
+        </div>
+
+       </div>
+
+
+       <div style="text-align:right">
+
+        <b class="orange">
+         ${money(x.amount)}
+        </b>
+
+        <div class="rowBtns">
+
+         <button
+          type="button"
+          class="smallBtn paidBtn"
+          onclick="payPlanned('${x.id}')">
+          Payée
+         </button>
+
+         <button
+          type="button"
+          class="smallBtn delBtn"
+          onclick="deletePlanned('${x.id}')">
+          ×
+         </button>
+
+        </div>
+
+       </div>
+
+      </div>
+
+     `).join("")
+
+  : "<p class='muted'>Ajoute ici ton loyer, tes crédits, abonnements et autres échéances.</p>";
+
+
+ /* ----- CONSEIL ----- */
+
+ $("tip").textContent=
+  tips[
+   Math.floor(
+    Date.now()/86400000
+   )%tips.length
+  ];
+
+
+ /* ----- TRANSACTIONS ----- */
+
+ let list=
+  data.transactions
+   .slice()
+   .reverse()
+   .slice(0,12);
+
+
+ $("transactions").innerHTML=
+
+  list.length
+
+  ? list.map((t,i)=>{
+
+   let d=new Date(t.date);
+
+   let idx=
+    data.transactions.length-1-i;
+
+   return `
+
+    <div class="tx">
+
+     <div>
+
+      <b>
+       ${t.label||t.category}
+      </b>
+
+      <div class="meta">
+
+       ${d.toLocaleDateString("fr-BE")}
+       ·
+       ${d.toLocaleTimeString(
+        "fr-BE",
+        {
+         hour:"2-digit",
+         minute:"2-digit"
+        }
+       )}
+       ·
+       ${t.category}
+
+      </div>
+
+     </div>
+
+
+     <div>
+
+      <b class="${t.type=="income" ? "green" : "red"}">
+
+       ${t.type=="income" ? "+" : "−"}
+
+       ${money(t.amount)}
+
+      </b>
+
+      <button
+       type="button"
+       onclick="delTx(${idx})">
+       ×
+      </button>
+
+     </div>
+
+    </div>
+
+   `;
+
+  }).join("")
+
+  : "Aucune opération.";
+
+
+ /*
+   Chaque modification du budget
+   rafraîchit aussi les graphiques.
+ */
+
+ renderCharts();
+
+}
+
+
+/* ==========================================================
+   DÉPENSES À VENIR
+   ========================================================== */
 
 function togglePlannedForm(force){
+
  let f=$("plannedForm");
- let show=typeof force==="boolean"?force:!f.classList.contains("show");
- f.classList.toggle("show",show);
- if(!show && document.activeElement && typeof document.activeElement.blur==="function")document.activeElement.blur();
+
+ let show=
+  typeof force==="boolean"
+  ? force
+  : !f.classList.contains("show");
+
+
+ f.classList.toggle(
+  "show",
+  show
+ );
+
+
+ if(
+  !show &&
+  document.activeElement &&
+  typeof document.activeElement.blur==="function"
+ ){
+  document.activeElement.blur();
+ }
+
 }
 
-function addPlanned(){
- let label=$("plannedLabel").value.trim();
- let amount=Number($("plannedAmount").value);
- let day=Math.round(Number($("plannedDay").value));
 
- if(!label)label=$("plannedCategory").value;
- if(!(amount>0))return alert("Entre un montant supérieur à 0.");
- if(!(day>=1&&day<=31))return alert("Indique un jour du mois entre 1 et 31.");
+function addPlanned(){
+
+ let label=
+  $("plannedLabel").value.trim();
+
+ let amount=
+  Number($("plannedAmount").value);
+
+ let day=
+  Math.round(
+   Number($("plannedDay").value)
+  );
+
+
+ if(!label)
+  label=
+   $("plannedCategory").value;
+
+
+ if(!(amount>0))
+  return alert(
+   "Entre un montant supérieur à 0."
+  );
+
+
+ if(!(day>=1 && day<=31))
+  return alert(
+   "Indique un jour du mois entre 1 et 31."
+  );
+
 
  data.planned.push({
-  id:Date.now().toString(36)+Math.random().toString(36).slice(2,7),
+
+  id:
+   Date.now().toString(36)+
+   Math.random().toString(36).slice(2,7),
+
   label,
+
   amount,
+
   day,
-  category:$("plannedCategory").value,
-  recurring:$("plannedRecurring").checked,
+
+  category:
+   $("plannedCategory").value,
+
+  recurring:
+   $("plannedRecurring").checked,
+
   paidPeriod:""
+
  });
 
+
  save();
+
 
  $("plannedLabel").value="";
  $("plannedAmount").value="";
  $("plannedDay").value="";
+
+
  togglePlannedForm(false);
- render()
+
+ render();
+
 }
+
 
 function payPlanned(id){
- let x=data.planned.find(p=>p.id===id);
+
+ let x=
+  data.planned.find(
+   p=>p.id===id
+  );
+
+
  if(!x)return;
 
- if(!confirm("Marquer cette échéance comme payée et l’ajouter aux dépenses ?"))return;
+
+ if(
+  !confirm(
+   "Marquer cette échéance comme payée et l’ajouter aux dépenses ?"
+  )
+ )return;
+
 
  let map={
+
   Crédit:"Autre",
+
   Assurance:"Autre",
+
   Impôts:"Autre",
+
   Abonnement:"Abonnements"
+
  };
 
+
  data.transactions.push({
+
   type:"expense",
+
   amount:Number(x.amount),
-  category:map[x.category]||x.category,
+
+  category:
+   map[x.category]||
+   x.category,
+
   label:x.label,
-  date:new Date().toISOString()
+
+  date:
+   new Date().toISOString()
+
  });
 
- if(x.recurring)x.paidPeriod=period();
- else data.planned=data.planned.filter(p=>p.id!==id);
+
+ if(x.recurring)
+  x.paidPeriod=period();
+
+ else
+  data.planned=
+   data.planned.filter(
+    p=>p.id!==id
+   );
+
 
  save();
- render()
+
+ render();
+
 }
 
+
 function deletePlanned(id){
- if(confirm("Supprimer cette dépense à venir ?")){
-  data.planned=data.planned.filter(p=>p.id!==id);
+
+ if(
+  confirm(
+   "Supprimer cette dépense à venir ?"
+  )
+ ){
+
+  data.planned=
+   data.planned.filter(
+    p=>p.id!==id
+   );
+
   save();
-  render()
+
+  render();
+
  }
+
 }
+
+
+/* ==========================================================
+   REVENUS / DÉPENSES
+   ========================================================== */
 
 let type="expense";
 
+
 function closeTransactionForm(){
+
  $("form").classList.remove("show");
- if(document.activeElement && typeof document.activeElement.blur==="function")document.activeElement.blur();
+
+ if(
+  document.activeElement &&
+  typeof document.activeElement.blur==="function"
+ ){
+  document.activeElement.blur();
+ }
+
 }
+
 
 function openForm(t){
+
  type=t;
- $("formTitle").textContent=t=="income"?"Ajouter un revenu":"Ajouter une dépense";
- $("category").innerHTML=cats[t].map(x=>`<option>${x}</option>`).join("");
+
+
+ $("formTitle").textContent=
+  t=="income"
+  ? "Ajouter un revenu"
+  : "Ajouter une dépense";
+
+
+ $("category").innerHTML=
+  cats[t]
+   .map(x=>`<option>${x}</option>`)
+   .join("");
+
+
  $("amount").value="";
  $("label").value="";
+
+
  $("form").classList.add("show");
- $("form").scrollIntoView({behavior:"smooth"})
-}
 
-function addTx(){
- let a=Number($("amount").value);
- if(!(a>0))return alert("Entre un montant supérieur à 0.");
 
- data.transactions.push({
-  type,
-  amount:a,
-  category:$("category").value,
-  label:$("label").value.trim(),
-  date:new Date().toISOString()
+ $("form").scrollIntoView({
+  behavior:"smooth"
  });
 
- save();
- closeTransactionForm();
- render()
 }
+
+
+function addTx(){
+
+ let a=
+  Number(
+   $("amount").value
+  );
+
+
+ if(!(a>0))
+  return alert(
+   "Entre un montant supérieur à 0."
+  );
+
+
+ data.transactions.push({
+
+  type,
+
+  amount:a,
+
+  category:
+   $("category").value,
+
+  label:
+   $("label").value.trim(),
+
+  date:
+   new Date().toISOString()
+
+ });
+
+
+ save();
+
+ closeTransactionForm();
+
+ render();
+
+}
+
 
 function delTx(i){
- if(confirm("Supprimer cette opération ?")){
+
+ if(
+  confirm(
+   "Supprimer cette opération ?"
+  )
+ ){
+
   data.transactions.splice(i,1);
+
   save();
-  render()
+
+  render();
+
  }
+
 }
+
+
+/* ==========================================================
+   OBJECTIF
+   ========================================================== */
 
 function saveGoal(){
- data.goal=Math.max(0,Number($("goalInput").value)||0);
+
+ data.goal=
+  Math.max(
+   0,
+   Number(
+    $("goalInput").value
+   )||0
+  );
+
  save();
- render()
+
+ render();
+
 }
+
+
+/* ==========================================================
+   SAUVEGARDE
+   ========================================================== */
 
 function exportData(){
- let b=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
- let a=document.createElement("a");
- a.href=URL.createObjectURL(b);
- a.download="mon-budget-sauvegarde.json";
- a.click()
+
+ let b=
+  new Blob(
+   [
+    JSON.stringify(
+     data,
+     null,
+     2
+    )
+   ],
+   {
+    type:"application/json"
+   }
+  );
+
+
+ let a=
+  document.createElement("a");
+
+
+ a.href=
+  URL.createObjectURL(b);
+
+
+ a.download=
+  "mon-budget-sauvegarde.json";
+
+
+ a.click();
+
 }
+
 
 function importData(e){
- let f=e.target.files[0];
+
+ let f=
+  e.target.files[0];
+
+
  if(!f)return;
 
- let r=new FileReader();
+
+ let r=
+  new FileReader();
+
 
  r.onload=()=>{
+
   try{
-   let x=JSON.parse(r.result);
-   if(!Array.isArray(x.transactions))throw 0;
-   if(!Array.isArray(x.planned))x.planned=[];
+
+   let x=
+    JSON.parse(
+     r.result
+    );
+
+
+   if(
+    !Array.isArray(
+     x.transactions
+    )
+   )throw 0;
+
+
+   if(
+    !Array.isArray(
+     x.planned
+    )
+   )
+    x.planned=[];
+
+
    data=x;
+
    save();
+
    render();
-   alert("Données importées.")
+
+   alert(
+    "Données importées."
+   );
+
+
   }catch(e){
-   alert("Fichier invalide.")
+
+   alert(
+    "Fichier invalide."
+   );
+
   }
+
  };
 
- r.readAsText(f)
+
+ r.readAsText(f);
+
 }
 
+
 function clearData(){
- if(confirm("Effacer toutes les données ?")){
-  data={transactions:[],goal:0,planned:[]};
+
+ if(
+  confirm(
+   "Effacer toutes les données ?"
+  )
+ ){
+
+  data={
+   transactions:[],
+   goal:0,
+   planned:[]
+  };
+
+
   save();
-  render()
+
+  chartMonthOffset=0;
+
+  render();
+
  }
+
 }
+
+
+/* ==========================================================
+   DÉMARRAGE
+   ========================================================== */
 
 render();
 
-if("serviceWorker"in navigator)
- navigator.serviceWorker.register("./sw.js").catch(()=>{});
 
-</script></body></html>
+if("serviceWorker" in navigator){
+
+ navigator.serviceWorker
+  .register("./sw.js")
+  .catch(()=>{});
+
+}
+
+</script>
+
+</body>
+</html>
