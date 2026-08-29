@@ -64,23 +64,27 @@ workflows:
           mkdir -p www
           cp index.html privacy.html about.html manifest.webmanifest sw.js ads.txt www/
 
-      - name: Create iOS project
+      - name: Create iOS project without AdMob plugin
         script: |
+          npm uninstall @capacitor-community/admob
           npx cap add ios
 
-      - name: Set iOS 15 deployment target
+      - name: Set iOS 15 before AdMob
         script: |
           sed -i '' "s/platform :ios, '[0-9.]*'/platform :ios, '15.0'/" ios/App/Podfile
-          cd ios/App
-          pod repo update
-          pod install
-          cd ../..
+
+      - name: Reinstall AdMob and sync iOS
+        script: |
+          npm install @capacitor-community/admob@7
           npx cap sync ios
 
       - name: Configure AdMob iOS
         script: |
           /usr/libexec/PlistBuddy \
             -c "Add :GADApplicationIdentifier string ca-app-pub-1076788224709799~8711250560" \
+            ios/App/App/Info.plist || \
+          /usr/libexec/PlistBuddy \
+            -c "Set :GADApplicationIdentifier ca-app-pub-1076788224709799~8711250560" \
             ios/App/App/Info.plist
 
       - name: Set iOS build number
