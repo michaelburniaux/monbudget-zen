@@ -664,6 +664,41 @@ select:focus{
   margin-top:12px;
 }
 
+
+.headerClock{
+  margin-top:9px;
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  padding:7px 10px;
+  border-radius:12px;
+  background:rgba(90,169,255,.10);
+  border:1px solid rgba(90,169,255,.20);
+  color:#dceaff;
+  font-size:13px;
+  font-weight:700;
+}
+
+.exportChoices{
+  display:none;
+  margin-top:10px;
+  padding:12px;
+  border-radius:14px;
+  background:#091a31;
+  border:1px solid var(--border);
+}
+
+.exportChoices.show{
+  display:block;
+}
+
+.exportChoiceGrid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin-top:9px;
+}
+
 @media(max-width:520px){
   .donutArea{
     grid-template-columns:1fr;
@@ -690,7 +725,13 @@ select:focus{
 
   <div class="header">
     <h1>💶 Mon Budget ZEN</h1>
-    <p>Mes économies • v2.5</p>
+    <p>Mes économies • v2.6</p>
+
+    <div
+      class="headerClock"
+      id="currentDateTime">
+      📅 Date • 🕒 Heure
+    </div>
   </div>
 
   <div class="card">
@@ -1210,11 +1251,12 @@ select:focus{
 
   <div class="card">
 
-    <h2>💾 Sauvegarde</h2>
+    <h2>💾 Sauvegarde et export</h2>
 
     <div class="small" style="margin-bottom:12px">
       Vos données restent enregistrées sur votre appareil.
-      Vous pouvez aussi créer une copie de sauvegarde.
+      Vous pouvez exporter un rapport en PDF ou Excel,
+      ou conserver une sauvegarde complète de l'application.
     </div>
 
     <div class="backupButtons">
@@ -1222,18 +1264,55 @@ select:focus{
       <button
         type="button"
         class="btnSecondary"
-        onclick="exportData()">
+        onclick="toggleExportChoices()">
         Exporter
       </button>
 
       <label class="fileLabel">
-        Importer
+        Importer une sauvegarde
 
         <input
           type="file"
           accept=".json,application/json"
           onchange="importData(event)">
       </label>
+
+    </div>
+
+    <div
+      class="exportChoices"
+      id="exportChoices">
+
+      <div class="small">
+        Choisissez le format. Sur iPhone,
+        la feuille de partage sera utilisée si elle est disponible.
+      </div>
+
+      <div class="exportChoiceGrid">
+
+        <button
+          type="button"
+          class="btnSave"
+          onclick="exportPDF()">
+          📄 PDF partageable
+        </button>
+
+        <button
+          type="button"
+          class="btnSave"
+          onclick="exportXLS()">
+          📊 Excel (.xls)
+        </button>
+
+      </div>
+
+      <button
+        type="button"
+        class="btnSecondary"
+        style="width:100%;margin-top:8px"
+        onclick="exportBackup()">
+        💾 Sauvegarde complète (.json)
+      </button>
 
     </div>
 
@@ -1786,6 +1865,90 @@ function escapeHtml(str){
   .replaceAll(">","&gt;")
 
   .replaceAll('"',"&quot;");
+
+}
+
+
+function formatClockDate(d = new Date()){
+
+  const date =
+    d.toLocaleDateString(
+      "fr-BE",
+      {
+        weekday:"long",
+        day:"2-digit",
+        month:"long",
+        year:"numeric"
+      }
+    );
+
+
+  const time =
+    d.toLocaleTimeString(
+      "fr-BE",
+      {
+        hour:"2-digit",
+        minute:"2-digit",
+        second:"2-digit"
+      }
+    );
+
+
+  return (
+    `📅 ${date.replace(/^./,c=>c.toUpperCase())}`
+    +
+    ` • 🕒 ${time}`
+  );
+
+}
+
+
+function renderClock(){
+
+  if($("currentDateTime")){
+
+    $("currentDateTime").textContent =
+      formatClockDate();
+
+  }
+
+}
+
+
+function txDateTimeLabel(tx){
+
+  const dateText =
+    new Date(
+      tx.date + "T12:00:00"
+    )
+    .toLocaleDateString(
+      "fr-BE"
+    );
+
+
+  if(Number(tx.createdAt) > 0){
+
+    const timeText =
+      new Date(
+        Number(tx.createdAt)
+      )
+      .toLocaleTimeString(
+        "fr-BE",
+        {
+          hour:"2-digit",
+          minute:"2-digit"
+        }
+      );
+
+
+    return (
+      `${dateText} • ${timeText}`
+    );
+
+  }
+
+
+  return dateText;
 
 }
 
@@ -4608,21 +4771,7 @@ function renderTransactions(){
 
         `${escapeHtml(tx.category)}
          •
-         ${
-
-           new Date(
-
-             tx.date+"T12:00:00"
-
-           )
-
-           .toLocaleDateString(
-
-             "fr-BE"
-
-           )
-
-         }`;
+         ${txDateTimeLabel(tx)}`;
 
 
       if(fromSaving){
@@ -5639,64 +5788,676 @@ function renderTip(){
    EXPORT / IMPORT
 ================================ */
 
-function exportData(){
+function toggleExportChoices(){
 
-  const content =
+  $("exportChoices")
+  .classList
+  .toggle("show");
 
-    JSON.stringify(
-
-      data,
-
-      null,
-
-      2
-
-    );
+}
 
 
-  const blob =
+function reportRows(){
 
-    new Blob(
+  return data.transactions
+  .slice()
+  .sort(
+    (a,b)=>{
 
-      [content],
+      const ad =
+        new Date(a.date)
+        .getTime();
 
-      {
+      const bd =
+        new Date(b.date)
+        .getTime();
 
-        type:"application/json"
+      if(ad !== bd){
+
+        return bd-ad;
 
       }
 
+      return (
+        Number(b.createdAt || 0)
+        -
+        Number(a.createdAt || 0)
+      );
+
+    }
+  );
+
+}
+
+
+async function shareOrDownloadBlob(
+
+  blob,
+
+  filename,
+
+  title
+
+){
+
+  try{
+
+    const file =
+      new File(
+        [blob],
+        filename,
+        {
+          type:blob.type
+        }
+      );
+
+
+    if(
+
+      navigator.share
+
+      &&
+
+      navigator.canShare
+
+      &&
+
+      navigator.canShare({
+        files:[file]
+      })
+
+    ){
+
+      await navigator.share({
+
+        title,
+
+        files:[file]
+
+      });
+
+
+      return;
+
+    }
+
+  }catch(e){
+
+    if(
+      e
+      &&
+      e.name === "AbortError"
+    ){
+
+      return;
+
+    }
+
+    console.warn(
+      "Partage natif indisponible, téléchargement utilisé.",
+      e
     );
+
+  }
 
 
   const url =
-
     URL.createObjectURL(blob);
 
 
   const a =
-
     document.createElement("a");
 
 
   a.href = url;
 
+  a.download = filename;
 
-  a.download =
-
-    `mon-budget-zen-${todayISO()}.json`;
+  a.style.display = "none";
 
 
   document.body.appendChild(a);
 
-
   a.click();
 
 
-  a.remove();
+  setTimeout(
+
+    ()=>{
+
+      a.remove();
+
+      URL.revokeObjectURL(url);
+
+    },
+
+    1000
+
+  );
+
+}
 
 
-  URL.revokeObjectURL(url);
+async function exportBackup(){
+
+  const content =
+    JSON.stringify(
+      data,
+      null,
+      2
+    );
+
+
+  const blob =
+    new Blob(
+      [content],
+      {
+        type:"application/json"
+      }
+    );
+
+
+  await shareOrDownloadBlob(
+
+    blob,
+
+    `mon-budget-zen-sauvegarde-${todayISO()}.json`,
+
+    "Sauvegarde Mon Budget ZEN"
+
+  );
+
+}
+
+
+function exportData(){
+
+  return exportBackup();
+
+}
+
+
+function pdfSafeText(value){
+
+  return String(value ?? "")
+
+  .normalize("NFD")
+
+  .replace(
+    /[\u0300-\u036f]/g,
+    ""
+  )
+
+  .replace(
+    /€/g,
+    "EUR"
+  )
+
+  .replace(
+    /[^\x20-\x7E]/g,
+    " "
+  )
+
+  .replace(
+    /\\/g,
+    "\\\\"
+  )
+
+  .replace(
+    /\(/g,
+    "\\("
+  )
+
+  .replace(
+    /\)/g,
+    "\\)"
+  );
+
+}
+
+
+function buildSimplePDF(lines){
+
+  const pageWidth = 595;
+
+  const pageHeight = 842;
+
+  const left = 44;
+
+  const top = 790;
+
+  const lineHeight = 15;
+
+  const maxLines = 48;
+
+
+  const pages = [];
+
+
+  for(
+    let i=0;
+    i<lines.length;
+    i+=maxLines
+  ){
+
+    pages.push(
+      lines.slice(
+        i,
+        i+maxLines
+      )
+    );
+
+  }
+
+
+  if(!pages.length){
+
+    pages.push([
+      "Mon Budget ZEN"
+    ]);
+
+  }
+
+
+  const objects = [];
+
+
+  const addObject =
+    content=>{
+
+      objects.push(content);
+
+      return objects.length;
+
+    };
+
+
+  const fontId =
+    addObject(
+      "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>"
+    );
+
+
+  const fontBoldId =
+    addObject(
+      "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>"
+    );
+
+
+  const pageIds = [];
+
+  const contentIds = [];
+
+
+  pages.forEach(pageLines=>{
+
+    let stream = "BT\n";
+
+    stream +=
+      `/F2 16 Tf\n${left} ${top} Td\n`;
+
+    stream +=
+      `(${pdfSafeText(pageLines[0] || "Mon Budget ZEN")}) Tj\n`;
+
+    stream +=
+      "/F1 10 Tf\n0 -24 Td\n";
+
+
+    pageLines
+    .slice(1)
+    .forEach((line,index)=>{
+
+      if(index > 0){
+
+        stream +=
+          `0 -${lineHeight} Td\n`;
+
+      }
+
+      stream +=
+        `(${pdfSafeText(line)}) Tj\n`;
+
+    });
+
+
+    stream += "ET";
+
+
+    const contentId =
+      addObject(
+        `<< /Length ${stream.length} >>\nstream\n${stream}\nendstream`
+      );
+
+
+    contentIds.push(contentId);
+
+
+    const pageId =
+      addObject("");
+
+
+    pageIds.push(pageId);
+
+  });
+
+
+  const pagesId =
+    addObject("");
+
+
+  const catalogId =
+    addObject(
+      `<< /Type /Catalog /Pages ${pagesId} 0 R >>`
+    );
+
+
+  pageIds.forEach((pageId,index)=>{
+
+    objects[pageId-1] =
+      `<< /Type /Page /Parent ${pagesId} 0 R `
+      +
+      `/MediaBox [0 0 ${pageWidth} ${pageHeight}] `
+      +
+      `/Resources << /Font << /F1 ${fontId} 0 R /F2 ${fontBoldId} 0 R >> >> `
+      +
+      `/Contents ${contentIds[index]} 0 R >>`;
+
+  });
+
+
+  objects[pagesId-1] =
+    `<< /Type /Pages /Count ${pageIds.length} /Kids [`
+    +
+    pageIds
+    .map(id=>`${id} 0 R`)
+    .join(" ")
+    +
+    `] >>`;
+
+
+  let pdf = "%PDF-1.4\n";
+
+  const offsets = [0];
+
+
+  objects.forEach((object,index)=>{
+
+    offsets.push(
+      pdf.length
+    );
+
+    pdf +=
+      `${index+1} 0 obj\n${object}\nendobj\n`;
+
+  });
+
+
+  const xref =
+    pdf.length;
+
+
+  pdf +=
+    `xref\n0 ${objects.length+1}\n`;
+
+  pdf +=
+    "0000000000 65535 f \n";
+
+
+  for(
+    let i=1;
+    i<=objects.length;
+    i++
+  ){
+
+    pdf +=
+      String(offsets[i])
+      .padStart(10,"0")
+      +
+      " 00000 n \n";
+
+  }
+
+
+  pdf +=
+    `trailer\n<< /Size ${objects.length+1} /Root ${catalogId} 0 R >>\n`;
+
+  pdf +=
+    `startxref\n${xref}\n%%EOF`;
+
+
+  return new Blob(
+    [pdf],
+    {
+      type:"application/pdf"
+    }
+  );
+
+}
+
+
+async function exportPDF(){
+
+  const period =
+    currentPeriod();
+
+
+  const totals =
+    totalsForPeriod(period);
+
+
+  const rows =
+    reportRows();
+
+
+  const lines = [
+
+    "Mon Budget ZEN - Rapport budgetaire",
+
+    `Genere le ${new Date().toLocaleString("fr-BE")}`,
+
+    "",
+
+    `Mois actuel : ${periodName(period)}`,
+
+    `Revenus du mois : ${euro(totals.inc)}`,
+
+    `Depenses du mois : ${euro(totals.exp)}`,
+
+    `Epargne totale : ${euro(totalSaving())}`,
+
+    `Objectif d'epargne : ${euro(data.goal)}`,
+
+    "",
+
+    "Operations :"
+
+  ];
+
+
+  if(!rows.length){
+
+    lines.push(
+      "Aucune operation enregistree."
+    );
+
+  }
+
+  else{
+
+    rows.forEach(tx=>{
+
+      const sign =
+        tx.type === "income"
+        ? "+"
+        : "-";
+
+
+      const source =
+        tx.type === "expense"
+        ? (
+            tx.source === "saving"
+            ? "epargne"
+            : "compte courant"
+          )
+        : "revenu";
+
+
+      lines.push(
+        `${txDateTimeLabel(tx)} | ${tx.label} | ${tx.category} | ${sign}${euro(tx.amount)} | ${source}`
+      );
+
+    });
+
+  }
+
+
+  const blob =
+    buildSimplePDF(lines);
+
+
+  await shareOrDownloadBlob(
+
+    blob,
+
+    `mon-budget-zen-${todayISO()}.pdf`,
+
+    "Rapport Mon Budget ZEN"
+
+  );
+
+}
+
+
+async function exportXLS(){
+
+  const period =
+    currentPeriod();
+
+
+  const totals =
+    totalsForPeriod(period);
+
+
+  const rows =
+    reportRows();
+
+
+  const htmlEscape =
+    value=>
+      String(value ?? "")
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;");
+
+
+  const tableRows =
+    rows.map(tx=>{
+
+      const source =
+        tx.type === "expense"
+        ? (
+            tx.source === "saving"
+            ? "Épargne"
+            : "Compte courant"
+          )
+        : "Revenu";
+
+
+      let time = "";
+
+
+      if(Number(tx.createdAt) > 0){
+
+        time =
+          new Date(
+            Number(tx.createdAt)
+          )
+          .toLocaleTimeString(
+            "fr-BE",
+            {
+              hour:"2-digit",
+              minute:"2-digit"
+            }
+          );
+
+      }
+
+
+      return `
+        <tr>
+          <td>${htmlEscape(tx.date)}</td>
+          <td>${htmlEscape(time)}</td>
+          <td>${htmlEscape(tx.type === "income" ? "Revenu" : "Dépense")}</td>
+          <td>${htmlEscape(tx.label)}</td>
+          <td>${htmlEscape(tx.category)}</td>
+          <td>${Number(tx.amount || 0).toFixed(2)}</td>
+          <td>${htmlEscape(source)}</td>
+        </tr>
+      `;
+
+    }).join("");
+
+
+  const html =
+    `<!DOCTYPE html>
+     <html>
+     <head>
+       <meta charset="UTF-8">
+       <style>
+         table{border-collapse:collapse;font-family:Arial,sans-serif}
+         th,td{border:1px solid #999;padding:6px}
+         th{background:#e8eef7}
+         .summary td:first-child{font-weight:bold}
+       </style>
+     </head>
+     <body>
+       <h2>Mon Budget ZEN</h2>
+       <table class="summary">
+         <tr><td>Mois</td><td>${htmlEscape(periodName(period))}</td></tr>
+         <tr><td>Revenus du mois</td><td>${totals.inc.toFixed(2)}</td></tr>
+         <tr><td>Dépenses du mois</td><td>${totals.exp.toFixed(2)}</td></tr>
+         <tr><td>Épargne totale</td><td>${totalSaving().toFixed(2)}</td></tr>
+         <tr><td>Objectif d'épargne</td><td>${Number(data.goal || 0).toFixed(2)}</td></tr>
+       </table>
+       <br>
+       <table>
+         <thead>
+           <tr>
+             <th>Date</th>
+             <th>Heure</th>
+             <th>Type</th>
+             <th>Libellé</th>
+             <th>Catégorie</th>
+             <th>Montant EUR</th>
+             <th>Origine</th>
+           </tr>
+         </thead>
+         <tbody>
+           ${tableRows || `<tr><td colspan="7">Aucune opération</td></tr>`}
+         </tbody>
+       </table>
+     </body>
+     </html>`;
+
+
+  const blob =
+    new Blob(
+      ["\ufeff",html],
+      {
+        type:"application/vnd.ms-excel;charset=utf-8"
+      }
+    );
+
+
+  await shareOrDownloadBlob(
+
+    blob,
+
+    `mon-budget-zen-${todayISO()}.xls`,
+
+    "Export Excel Mon Budget ZEN"
+
+  );
 
 }
 
@@ -5838,6 +6599,18 @@ document.addEventListener(
     $("txDate").value =
 
       todayISO();
+
+
+    renderClock();
+
+
+    setInterval(
+
+      renderClock,
+
+      1000
+
+    );
 
 
     /*
