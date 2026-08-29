@@ -84,6 +84,15 @@ workflows:
         script: |
           npx cap sync ios
 
+      - name: Verify Camera plugin is installed
+        script: |
+          echo "=== Vérification du plugin Camera ==="
+          if ! grep -q "CapacitorCamera" ios/App/Podfile.lock; then
+            echo "ERREUR : le plugin CapacitorCamera n'est pas présent dans Podfile.lock."
+            exit 1
+          fi
+          echo "OK : CapacitorCamera est bien installé."
+
       - name: Configure AdMob iOS
         script: |
           /usr/libexec/PlistBuddy \
@@ -116,6 +125,27 @@ workflows:
             -c "Set :NSPhotoLibraryAddUsageDescription Mon Budget ZEN peut enregistrer les photos de factures dans votre photothèque lorsque vous le demandez." \
             ios/App/App/Info.plist
 
+      - name: Verify permissions before build
+        script: |
+          echo "=== Info.plist AVANT compilation ==="
+
+          CAMERA_VALUE=$(/usr/libexec/PlistBuddy -c "Print :NSCameraUsageDescription" ios/App/App/Info.plist 2>/dev/null || true)
+          PHOTO_VALUE=$(/usr/libexec/PlistBuddy -c "Print :NSPhotoLibraryUsageDescription" ios/App/App/Info.plist 2>/dev/null || true)
+
+          if [ -z "$CAMERA_VALUE" ]; then
+            echo "ERREUR : NSCameraUsageDescription est absent avant compilation."
+            exit 1
+          fi
+
+          if [ -z "$PHOTO_VALUE" ]; then
+            echo "ERREUR : NSPhotoLibraryUsageDescription est absent avant compilation."
+            exit 1
+          fi
+
+          echo "NSCameraUsageDescription = $CAMERA_VALUE"
+          echo "NSPhotoLibraryUsageDescription = $PHOTO_VALUE"
+          echo "OK : les autorisations sont présentes avant compilation."
+
       - name: Set iOS build number
         script: |
           cd ios/App
@@ -131,6 +161,55 @@ workflows:
           xcode-project build-ipa \
             --workspace "$CM_BUILD_DIR/ios/App/$XCODE_WORKSPACE" \
             --scheme "$XCODE_SCHEME"
+
+      - name: Verify permissions inside final IPA
+        script: |
+          echo "=== Vérification de l'IPA réellement compilée ==="
+
+          IPA_PATH=$(find build/ios/ipa -name "*.ipa" | head -n 1)
+
+          if [ -z "$IPA_PATH" ]; then
+            echo "ERREUR : aucune IPA trouvée."
+            exit 1
+          fi
+
+          rm -rf /tmp/monbudget_ipa_check
+          mkdir -p /tmp/monbudget_ipa_check
+          unzip -q "$IPA_PATH" -d /tmp/monbudget_ipa_check
+
+          APP_PLIST=$(find /tmp/monbudget_ipa_check/Payload -maxdepth 2 -name Info.plist | head -n 1)
+
+          if [ -z "$APP_PLIST" ]; then
+            echo "ERREUR : Info.plist introuvable dans l'IPA."
+            exit 1
+          fi
+
+          CAMERA_VALUE=$(/usr/libexec/PlistBuddy -c "Print :NSCameraUsageDescription" "$APP_PLIST" 2>/dev/null || true)
+          PHOTO_VALUE=$(/usr/libexec/PlistBuddy -c "Print :NSPhotoLibraryUsageDescription" "$APP_PLIST" 2>/dev/null || true)
+          APP_ID=$(/usr/libexec/PlistBuddy -c "Print :CFBundleIdentifier" "$APP_PLIST" 2>/dev/null || true)
+          BUILD_NUMBER=$(/usr/libexec/PlistBuddy -c "Print :CFBundleVersion" "$APP_PLIST" 2>/dev/null || true)
+
+          echo "Bundle ID : $APP_ID"
+          echo "Build : $BUILD_NUMBER"
+          echo "NSCameraUsageDescription : $CAMERA_VALUE"
+          echo "NSPhotoLibraryUsageDescription : $PHOTO_VALUE"
+
+          if [ "$APP_ID" != "com.michaelburniaux.monbudget" ]; then
+            echo "ERREUR : mauvais Bundle ID dans l'IPA finale."
+            exit 1
+          fi
+
+          if [ -z "$CAMERA_VALUE" ]; then
+            echo "ERREUR : NSCameraUsageDescription est ABSENT de l'IPA finale."
+            exit 1
+          fi
+
+          if [ -z "$PHOTO_VALUE" ]; then
+            echo "ERREUR : NSPhotoLibraryUsageDescription est ABSENT de l'IPA finale."
+            exit 1
+          fi
+
+          echo "OK : l'autorisation caméra est bien embarquée dans l'IPA finale."
 
     artifacts:
       - build/ios/ipa/*.ipa
