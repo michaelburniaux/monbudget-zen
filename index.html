@@ -760,7 +760,7 @@ select:focus{
 
   <div class="header">
     <h1>💶 Mon Budget ZEN</h1>
-    <p>Mes économies • v2.7.2</p>
+    <p>Mes économies • v2.7.3</p>
 
     <div
       class="headerClock"
@@ -852,7 +852,15 @@ select:focus{
       inputmode="decimal"
       placeholder="Montant">
 
-    <select id="txCategory"></select>
+    <select id="txCategory" onchange="updateBudgetTransactionUI()"></select>
+
+    <div id="budgetTxBox" style="display:none;margin-top:8px">
+      <div class="small" style="margin-bottom:6px">Objectif de budgétisation :</div>
+      <select id="txBudgetId"></select>
+      <div class="small" id="budgetTxHelp" style="margin-top:6px">
+        Le montant sera ajouté à l’objectif choisi et compté dans les dépenses du mois.
+      </div>
+    </div>
 
     <input
       id="txDate"
@@ -1168,24 +1176,20 @@ select:focus{
 
     <div class="row" style="margin-top:12px">
 
-      <label class="fileLabel" style="flex:1">
+      <button type="button" class="btnSave" style="flex:1" onclick="openInvoiceCamera()">
         📷 Photographier une facture
-        <input
-          id="invoiceCamera"
-          type="file"
-          accept="image/*"
-          capture="environment"
-          onchange="prepareInvoicePhoto(event)">
-      </label>
+      </button>
 
-      <label class="fileLabel" style="flex:1">
+      <button type="button" class="btnSecondary" style="flex:1" onclick="openInvoiceGallery()">
         🖼️ Choisir dans les photos
-        <input
-          id="invoicePhoto"
-          type="file"
-          accept="image/*"
-          onchange="prepareInvoicePhoto(event)">
-      </label>
+      </button>
+
+      <input
+        id="invoicePhotoFallback"
+        type="file"
+        accept="image/*"
+        style="display:none"
+        onchange="prepareInvoicePhoto(event)">
 
     </div>
 
@@ -1776,6 +1780,28 @@ function normalizeData(raw){
         : []
 
     }));
+
+
+  /*
+  Correction v2.7.3 : les anciennes dépenses de budgétisation
+  créées depuis le formulaire général n'avaient pas de budgetId.
+  S'il n'existe qu'un seul objectif actif, on peut les rattacher
+  sans ambiguïté afin que le statut et l'annulation fonctionnent.
+  */
+
+  if(d.budgets.length===1){
+    const onlyBudgetId=d.budgets[0].id;
+    d.transactions=d.transactions.map(tx=>{
+      if(
+        tx.type==="expense" &&
+        tx.category==="Budgétisation" &&
+        !tx.budgetId
+      ){
+        return { ...tx, budgetId:onlyBudgetId };
+      }
+      return tx;
+    });
+  }
 
 
   return d;
@@ -2465,13 +2491,26 @@ function closeTransactionForm(){
 
 function populateCategories(){
 
-  const list =
+  let list =
 
     transactionType === "income"
 
-    ? incomeCategories
+    ? incomeCategories.slice()
 
-    : expenseCategories;
+    : expenseCategories.slice();
+
+
+  /*
+  Budgétisation n'est proposée comme dépense que lorsqu'au moins
+  un objectif (nom + montant) a d'abord été créé.
+  */
+
+  if(
+    transactionType === "expense" &&
+    (!Array.isArray(data.budgets) || data.budgets.length===0)
+  ){
+    list=list.filter(c=>c!=="Budgétisation");
+  }
 
 
   $("txCategory").innerHTML =
@@ -2480,13 +2519,51 @@ function populateCategories(){
 
       c=>
 
-      `<option>
-
-       ${escapeHtml(c)}
-
-       </option>`
+      `<option>${escapeHtml(c)}</option>`
 
     ).join("");
+
+
+  updateBudgetTransactionUI();
+
+}
+
+
+function updateBudgetTransactionUI(){
+
+  const box=$("budgetTxBox");
+  const select=$("txBudgetId");
+  const category=$("txCategory").value;
+  const isBudget=
+    transactionType === "expense" &&
+    category === "Budgétisation";
+
+  if(!box || !select) return;
+
+  if(!isBudget){
+    box.style.display="none";
+    if($("sourceSaving")) $("sourceSaving").style.display="";
+    updateSourceUI();
+    return;
+  }
+
+  if(!Array.isArray(data.budgets) || data.budgets.length===0){
+    box.style.display="none";
+    alert("Créez d'abord un objectif de budgétisation avec un nom et un montant.");
+    populateCategories();
+    return;
+  }
+
+  select.innerHTML=data.budgets.map(b=>
+    `<option value="${escapeHtml(b.id)}">${escapeHtml(b.label)} — ${euro(budgetSaved(b.id))} / ${euro(b.target)}</option>`
+  ).join("");
+
+  box.style.display="block";
+
+  /* Un versement de budgétisation provient toujours du compte courant. */
+  expenseSource="current";
+  if($("sourceSaving")) $("sourceSaving").style.display="none";
+  updateSourceUI();
 
 }
 
@@ -2601,6 +2678,33 @@ function addTx(){
     || todayISO();
 
 
+  let budgetId=null;
+  let budgetBefore=0;
+  let selectedBudget=null;
+
+  if(
+    transactionType === "expense" &&
+    category === "Budgétisation"
+  ){
+
+    if(!Array.isArray(data.budgets) || data.budgets.length===0){
+      alert("Vous devez d'abord créer un objectif de budgétisation avec un nom et un montant.");
+      return;
+    }
+
+    budgetId=$("txBudgetId").value;
+    selectedBudget=data.budgets.find(b=>b.id===budgetId);
+
+    if(!selectedBudget){
+      alert("Choisissez l'objectif de budgétisation à alimenter.");
+      return;
+    }
+
+    budgetBefore=budgetSaved(budgetId);
+    expenseSource="current";
+  }
+
+
   if(
 
     !amount ||
@@ -2677,6 +2781,11 @@ function addTx(){
 
       : "current",
 
+    budgetId:
+      transactionType === "expense" && category === "Budgétisation"
+      ? budgetId
+      : undefined,
+
     createdAt:Date.now()
 
   });
@@ -2696,6 +2805,15 @@ function addTx(){
     beforeCompleted
 
   );
+
+
+  if(
+    selectedBudget &&
+    budgetBefore < Number(selectedBudget.target) &&
+    budgetSaved(budgetId) >= Number(selectedBudget.target)
+  ){
+    showBudgetVictory(selectedBudget);
+  }
 
 }
 
@@ -6917,12 +7035,137 @@ function renderBudgets(){
 
 let pendingInvoiceImage=null;
 
+function getNativeCameraPlugin(){
+  try{
+    return window.Capacitor &&
+      window.Capacitor.Plugins &&
+      window.Capacitor.Plugins.Camera
+      ? window.Capacitor.Plugins.Camera
+      : null;
+  }catch(e){
+    return null;
+  }
+}
+
+async function openInvoiceCamera(){
+  const Camera=getNativeCameraPlugin();
+
+  if(!Camera){
+    /* Navigateur/PWA : on retombe proprement sur le sélecteur de fichiers. */
+    $("invoicePhotoFallback").click();
+    return;
+  }
+
+  try{
+    if(Camera.requestPermissions){
+      await Camera.requestPermissions({permissions:["camera"]});
+    }
+
+    const photo=await Camera.getPhoto({
+      quality:75,
+      allowEditing:false,
+      resultType:"dataUrl",
+      source:"CAMERA",
+      direction:"REAR",
+      width:1600,
+      height:1600,
+      correctOrientation:true,
+      saveToGallery:false
+    });
+
+    if(photo && photo.dataUrl){
+      prepareInvoiceDataUrl(photo.dataUrl);
+    }
+  }catch(e){
+    console.error("Camera error",e);
+    const message=String((e && e.message) || e || "");
+    if(!/cancel/i.test(message)){
+      alert("Impossible d'ouvrir l'appareil photo. Vérifiez l'autorisation Caméra dans Réglages > Mon Budget ZEN.");
+    }
+  }
+}
+
+async function openInvoiceGallery(){
+  const Camera=getNativeCameraPlugin();
+
+  if(!Camera){
+    $("invoicePhotoFallback").click();
+    return;
+  }
+
+  try{
+    if(Camera.requestPermissions){
+      await Camera.requestPermissions({permissions:["photos"]});
+    }
+
+    const photo=await Camera.getPhoto({
+      quality:75,
+      allowEditing:false,
+      resultType:"dataUrl",
+      source:"PHOTOS",
+      width:1600,
+      height:1600,
+      correctOrientation:true,
+      saveToGallery:false
+    });
+
+    if(photo && photo.dataUrl){
+      prepareInvoiceDataUrl(photo.dataUrl);
+    }
+  }catch(e){
+    console.error("Photo library error",e);
+    const message=String((e && e.message) || e || "");
+    if(!/cancel/i.test(message)){
+      alert("Impossible d'ouvrir la photothèque. Vérifiez l'autorisation Photos dans Réglages > Mon Budget ZEN.");
+    }
+  }
+}
+
+function prepareInvoiceDataUrl(dataUrl){
+  const img=new Image();
+
+  img.onload=()=>{
+    try{
+      const maxSide=1600;
+      let width=img.width;
+      let height=img.height;
+
+      if(width>maxSide || height>maxSide){
+        const ratio=Math.min(maxSide/width,maxSide/height);
+        width=Math.round(width*ratio);
+        height=Math.round(height*ratio);
+      }
+
+      const canvas=document.createElement("canvas");
+      canvas.width=width;
+      canvas.height=height;
+
+      const ctx=canvas.getContext("2d");
+      ctx.drawImage(img,0,0,width,height);
+
+      pendingInvoiceImage=canvas.toDataURL("image/jpeg",0.72);
+      $("invoicePreview").src=pendingInvoiceImage;
+      $("invoiceDueDate").value=todayISO();
+      $("invoiceForm").classList.add("show");
+
+      setTimeout(()=>$("invoiceLabel").focus(),50);
+    }catch(e){
+      console.error(e);
+      alert("Impossible de préparer cette photo. Essayez une autre image.");
+    }
+  };
+
+  img.onerror=()=>{
+    alert("Impossible de lire cette image.");
+  };
+
+  img.src=dataUrl;
+}
+
 function prepareInvoicePhoto(event){
   const file=event.target.files && event.target.files[0];
 
-  if(!file){
-    return;
-  }
+  if(!file) return;
 
   if(!file.type.startsWith("image/")){
     alert("Choisissez une photo ou une image.");
@@ -6930,54 +7173,11 @@ function prepareInvoicePhoto(event){
     return;
   }
 
-  /*
-  Les photos prises par un iPhone peuvent dépasser plusieurs Mo.
-  On les réduit avant de les conserver afin d'éviter de saturer
-  le stockage local de l'application.
-  */
   const reader=new FileReader();
 
   reader.onload=()=>{
-    const img=new Image();
-
-    img.onload=()=>{
-      try{
-        const maxSide=1600;
-        let width=img.width;
-        let height=img.height;
-
-        if(width>maxSide || height>maxSide){
-          const ratio=Math.min(maxSide/width,maxSide/height);
-          width=Math.round(width*ratio);
-          height=Math.round(height*ratio);
-        }
-
-        const canvas=document.createElement("canvas");
-        canvas.width=width;
-        canvas.height=height;
-
-        const ctx=canvas.getContext("2d");
-        ctx.drawImage(img,0,0,width,height);
-
-        pendingInvoiceImage=canvas.toDataURL("image/jpeg",0.72);
-        $("invoicePreview").src=pendingInvoiceImage;
-        $("invoiceDueDate").value=todayISO();
-        $("invoiceForm").classList.add("show");
-
-        setTimeout(()=>$("invoiceLabel").focus(),50);
-      }catch(e){
-        console.error(e);
-        alert("Impossible de préparer cette photo. Essayez une autre image.");
-        event.target.value="";
-      }
-    };
-
-    img.onerror=()=>{
-      alert("Impossible de lire cette image.");
-      event.target.value="";
-    };
-
-    img.src=reader.result;
+    prepareInvoiceDataUrl(reader.result);
+    event.target.value="";
   };
 
   reader.onerror=()=>{
@@ -6992,12 +7192,8 @@ function cancelInvoiceForm(){
   pendingInvoiceImage=null;
   $("invoiceForm").classList.remove("show");
 
-  if($("invoiceCamera")){
-    $("invoiceCamera").value="";
-  }
-
-  if($("invoicePhoto")){
-    $("invoicePhoto").value="";
+  if($("invoicePhotoFallback")){
+    $("invoicePhotoFallback").value="";
   }
 
   $("invoiceLabel").value="";
