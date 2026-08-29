@@ -734,6 +734,112 @@ select:focus{
   margin-top:8px;
 }
 
+
+/* ================================
+   ASSISTANT ZEN — DOCUMENTS v2.8
+================================ */
+.assistantStatus{
+  margin-top:12px;
+  padding:12px;
+  border-radius:14px;
+  background:#091a31;
+  border:1px solid var(--border);
+  color:#dce7f5;
+  line-height:1.45;
+}
+.assistantStatus.loading{
+  border-color:rgba(90,169,255,.55);
+}
+.assistantResult{
+  margin-top:12px;
+  padding:14px;
+  border-radius:16px;
+  background:#091a31;
+  border:1px solid var(--border);
+}
+.assistantResult h3{
+  margin:0 0 8px;
+  font-size:16px;
+}
+.urgencyBadge{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  padding:5px 8px;
+  border-radius:999px;
+  font-size:11px;
+  font-weight:800;
+  border:1px solid var(--border);
+  margin:5px 0 8px;
+}
+.urgency-normal{background:#163b31;color:#9ff2cb;}
+.urgency-watch{background:#3d351a;color:#ffe39a;}
+.urgency-urgent{background:#4b2e1f;color:#ffc08a;}
+.urgency-critical{background:#512638;color:#ffd0d7;}
+.assistantAdvice{
+  white-space:pre-line;
+  color:#dce7f5;
+  line-height:1.55;
+  font-size:13px;
+}
+.assistantGrid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+}
+.assistantActions{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:8px;
+  margin-top:12px;
+}
+.assistantCheck{
+  display:flex;
+  align-items:flex-start;
+  gap:9px;
+  margin:10px 0;
+  padding:10px;
+  border-radius:12px;
+  background:#10233f;
+  color:#dce7f5;
+  font-size:13px;
+  line-height:1.4;
+}
+.assistantCheck input{
+  width:auto;
+  margin:2px 0 0;
+}
+.rawText{
+  white-space:pre-wrap;
+  word-break:break-word;
+  color:#b9c9da;
+  font-size:11px;
+  line-height:1.45;
+  max-height:220px;
+  overflow:auto;
+  padding:10px;
+  border-radius:10px;
+  background:#071426;
+  margin-top:8px;
+}
+.docMetaLine{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin-top:7px;
+}
+.docChip{
+  font-size:10px;
+  padding:4px 7px;
+  border-radius:999px;
+  background:#172f4d;
+  color:#dce7f5;
+  border:1px solid var(--border);
+}
+@media(max-width:520px){
+  .assistantGrid{grid-template-columns:1fr;}
+}
+
 @media(max-width:520px){
   .donutArea{
     grid-template-columns:1fr;
@@ -760,7 +866,7 @@ select:focus{
 
   <div class="header">
     <h1>💶 Mon Budget ZEN</h1>
-    <p>Mes économies • v2.7.6</p>
+    <p>Mes économies • v2.8.0</p>
 
     <div
       class="headerClock"
@@ -1196,48 +1302,97 @@ select:focus{
 
   <div class="card" id="invoiceSection">
 
-    <h2>📸 Factures & documents</h2>
+    <h2>🤖 Assistant ZEN — documents</h2>
 
     <div class="small">
-      Photographiez une facture et conservez son image dans l'application. Elle peut ensuite être placée dans « À payer prochainement » puis dans « Payé ».
+      Photographiez une facture, un ticket ou un courrier administratif. L'assistant lit le document sur l'iPhone, l'identifie, repère les montants et échéances et vous explique les démarches à suivre. Vérifiez toujours les informations détectées avant de les valider.
     </div>
 
     <div class="row" style="margin-top:12px">
-
       <button type="button" class="btnSave" style="flex:1" onclick="openInvoiceCamera()">
-        📷 Photographier une facture
+        📷 Photographier un document
       </button>
-
       <button type="button" class="btnSecondary" style="flex:1" onclick="openInvoiceGallery()">
         🖼️ Choisir dans les photos
       </button>
-
-      <input
-        id="invoicePhotoFallback"
-        type="file"
-        accept="image/*"
-        style="display:none"
-        onchange="prepareInvoicePhoto(event)">
-
+      <input id="invoicePhotoFallback" type="file" accept="image/*" style="display:none" onchange="prepareInvoicePhoto(event)">
     </div>
 
+    <div id="documentAnalysisStatus" class="assistantStatus" style="display:none"></div>
+
     <div class="formBox" id="invoiceForm" style="margin-top:12px">
-      <div class="small" style="margin-bottom:8px">Identification de la facture</div>
-      <img id="invoicePreview" class="photoPreview" alt="Aperçu">
-      <input id="invoiceLabel" type="text" placeholder="Ex. Facture électricité">
-      <input id="invoiceAmount" type="number" step="0.01" inputmode="decimal" placeholder="Montant à payer">
+      <div class="small" style="margin-bottom:8px">Document analysé — vérifiez ou corrigez les informations</div>
+      <img id="invoicePreview" class="photoPreview" alt="Aperçu du document">
+
+      <div id="assistantResult" class="assistantResult" style="display:none">
+        <h3 id="assistantTitle">Analyse du document</h3>
+        <div id="assistantUrgency"></div>
+        <div class="assistantAdvice" id="assistantSummary"></div>
+        <div class="archiveTitle" style="margin-top:12px">Que dois-je faire maintenant ?</div>
+        <div class="assistantAdvice" id="assistantAdvice"></div>
+        <details style="margin-top:10px">
+          <summary class="small" style="cursor:pointer">Voir le texte reconnu</summary>
+          <div class="rawText" id="assistantRawText"></div>
+        </details>
+      </div>
+
+      <input id="invoiceLabel" type="text" placeholder="Organisme ou description">
+
+      <div class="assistantGrid">
+        <select id="invoiceDocumentType">
+          <option value="facture">Facture</option>
+          <option value="ticket_restaurant">Ticket restaurant</option>
+          <option value="ticket">Ticket / reçu</option>
+          <option value="rappel">Rappel / mise en demeure</option>
+          <option value="administratif">Courrier administratif</option>
+          <option value="assurance">Assurance</option>
+          <option value="banque">Banque</option>
+          <option value="impots">Impôts / taxes</option>
+          <option value="sante">Santé / mutuelle</option>
+          <option value="contrat">Contrat</option>
+          <option value="autre">Autre document</option>
+        </select>
+        <select id="invoiceCategory">
+          <option>Alimentation</option>
+          <option>Logement</option>
+          <option>Crédit</option>
+          <option>Énergie</option>
+          <option>Transport</option>
+          <option>Assurance</option>
+          <option>Abonnements</option>
+          <option>Loisirs</option>
+          <option>Restaurant</option>
+          <option>Santé</option>
+          <option>Shopping</option>
+          <option>Impôts</option>
+          <option>Autre</option>
+        </select>
+      </div>
+
+      <input id="invoiceAmount" type="number" step="0.01" inputmode="decimal" placeholder="Montant (si le document en contient un)">
       <input id="invoiceDueDate" type="date">
-      <div class="row">
-        <button type="button" class="btnSave" onclick="saveInvoice()">Ajouter à « À payer »</button>
-        <button type="button" class="btnSecondary" onclick="cancelInvoiceForm()">Annuler</button>
+
+      <label class="assistantCheck">
+        <input id="invoiceIncludeBudget" type="checkbox">
+        <span><strong>Inclure dans mon budget</strong><br><span class="small">Pour un ticket déjà payé, la dépense sera ajoutée immédiatement. Pour une facture à payer, elle sera ajoutée lorsque vous la marquerez comme payée.</span></span>
+      </label>
+
+      <div class="assistantActions">
+        <button type="button" class="btnSave" onclick="saveAnalyzedDocument('paid')">✅ Déjà payé — classer dans mes dépenses</button>
+        <button type="button" class="btnSecondary" onclick="saveAnalyzedDocument('upcoming')">⏳ À payer / à traiter</button>
+        <button type="button" class="btnSecondary" onclick="saveAnalyzedDocument('archive')">📁 Archiver sans l'ajouter au budget</button>
+        <button type="button" class="btnDanger" onclick="cancelInvoiceForm()">Annuler</button>
       </div>
     </div>
 
-    <div class="archiveTitle">⏳ À payer prochainement</div>
+    <div class="archiveTitle">🔴 À payer / à traiter</div>
     <div id="invoiceUpcoming"></div>
 
-    <div class="archiveTitle">🗂️ Payé — archive photos/images</div>
+    <div class="archiveTitle">✅ Dépenses payées / tickets</div>
     <div id="invoicePaid"></div>
+
+    <div class="archiveTitle">📁 Documents administratifs archivés</div>
+    <div id="invoiceArchived"></div>
 
   </div>
 
@@ -7165,26 +7320,14 @@ function renderBudgets(){
 ================================ */
 
 let pendingInvoiceImage=null;
+let pendingDocumentAnalysis=null;
 
 function getNativeCameraPlugin(){
   try{
     const cap=window.Capacitor;
-
     if(!cap) return null;
-
-    if(cap.Plugins && cap.Plugins.Camera){
-      return cap.Plugins.Camera;
-    }
-
-    /*
-    Capacitor 7 peut exposer le plugin via registerPlugin plutôt que
-    directement dans Capacitor.Plugins. Cette voie évite de tomber
-    inutilement sur le sélecteur HTML dans l'application native.
-    */
-    if(typeof cap.registerPlugin === "function"){
-      return cap.registerPlugin("Camera");
-    }
-
+    if(cap.Plugins && cap.Plugins.Camera) return cap.Plugins.Camera;
+    if(typeof cap.registerPlugin === "function") return cap.registerPlugin("Camera");
     return null;
   }catch(e){
     console.error("Camera plugin detection error",e);
@@ -7192,31 +7335,29 @@ function getNativeCameraPlugin(){
   }
 }
 
+function getNativeTextRecognitionPlugin(){
+  try{
+    const cap=window.Capacitor;
+    if(!cap) return null;
+    if(cap.Plugins && cap.Plugins.CapacitorPluginMlKitTextRecognition){
+      return cap.Plugins.CapacitorPluginMlKitTextRecognition;
+    }
+    if(typeof cap.registerPlugin === "function"){
+      return cap.registerPlugin("CapacitorPluginMlKitTextRecognition");
+    }
+    return null;
+  }catch(e){
+    console.error("Text recognition plugin detection error",e);
+    return null;
+  }
+}
+
 function nativePhotoToInvoice(photo){
   return new Promise((resolve,reject)=>{
-    if(!photo){
-      reject(new Error("Aucune photo reçue"));
-      return;
-    }
-
-    if(photo.dataUrl){
-      prepareInvoiceDataUrl(photo.dataUrl);
-      resolve();
-      return;
-    }
-
+    if(!photo){ reject(new Error("Aucune photo reçue")); return; }
+    if(photo.dataUrl){ prepareInvoiceDataUrl(photo.dataUrl); resolve(); return; }
     const source=photo.webPath || photo.path;
-
-    if(!source){
-      reject(new Error("Chemin de photo introuvable"));
-      return;
-    }
-
-    /*
-    On demande maintenant un URI au plugin natif. C'est beaucoup plus
-    léger et plus stable que de faire transiter une grande image Base64
-    directement dans le pont iOS.
-    */
+    if(!source){ reject(new Error("Chemin de photo introuvable")); return; }
     fetch(source)
       .then(response=>{
         if(!response.ok) throw new Error("Lecture de la photo impossible");
@@ -7224,10 +7365,7 @@ function nativePhotoToInvoice(photo){
       })
       .then(blob=>{
         const reader=new FileReader();
-        reader.onload=()=>{
-          prepareInvoiceDataUrl(reader.result);
-          resolve();
-        };
+        reader.onload=()=>{ prepareInvoiceDataUrl(reader.result); resolve(); };
         reader.onerror=()=>reject(new Error("Conversion de la photo impossible"));
         reader.readAsDataURL(blob);
       })
@@ -7237,37 +7375,23 @@ function nativePhotoToInvoice(photo){
 
 async function openInvoiceCamera(){
   const Camera=getNativeCameraPlugin();
-
   if(!Camera || typeof Camera.getPhoto !== "function"){
     alert("La caméra native n'est pas disponible dans cette version de l'application.");
     return;
   }
-
   try{
-    /*
-    La galerie fonctionne : le pont Capacitor et le plugin sont donc chargés.
-    Ici on traite uniquement l'autorisation caméra iOS.
-    */
     if(typeof Camera.checkPermissions === "function"){
       let status=await Camera.checkPermissions();
-
       if(status && status.camera !== "granted"){
-        if(
-          (status.camera === "prompt" || status.camera === "prompt-with-rationale") &&
-          typeof Camera.requestPermissions === "function"
-        ){
+        if((status.camera === "prompt" || status.camera === "prompt-with-rationale") && typeof Camera.requestPermissions === "function"){
           status=await Camera.requestPermissions({permissions:["camera"]});
         }
-
         if(!status || status.camera !== "granted"){
-          alert(
-            "L'accès à la caméra n'est pas autorisé. Ouvrez Réglages > Mon Budget ZEN > Caméra et activez l'autorisation, puis revenez dans l'application."
-          );
+          alert("L'accès à la caméra n'est pas autorisé. Ouvrez Réglages > Mon Budget ZEN > Caméra et activez l'autorisation.");
           return;
         }
       }
     }
-
     const photo=await Camera.getPhoto({
       quality:75,
       allowEditing:false,
@@ -7279,176 +7403,427 @@ async function openInvoiceCamera(){
       correctOrientation:true,
       saveToGallery:false
     });
-
     await nativePhotoToInvoice(photo);
   }catch(e){
     console.error("Camera error",e);
-
     const message=String((e && e.message) || e || "Erreur inconnue");
-    const code=String((e && e.code) || "");
-
-    if(/cancel|user cancelled|canceled/i.test(message)){
-      return;
-    }
-
-    alert(
-      "La caméra n'a pas pu s'ouvrir.\n\n" +
-      "Erreur iOS/Capacitor : " + message +
-      (code ? "\nCode : " + code : "") +
-      "\n\nSi le problème continue, cette erreur permettra d'identifier exactement ce qu'iOS refuse."
-    );
+    if(/cancel|user cancelled|canceled/i.test(message)) return;
+    alert("La caméra n'a pas pu s'ouvrir.\n\n"+message);
   }
 }
 
 async function openInvoiceGallery(){
   const Camera=getNativeCameraPlugin();
-
-  if(!Camera){
-    $("invoicePhotoFallback").click();
-    return;
-  }
-
+  if(!Camera){ $("invoicePhotoFallback").click(); return; }
   try{
-    /*
-    pickImages utilise le sélecteur de photos iOS. On ne réclame plus
-    l'accès complet à toute la photothèque avant de l'ouvrir : l'utilisateur
-    choisit simplement la photo qu'il souhaite transmettre à l'application.
-    */
     if(typeof Camera.pickImages === "function"){
-      const result=await Camera.pickImages({
-        quality:75,
-        width:1600,
-        height:1600,
-        limit:1,
-        correctOrientation:true
-      });
-
-      const photo=result && Array.isArray(result.photos)
-        ? result.photos[0]
-        : null;
-
-      if(photo){
-        await nativePhotoToInvoice(photo);
-      }
-
+      const result=await Camera.pickImages({quality:75,width:1600,height:1600,limit:1,correctOrientation:true});
+      const photo=result && Array.isArray(result.photos) ? result.photos[0] : null;
+      if(photo) await nativePhotoToInvoice(photo);
       return;
     }
-
-    /* Compatibilité de secours si pickImages n'est pas exposé. */
     const photo=await Camera.getPhoto({
-      quality:75,
-      allowEditing:false,
-      resultType:"uri",
-      source:"PHOTOS",
-      width:1600,
-      height:1600,
-      correctOrientation:true,
-      saveToGallery:false
+      quality:75,allowEditing:false,resultType:"uri",source:"PHOTOS",width:1600,height:1600,correctOrientation:true,saveToGallery:false
     });
-
     await nativePhotoToInvoice(photo);
   }catch(e){
     console.error("Photo library error",e);
     const message=String((e && e.message) || e || "");
-
-    if(!/cancel|user cancelled|canceled/i.test(message)){
-      alert("Impossible d'importer cette photo. Essayez une autre image.");
-    }
+    if(!/cancel|user cancelled|canceled/i.test(message)) alert("Impossible d'importer cette photo. Essayez une autre image.");
   }
 }
 
 function prepareInvoiceDataUrl(dataUrl){
   const img=new Image();
-
   img.onload=()=>{
     try{
       const maxSide=1600;
-      let width=img.width;
-      let height=img.height;
-
+      let width=img.width, height=img.height;
       if(width>maxSide || height>maxSide){
         const ratio=Math.min(maxSide/width,maxSide/height);
-        width=Math.round(width*ratio);
-        height=Math.round(height*ratio);
+        width=Math.round(width*ratio); height=Math.round(height*ratio);
       }
-
       const canvas=document.createElement("canvas");
-      canvas.width=width;
-      canvas.height=height;
-
+      canvas.width=width; canvas.height=height;
       const ctx=canvas.getContext("2d");
       ctx.drawImage(img,0,0,width,height);
-
       pendingInvoiceImage=canvas.toDataURL("image/jpeg",0.72);
       $("invoicePreview").src=pendingInvoiceImage;
-      $("invoiceDueDate").value=todayISO();
+      $("invoiceDueDate").value="";
       $("invoiceForm").classList.add("show");
-
-      setTimeout(()=>$("invoiceLabel").focus(),50);
+      runDocumentAnalysis();
     }catch(e){
       console.error(e);
       alert("Impossible de préparer cette photo. Essayez une autre image.");
     }
   };
-
-  img.onerror=()=>{
-    alert("Impossible de lire cette image.");
-  };
-
+  img.onerror=()=>alert("Impossible de lire cette image.");
   img.src=dataUrl;
 }
 
 function prepareInvoicePhoto(event){
   const file=event.target.files && event.target.files[0];
-
   if(!file) return;
-
   if(!file.type.startsWith("image/")){
     alert("Choisissez une photo ou une image.");
     event.target.value="";
     return;
   }
-
   const reader=new FileReader();
-
-  reader.onload=()=>{
-    prepareInvoiceDataUrl(reader.result);
-    event.target.value="";
-  };
-
-  reader.onerror=()=>{
-    alert("Impossible de lire cette image.");
-    event.target.value="";
-  };
-
+  reader.onload=()=>{ prepareInvoiceDataUrl(reader.result); event.target.value=""; };
+  reader.onerror=()=>{ alert("Impossible de lire cette image."); event.target.value=""; };
   reader.readAsDataURL(file);
+}
+
+function normalizeDocumentText(text){
+  return String(text||"")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g,"")
+    .toLowerCase()
+    .replace(/\s+/g," ")
+    .trim();
+}
+
+function parseMoneyValue(raw){
+  let s=String(raw||"").replace(/\s/g,"").replace(/€/g,"");
+  if(s.includes(",") && s.includes(".")){
+    if(s.lastIndexOf(",")>s.lastIndexOf(".")) s=s.replace(/\./g,"").replace(",",".");
+    else s=s.replace(/,/g,"");
+  }else if(s.includes(",")) s=s.replace(",",".");
+  const n=Number(s);
+  return Number.isFinite(n)?n:0;
+}
+
+function extractDocumentAmount(text){
+  const lines=String(text||"").split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
+  const preferred=/total|montant\s+(?:a|à)\s+payer|net\s+(?:a|à)\s+payer|solde|due|prix\s+total|total\s+ttc/i;
+  const re=/(\d{1,6}(?:[ .]\d{3})*[,.]\d{2})\s*€?/g;
+  const getVals=line=>Array.from(line.matchAll(re)).map(m=>parseMoneyValue(m[1])).filter(n=>n>0&&n<1000000);
+  let candidates=[];
+  lines.filter(l=>preferred.test(l)).forEach(l=>candidates.push(...getVals(l)));
+  if(candidates.length) return candidates[candidates.length-1];
+  lines.forEach(l=>candidates.push(...getVals(l)));
+  if(!candidates.length) return 0;
+  return Math.max(...candidates);
+}
+
+function isoFromParts(d,m,y){
+  d=Number(d);m=Number(m);y=Number(y);
+  if(y<100) y+=2000;
+  if(y<2000||y>2100||m<1||m>12||d<1||d>31) return "";
+  const test=new Date(y,m-1,d,12,0,0);
+  if(test.getFullYear()!==y||test.getMonth()!==m-1||test.getDate()!==d) return "";
+  return `${y}-${String(m).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+}
+
+function extractDocumentDueDate(text){
+  const lines=String(text||"").split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
+  const due=/echeance|échéance|date limite|avant le|au plus tard|a payer avant|à payer avant|payment due|payer pour le/i;
+  const dateRe=/(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{2,4})/;
+  for(const line of lines){
+    if(due.test(line)){
+      const m=line.match(dateRe);
+      if(m){ const iso=isoFromParts(m[1],m[2],m[3]); if(iso) return iso; }
+    }
+  }
+  for(let i=0;i<lines.length;i++){
+    if(due.test(lines[i])){
+      const around=[lines[i-1],lines[i+1]].filter(Boolean).join(" ");
+      const m=around.match(dateRe);
+      if(m){ const iso=isoFromParts(m[1],m[2],m[3]); if(iso) return iso; }
+    }
+  }
+  return "";
+}
+
+function detectIssuer(text){
+  const normalized=normalizeDocumentText(text);
+  const known=[
+    ["engie","ENGIE"],["ores","ORES"],["luminus","Luminus"],["totalenergies","TotalEnergies"],
+    ["proximus","Proximus"],["orange belgium","Orange"],["telenet","Telenet"],["voo","VOO"],
+    ["swde","SWDE"],["inbw","in BW"],["belfius","Belfius"],["ing belg","ING"],["bnpparibas","BNP Paribas Fortis"],
+    ["partenamut","Partenamut"],["solidaris","Solidaris"],["mutualite chretienne","Mutualité chrétienne"],
+    ["spf finances","SPF Finances"],["service public federal finances","SPF Finances"]
+  ];
+  for(const [key,name] of known){ if(normalized.includes(key)) return name; }
+  const lines=String(text||"").split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
+  for(const line of lines.slice(0,10)){
+    if(line.length>=3 && line.length<=60 && /[A-Za-zÀ-ÿ]/.test(line) && !/^facture|^ticket|^date|^client|^numero|^n°|^tva/i.test(line)){
+      return line.replace(/\s{2,}/g," ");
+    }
+  }
+  return "Document";
+}
+
+function classifyDocument(text){
+  const t=normalizeDocumentText(text);
+  if(/mise en demeure|dernier rappel|rappel de paiement|sommation/.test(t)) return "rappel";
+  if(/restaurant|brasserie|pizzeria|cafe |café |addition/.test(t) && /ticket|total|tva|bancontact|visa|mastercard|carte/.test(t)) return "ticket_restaurant";
+  if(/ticket|recu|reçu|merci de votre visite|bancontact|terminal|visa|mastercard/.test(t) && /total|tva|montant/.test(t)) return "ticket";
+  if(/facture|invoice|montant a payer|net a payer|solde a payer/.test(t)) return "facture";
+  if(/assurance|prime d'assurance|police d'assurance|sinistre/.test(t)) return "assurance";
+  if(/spf finances|impot|impôt|precompte|précompte|taxe|avertissement extrait de role|rôle/.test(t)) return "impots";
+  if(/mutuelle|mutualite|mutualité|remboursement de soins|attestation de soins|hopital|hôpital/.test(t)) return "sante";
+  if(/banque|compte bancaire|extrait de compte|credit|crédit|iban/.test(t)) return "banque";
+  if(/contrat|conditions generales|conditions générales|resiliation|résiliation|engagement/.test(t)) return "contrat";
+  if(/commune|administration|service public|ministere|ministère|attestation|formulaire|dossier|convocation/.test(t)) return "administratif";
+  return "autre";
+}
+
+function documentTypeLabel(type){
+  return ({
+    facture:"Facture",ticket_restaurant:"Ticket restaurant",ticket:"Ticket / reçu",rappel:"Rappel / mise en demeure",
+    administratif:"Courrier administratif",assurance:"Assurance",banque:"Banque",impots:"Impôts / taxes",
+    sante:"Santé / mutuelle",contrat:"Contrat",autre:"Autre document"
+  })[type]||"Document";
+}
+
+function suggestCategory(text,type){
+  const t=normalizeDocumentText(text);
+  if(type==="ticket_restaurant" || /restaurant|brasserie|pizzeria/.test(t)) return "Restaurant";
+  if(/electricite|électricité|gaz|energie|énergie|ores|engie|luminus/.test(t)) return "Énergie";
+  if(/eau|swde|distribution d'eau/.test(t)) return "Logement";
+  if(/loyer|immobilier|syndic/.test(t)) return "Logement";
+  if(/assurance|prime/.test(t)) return "Assurance";
+  if(/proximus|orange|voo|telenet|abonnement|internet|telephone|téléphone/.test(t)) return "Abonnements";
+  if(/pharmacie|medecin|médecin|hopital|hôpital|mutuelle/.test(t)) return "Santé";
+  if(/carburant|essence|diesel|station service|parking|train|sncb/.test(t)) return "Transport";
+  if(/spf finances|impot|impôt|taxe|precompte|précompte/.test(t)) return "Impôts";
+  if(/supermarche|supermarché|carrefour|delhaize|colruyt|aldi|lidl|intermarche|intermarché/.test(t)) return "Alimentation";
+  if(type==="ticket") return "Shopping";
+  return "Autre";
+}
+
+function looksPaid(text,type){
+  const t=normalizeDocumentText(text);
+  if(/acquitte|acquitté|paye|payé|paiement accepte|paiement accepté|bancontact|mastercard|visa|carte bancaire|especes|espèces|cash|montant recu|montant reçu/.test(t)) return true;
+  return type==="ticket" || type==="ticket_restaurant";
+}
+
+function extractIBAN(text){
+  const compact=String(text||"").replace(/\s/g,"").toUpperCase();
+  const m=compact.match(/BE\d{14}/);
+  return m?m[0].replace(/(.{4})/g,"$1 ").trim():"";
+}
+
+function extractStructuredCommunication(text){
+  const m=String(text||"").match(/\+\+\+\s*([0-9]{3})[\/\s]?([0-9]{4})[\/\s]?([0-9]{5})\s*\+\+\+/);
+  return m?`+++${m[1]}/${m[2]}/${m[3]}+++`:"";
+}
+
+function daysUntilISO(iso){
+  if(!iso) return null;
+  const [y,m,d]=iso.split("-").map(Number);
+  const target=new Date(y,m-1,d,12,0,0);
+  const now=new Date();
+  const today=new Date(now.getFullYear(),now.getMonth(),now.getDate(),12,0,0);
+  return Math.round((target-today)/86400000);
+}
+
+function urgencyForDocument(type,dueDate){
+  if(type==="rappel" && !dueDate) return {key:"urgent",label:"🟠 URGENT — vérifiez le délai indiqué"};
+  const days=daysUntilISO(dueDate);
+  if(days===null) return {key:"normal",label:"🟢 Pas d'échéance détectée"};
+  if(days<0) return {key:"critical",label:`🔴 TRÈS URGENT — échéance dépassée de ${Math.abs(days)} jour${Math.abs(days)>1?'s':''}`};
+  if(days<=7) return {key:"critical",label:`🔴 TRÈS URGENT — ${days} jour${days>1?'s':''} restant${days>1?'s':''}`};
+  if(days<=14) return {key:"urgent",label:`🟠 URGENT — ${days} jours restants`};
+  if(days<=30) return {key:"watch",label:`🟡 À SURVEILLER — ${days} jours restants`};
+  return {key:"normal",label:`🟢 NORMAL — ${days} jours restants`};
+}
+
+function buildDocumentAdvice(info){
+  const due=info.dueDate ? new Date(info.dueDate+"T12:00:00").toLocaleDateString("fr-BE") : "aucune date limite clairement détectée";
+  const amount=info.amount>0?euro(info.amount):"aucun montant fiable détecté";
+  const iban=extractIBAN(info.text);
+  const communication=extractStructuredCommunication(info.text);
+  let summary="";
+  let steps=[];
+
+  if(info.type==="facture"){
+    summary=`Il s'agit probablement d'une facture de ${info.issuer}. Montant détecté : ${amount}. Échéance : ${due}.`;
+    steps=[
+      "1. Vérifiez que votre nom, votre adresse ou votre numéro de client correspondent bien à votre situation.",
+      `2. Vérifiez le montant à payer : ${amount}.`,
+      info.dueDate?`3. Effectuez le paiement au plus tard le ${due}.`:"3. Recherchez manuellement la date d'échéance : l'assistant n'en a pas identifié une avec suffisamment de certitude.",
+      iban?`4. IBAN repéré sur le document : ${iban}. Comparez-le toujours avec une source officielle de l'organisme avant de payer.`:"4. Utilisez uniquement les coordonnées de paiement présentes sur le document officiel ou dans votre espace client.",
+      communication?`5. Communication structurée repérée : ${communication}. Recopiez-la exactement si elle est bien liée à cette facture.`:"5. Si une communication structurée ou une référence de paiement est indiquée, recopiez-la exactement.",
+      "6. Après paiement, gardez la preuve de transaction et marquez le document comme payé dans l'application."
+    ];
+  }else if(info.type==="rappel"){
+    summary=`Ce document ressemble à un rappel de paiement ou une mise en demeure de ${info.issuer}. Il faut le traiter rapidement.`;
+    steps=[
+      "1. Vérifiez d'abord si la somme réclamée a déjà été payée. Consultez vos extraits bancaires et vos preuves de paiement.",
+      "2. Si vous avez déjà payé, ne payez pas une deuxième fois : rassemblez la preuve et contactez l'organisme avec la référence du dossier.",
+      info.dueDate?`3. Le délai détecté se termine le ${due}. Ne laissez pas cette date passer sans agir.`:"3. Cherchez dans le courrier le délai exact de réponse ou de paiement.",
+      "4. Si vous contestez la somme, demandez par écrit le détail de la dette et conservez une copie de votre message.",
+      "5. Si des frais supplémentaires, huissier ou procédure judiciaire sont mentionnés et que vous ne comprenez pas le courrier, demandez rapidement l'aide d'un professionnel ou d'un service d'aide juridique."
+    ];
+  }else if(info.type==="ticket" || info.type==="ticket_restaurant"){
+    summary=`Il s'agit probablement d'un ${info.type==="ticket_restaurant"?'ticket de restaurant':'ticket ou reçu'} déjà réglé. Total détecté : ${amount}.`;
+    steps=[
+      "1. Vérifiez le total et la date du ticket.",
+      "2. Si cette dépense doit apparaître dans votre budget, laissez « Inclure dans mon budget » activé.",
+      `3. Catégorie suggérée : ${info.category}. Vous pouvez la modifier avant de valider.`,
+      "4. Si vous souhaitez seulement conserver la preuve d'achat, choisissez « Archiver sans l'ajouter au budget »."
+    ];
+  }else if(info.type==="impots"){
+    summary=`Ce document semble concerner un impôt, une taxe ou le SPF Finances. Échéance détectée : ${due}.`;
+    steps=[
+      "1. Identifiez précisément l'impôt ou la taxe concernée et l'année de revenus indiquée.",
+      info.dueDate?`2. Notez la date limite : ${due}.`:"2. Recherchez la date limite de paiement, de déclaration ou de contestation.",
+      "3. Vérifiez les références du document dans votre espace officiel ou via les coordonnées officielles du SPF/administration avant tout paiement.",
+      "4. Si le montant ou la décision vous semble incorrect, recherchez la procédure et le délai de réclamation indiqué dans le courrier.",
+      "5. Conservez le document, les annexes et toute preuve de paiement ou d'envoi."
+    ];
+  }else if(info.type==="assurance"){
+    summary=`Ce courrier semble provenir d'une assurance. L'assistant a repéré ${info.amount>0?`un montant de ${amount}`:"aucun montant certain"} et ${info.dueDate?`une échéance au ${due}`:"pas d'échéance certaine"}.`;
+    steps=[
+      "1. Vérifiez le numéro de police, le contrat ou le sinistre concerné.",
+      "2. Regardez si l'assureur demande un paiement, un document, une signature ou une déclaration.",
+      info.dueDate?`3. Respectez la date du ${due}.`:"3. Repérez manuellement tout délai de réponse ou de paiement.",
+      "4. S'il faut envoyer des justificatifs, gardez une copie de chaque pièce transmise et une preuve d'envoi.",
+      "5. En cas de désaccord sur une indemnisation ou une résiliation, ne vous fiez pas uniquement au résumé : relisez les conditions et demandez confirmation à l'assureur."
+    ];
+  }else if(info.type==="sante"){
+    summary=`Ce document semble concerner la santé, une mutuelle ou un remboursement.`;
+    steps=[
+      "1. Vérifiez le nom du patient, la date des soins et l'organisme concerné.",
+      "2. Repérez s'il faut transmettre une attestation, une facture, une prescription ou un formulaire original.",
+      info.dueDate?`3. Une date limite a été détectée : ${due}.`:"3. Vérifiez si un délai d'envoi ou de remboursement est indiqué.",
+      "4. Conservez une copie avant d'envoyer un document original.",
+      "5. Ces documents peuvent contenir des informations sensibles : évitez de les partager inutilement."
+    ];
+  }else if(info.type==="contrat"){
+    summary=`Ce document ressemble à un contrat ou à des conditions contractuelles.`;
+    steps=[
+      "1. Identifiez les parties, l'objet du contrat, la date de début et la durée.",
+      "2. Recherchez les conditions de renouvellement automatique et de résiliation.",
+      "3. Repérez les montants, indexations, pénalités et délais de préavis.",
+      "4. Ne signez ou n'acceptez pas un engagement que vous ne comprenez pas complètement.",
+      "5. Pour une clause importante ou inhabituelle, demandez une confirmation écrite ou un avis professionnel avant de vous engager."
+    ];
+  }else{
+    summary=`Ce document semble être ${documentTypeLabel(info.type).toLowerCase()} provenant de ${info.issuer}. ${info.dueDate?`Une date limite a été détectée : ${due}.`:"Aucune échéance fiable n'a été détectée."}`;
+    steps=[
+      "1. Vérifiez l'expéditeur et l'objet exact du courrier.",
+      "2. Cherchez les phrases contenant « vous devez », « veuillez », « avant le », « délai », « joindre » ou « fournir » : elles décrivent généralement l'action attendue.",
+      info.dueDate?`3. Notez la date limite du ${due}.`:"3. Si une réponse est demandée, recherchez la date limite et ajoutez-la manuellement si nécessaire.",
+      "4. Préparez les documents ou informations demandés et gardez une copie de ce que vous envoyez.",
+      "5. Utilisez les coordonnées officielles de l'organisme si vous avez un doute sur l'authenticité ou le sens du courrier."
+    ];
+  }
+
+  return {summary,advice:steps.join("\n\n")};
+}
+
+function analyzeRecognizedText(text){
+  const type=classifyDocument(text);
+  const issuer=detectIssuer(text);
+  const amount=extractDocumentAmount(text);
+  const dueDate=extractDocumentDueDate(text);
+  const category=suggestCategory(text,type);
+  const paid=looksPaid(text,type);
+  const urgency=urgencyForDocument(type,dueDate);
+  const base={text,type,issuer,amount,dueDate,category,paid,urgency};
+  return {...base,...buildDocumentAdvice(base)};
+}
+
+function setAnalysisStatus(message,loading=false){
+  const box=$("documentAnalysisStatus");
+  if(!box) return;
+  box.style.display=message?"block":"none";
+  box.classList.toggle("loading",!!loading);
+  box.textContent=message||"";
+}
+
+function applyDocumentAnalysis(info){
+  pendingDocumentAnalysis=info;
+  $("invoiceLabel").value=info.issuer||"Document";
+  $("invoiceAmount").value=info.amount>0?String(info.amount):"";
+  $("invoiceDueDate").value=info.dueDate||"";
+  $("invoiceDocumentType").value=info.type||"autre";
+  $("invoiceCategory").value=info.category||"Autre";
+  $("invoiceIncludeBudget").checked=!!(info.amount>0 && ["facture","ticket","ticket_restaurant","rappel","assurance","impots"].includes(info.type));
+  $("assistantTitle").textContent=`${documentTypeLabel(info.type)} — ${info.issuer}`;
+  $("assistantUrgency").innerHTML=`<span class="urgencyBadge urgency-${info.urgency.key}">${escapeHtml(info.urgency.label)}</span>`;
+  $("assistantSummary").textContent=info.summary;
+  $("assistantAdvice").textContent=info.advice;
+  $("assistantRawText").textContent=info.text||"Aucun texte reconnu.";
+  $("assistantResult").style.display="block";
+  setAnalysisStatus("✅ Analyse terminée. Vérifiez les informations ci-dessous avant de les valider.");
+  setTimeout(()=>$('invoiceLabel').focus(),50);
+}
+
+async function runDocumentAnalysis(){
+  if(!pendingInvoiceImage) return;
+  $("assistantResult").style.display="none";
+  setAnalysisStatus("🤖 Lecture et analyse du document en cours…",true);
+  const TextRecognition=getNativeTextRecognitionPlugin();
+  if(!TextRecognition || typeof TextRecognition.detectText!=="function"){
+    setAnalysisStatus("⚠️ Le module de lecture intelligente n'est pas installé dans ce build. La photo est conservée, mais l'analyse automatique nécessite le prochain build.");
+    pendingDocumentAnalysis=null;
+    return;
+  }
+  try{
+    const base64=String(pendingInvoiceImage).replace(/^data:image\/[^;]+;base64,/,"");
+    const result=await TextRecognition.detectText({base64Image:base64,rotation:0});
+    const text=String((result&&result.text)||"").trim();
+    if(!text){
+      setAnalysisStatus("⚠️ Aucun texte lisible n'a été détecté. Reprenez la photo bien droite, avec davantage de lumière et tout le document visible.");
+      return;
+    }
+    applyDocumentAnalysis(analyzeRecognizedText(text));
+  }catch(e){
+    console.error("Document OCR error",e);
+    setAnalysisStatus("⚠️ L'analyse n'a pas abouti. La photo reste disponible et vous pouvez compléter les informations manuellement.");
+  }
 }
 
 function cancelInvoiceForm(){
   pendingInvoiceImage=null;
+  pendingDocumentAnalysis=null;
   $("invoiceForm").classList.remove("show");
-
-  if($("invoicePhotoFallback")){
-    $("invoicePhotoFallback").value="";
-  }
-
+  $("assistantResult").style.display="none";
+  setAnalysisStatus("");
+  if($("invoicePhotoFallback")) $("invoicePhotoFallback").value="";
   $("invoiceLabel").value="";
   $("invoiceAmount").value="";
   $("invoiceDueDate").value="";
+  $("invoiceIncludeBudget").checked=false;
 }
 
-function saveInvoice(){
-  const label=$("invoiceLabel").value.trim();
-  const amount=Number($("invoiceAmount").value);
-  const dueDate=$("invoiceDueDate").value;
+function addDocumentExpense(inv){
+  if(!inv || !inv.includeBudget || !(Number(inv.amount)>0)) return;
+  if((data.transactions||[]).some(tx=>tx.documentId===inv.id)) return;
+  data.transactions.push({
+    id:uid(),type:"expense",label:inv.label,amount:Number(inv.amount),category:inv.category||"Autre",
+    date:todayISO(),source:"current",documentId:inv.id,createdAt:Date.now()
+  });
+}
+
+function saveAnalyzedDocument(targetStatus){
   if(!pendingInvoiceImage){ alert("Ajoutez d'abord une photo."); return; }
-  if(!label){ alert("Indiquez le nom de la facture."); return; }
-  if(!amount || amount<=0){ alert("Indiquez le montant à payer."); return; }
-  if(!dueDate){ alert("Indiquez la date d'échéance."); return; }
+  const label=$("invoiceLabel").value.trim()||"Document";
+  const amount=Number($("invoiceAmount").value)||0;
+  const dueDate=$("invoiceDueDate").value||"";
+  const type=$("invoiceDocumentType").value||"autre";
+  const category=$("invoiceCategory").value||"Autre";
+  const includeBudget=$("invoiceIncludeBudget").checked && amount>0 && targetStatus!=="archive";
+  if(targetStatus==="upcoming" && !dueDate && !confirm("Aucune date d'échéance n'est indiquée. Classer quand même ce document dans « À payer / à traiter » ?")) return;
+  const analysis=pendingDocumentAnalysis||{};
+  const inv={
+    id:uid(),label,amount,dueDate,status:targetStatus,image:pendingInvoiceImage,createdAt:Date.now(),
+    paidAt:targetStatus==="paid"?Date.now():null,documentType:type,category,includeBudget,
+    ocrText:analysis.text||"",summary:analysis.summary||"",advice:analysis.advice||"",
+    urgency:urgencyForDocument(type,dueDate)
+  };
   try{
-    data.invoices.push({id:uid(),label,amount,dueDate,status:"upcoming",image:pendingInvoiceImage,createdAt:Date.now(),paidAt:null});
+    data.invoices.push(inv);
+    if(targetStatus==="paid") addDocumentExpense(inv);
     save();
   }catch(e){
+    data.invoices=data.invoices.filter(x=>x.id!==inv.id);
+    data.transactions=(data.transactions||[]).filter(tx=>tx.documentId!==inv.id);
     alert("La photo est trop volumineuse pour le stockage local. Essayez une photo moins lourde.");
     return;
   }
@@ -7456,12 +7831,16 @@ function saveInvoice(){
   render();
 }
 
+/* Compatibilité : ancien bouton / ancien code */
+function saveInvoice(){ saveAnalyzedDocument("upcoming"); }
+
 function markInvoicePaid(id){
   const inv=data.invoices.find(x=>x.id===id);
   if(!inv) return;
-  if(!confirm(`Marquer « ${inv.label} » comme payée ?`)) return;
+  if(!confirm(`Marquer « ${inv.label} » comme payé / traité ?`)) return;
   inv.status="paid";
   inv.paidAt=Date.now();
+  addDocumentExpense(inv);
   save();
   render();
 }
@@ -7471,6 +7850,7 @@ function restoreInvoice(id){
   if(!inv) return;
   inv.status="upcoming";
   inv.paidAt=null;
+  data.transactions=(data.transactions||[]).filter(tx=>tx.documentId!==id);
   save();
   render();
 }
@@ -7479,21 +7859,31 @@ function deleteInvoice(id){
   const inv=data.invoices.find(x=>x.id===id);
   if(!inv || !confirm(`Supprimer définitivement « ${inv.label} » et sa photo ?`)) return;
   data.invoices=data.invoices.filter(x=>x.id!==id);
+  data.transactions=(data.transactions||[]).filter(tx=>tx.documentId!==id);
   save();
   render();
 }
 
-function invoiceHtml(inv,paid){
-  const due=inv.dueDate?new Date(inv.dueDate+'T12:00:00').toLocaleDateString('fr-BE'):"—";
+function invoiceHtml(inv,mode){
+  const due=inv.dueDate?new Date(inv.dueDate+'T12:00:00').toLocaleDateString('fr-BE'):"Aucune échéance";
   const paidDate=inv.paidAt?new Date(inv.paidAt).toLocaleDateString('fr-BE'):"";
-  return `<div class="invoiceItem"><div class="invoiceHead"><div><strong>${paid?'✅':'🧾'} ${escapeHtml(inv.label)}</strong><div class="small">${paid?`Payée le ${paidDate}`:`À payer pour le ${due}`} • ${euro(inv.amount)}</div>${inv.image?`<img class="photoPreview" src="${inv.image}" alt="${escapeHtml(inv.label)}">`:''}</div><strong class="${paid?'green':'red'}">${euro(inv.amount)}</strong></div><div class="invoiceActions">${paid?`<button type="button" class="miniButton" onclick="restoreInvoice('${inv.id}')">↩ Remettre à payer</button>`:`<button type="button" class="miniButton" onclick="markInvoicePaid('${inv.id}')">✓ Payée</button>`}<button type="button" class="miniButton" onclick="deleteInvoice('${inv.id}')">✕ Supprimer</button></div></div>`;
+  const urgency=urgencyForDocument(inv.documentType||"facture",inv.dueDate||"");
+  const typeLabel=documentTypeLabel(inv.documentType||"facture");
+  const amountText=Number(inv.amount)>0?euro(inv.amount):"Sans montant";
+  const meta=mode==="paid"?`Payé / traité le ${paidDate}`:mode==="archive"?"Archivé sans impact budget":`Échéance : ${due}`;
+  const linked=inv.includeBudget?`<span class="docChip">💰 Budget</span>`:`<span class="docChip">📁 Hors budget</span>`;
+  const advice=(inv.summary||inv.advice)?`<details style="margin-top:10px"><summary class="small" style="cursor:pointer">🤖 Voir l'explication et les démarches</summary>${inv.summary?`<div class="assistantAdvice" style="margin-top:8px"><strong>${escapeHtml(inv.summary)}</strong></div>`:''}${inv.advice?`<div class="assistantAdvice" style="margin-top:8px">${escapeHtml(inv.advice)}</div>`:''}</details>`:"";
+  return `<div class="invoiceItem"><div class="invoiceHead"><div><strong>${mode==='paid'?'✅':mode==='archive'?'📁':'🧾'} ${escapeHtml(inv.label)}</strong><div class="small">${escapeHtml(typeLabel)} • ${escapeHtml(meta)} • ${escapeHtml(amountText)}</div><div class="docMetaLine"><span class="docChip">${escapeHtml(inv.category||'Autre')}</span>${linked}${mode==='upcoming'?`<span class="urgencyBadge urgency-${urgency.key}">${escapeHtml(urgency.label)}</span>`:''}</div>${inv.image?`<img class="photoPreview" src="${inv.image}" alt="${escapeHtml(inv.label)}">`:''}${advice}</div>${Number(inv.amount)>0?`<strong class="${mode==='paid'?'green':mode==='archive'?'blue':'red'}">${euro(inv.amount)}</strong>`:''}</div><div class="invoiceActions">${mode==='upcoming'?`<button type="button" class="miniButton" onclick="markInvoicePaid('${inv.id}')">✓ Payé / traité</button>`:''}${mode==='paid'?`<button type="button" class="miniButton" onclick="restoreInvoice('${inv.id}')">↩ Remettre à traiter</button>`:''}<button type="button" class="miniButton" onclick="deleteInvoice('${inv.id}')">✕ Supprimer</button></div></div>`;
 }
 
 function renderInvoices(){
-  const upcoming=(data.invoices||[]).filter(x=>x.status!=="paid").sort((a,b)=>String(a.dueDate).localeCompare(String(b.dueDate)));
-  const paid=(data.invoices||[]).filter(x=>x.status==="paid").sort((a,b)=>Number(b.paidAt||0)-Number(a.paidAt||0));
-  $("invoiceUpcoming").innerHTML=upcoming.length?upcoming.map(x=>invoiceHtml(x,false)).join(""):`<div class="small" style="padding:12px 0">Aucune facture à payer.</div>`;
-  $("invoicePaid").innerHTML=paid.length?paid.map(x=>invoiceHtml(x,true)).join(""):`<div class="small" style="padding:12px 0">Aucune facture payée archivée.</div>`;
+  const all=data.invoices||[];
+  const upcoming=all.filter(x=>x.status!=="paid"&&x.status!=="archive").sort((a,b)=>String(a.dueDate||"9999").localeCompare(String(b.dueDate||"9999")));
+  const paid=all.filter(x=>x.status==="paid").sort((a,b)=>Number(b.paidAt||0)-Number(a.paidAt||0));
+  const archived=all.filter(x=>x.status==="archive").sort((a,b)=>Number(b.createdAt||0)-Number(a.createdAt||0));
+  $("invoiceUpcoming").innerHTML=upcoming.length?upcoming.map(x=>invoiceHtml(x,"upcoming")).join(""):`<div class="small" style="padding:12px 0">Aucun document à payer ou à traiter.</div>`;
+  $("invoicePaid").innerHTML=paid.length?paid.map(x=>invoiceHtml(x,"paid")).join(""):`<div class="small" style="padding:12px 0">Aucune dépense payée archivée.</div>`;
+  $("invoiceArchived").innerHTML=archived.length?archived.map(x=>invoiceHtml(x,"archive")).join(""):`<div class="small" style="padding:12px 0">Aucun document administratif archivé.</div>`;
 }
 
 
