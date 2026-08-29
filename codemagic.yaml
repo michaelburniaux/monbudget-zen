@@ -28,3 +28,32 @@ workflows:
           ./gradlew assembleDebug
     artifacts:
       - android/app/build/outputs/**/*.apk
+  ios-debug:
+    name: Mon Budget ZEN iPhone
+    max_build_duration: 60
+    environment:
+      node: 20
+      xcode: latest
+    scripts:
+      - name: Install Capacitor
+        script: |
+          npm install
+
+      - name: Prepare web files
+        script: |
+          rm -rf www
+          mkdir -p www
+          cp index.html privacy.html about.html manifest.webmanifest sw.js ads.txt www/
+
+      - name: Create iOS project
+        script: |
+          npx cap add ios
+          npx cap sync ios
+
+      - name: Build iPhone app
+        script: |
+          cd ios/App
+          xcodebuild -workspace App.xcworkspace -scheme App -configuration Debug -sdk iphonesimulator -derivedDataPath build CODE_SIGNING_ALLOWED=NO
+
+    artifacts:
+      - ios/App/build/Build/Products/Debug-iphonesimulator/*.app
