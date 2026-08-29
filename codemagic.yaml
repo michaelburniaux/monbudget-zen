@@ -5,6 +5,7 @@ workflows:
     environment:
       node: 20
       java: 21
+
     scripts:
       - name: Install Capacitor
         script: |
@@ -29,6 +30,7 @@ workflows:
 
     artifacts:
       - android/app/build/outputs/**/*.apk
+
 
   ios-app-store:
     name: Mon Budget ZEN App Store
@@ -65,6 +67,11 @@ workflows:
         script: |
           npx cap add ios
           npx cap sync ios
+
+      - name: Set iOS build number
+        script: |
+          cd ios/App
+          agvtool new-version -all 2
 
       - name: Apply Apple signing
         script: |
