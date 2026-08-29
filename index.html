@@ -760,7 +760,7 @@ select:focus{
 
   <div class="header">
     <h1>💶 Mon Budget ZEN</h1>
-    <p>Mes économies • v2.7.4</p>
+    <p>Mes économies • v2.7.5</p>
 
     <div
       class="headerClock"
@@ -836,12 +836,20 @@ select:focus{
 
   </div>
 
-  <div class="row" style="margin-top:10px">
+  <div class="row" style="margin-top:10px; flex-wrap:wrap">
 
     <button
       type="button"
       class="miniButton"
-      style="flex:1"
+      style="flex:1; min-width:150px"
+      onclick="undoLastIncome()">
+      ↩ Annuler le dernier revenu
+    </button>
+
+    <button
+      type="button"
+      class="miniButton"
+      style="flex:1; min-width:150px"
       onclick="undoLastExpense()">
       ↩ Annuler la dernière dépense
     </button>
@@ -849,7 +857,7 @@ select:focus{
     <button
       type="button"
       class="miniButton"
-      style="flex:1"
+      style="flex:1; min-width:150px"
       onclick="undoLastSaving()">
       ↩ Annuler la dernière épargne
     </button>
@@ -2835,6 +2843,41 @@ function addTx(){
     showBudgetVictory(selectedBudget);
   }
 
+}
+
+
+/*
+Annule le dernier revenu. La fonction peut être utilisée plusieurs fois
+de suite : après chaque annulation, le revenu précédent devient le dernier.
+*/
+function undoLastIncome(){
+
+  const list=data.transactions
+    .filter(tx=>tx.type === "income")
+    .slice()
+    .sort((a,b)=>{
+      const timeA=Number(a.createdAt || 0);
+      const timeB=Number(b.createdAt || 0);
+      if(timeB!==timeA) return timeB-timeA;
+      return String(b.id || "").localeCompare(String(a.id || ""));
+    });
+
+  const tx=list[0];
+
+  if(!tx){
+    alert("Aucun revenu à annuler.");
+    return;
+  }
+
+  if(!confirm(
+    `Annuler le dernier revenu de ${euro(tx.amount)} (« ${tx.label} ») ?\n\nVous pourrez appuyer de nouveau sur le bouton pour revenir encore d’un revenu en arrière.`
+  )){
+    return;
+  }
+
+  data.transactions=data.transactions.filter(t=>t.id!==tx.id);
+  save();
+  render();
 }
 
 
@@ -7182,16 +7225,35 @@ async function openInvoiceCamera(){
   const Camera=getNativeCameraPlugin();
 
   if(!Camera || typeof Camera.getPhoto !== "function"){
-    alert("La caméra native n'est pas encore disponible dans cette version de l'application.");
+    alert("La caméra native n'est pas disponible dans cette version de l'application.");
     return;
   }
 
   try{
     /*
-    Ne pas appeler requestPermissions() juste avant getPhoto().
-    Sur iOS, getPhoto déclenche lui-même la demande système au moment
-    approprié. Cela évite les écrans d'autorisation qui se superposent.
+    La galerie fonctionne : le pont Capacitor et le plugin sont donc chargés.
+    Ici on traite uniquement l'autorisation caméra iOS.
     */
+    if(typeof Camera.checkPermissions === "function"){
+      let status=await Camera.checkPermissions();
+
+      if(status && status.camera !== "granted"){
+        if(
+          (status.camera === "prompt" || status.camera === "prompt-with-rationale") &&
+          typeof Camera.requestPermissions === "function"
+        ){
+          status=await Camera.requestPermissions({permissions:["camera"]});
+        }
+
+        if(!status || status.camera !== "granted"){
+          alert(
+            "L'accès à la caméra n'est pas autorisé. Ouvrez Réglages > Mon Budget ZEN > Caméra et activez l'autorisation, puis revenez dans l'application."
+          );
+          return;
+        }
+      }
+    }
+
     const photo=await Camera.getPhoto({
       quality:75,
       allowEditing:false,
@@ -7201,20 +7263,26 @@ async function openInvoiceCamera(){
       width:1600,
       height:1600,
       correctOrientation:true,
-      saveToGallery:false,
-      presentationStyle:"fullscreen"
+      saveToGallery:false
     });
 
     await nativePhotoToInvoice(photo);
   }catch(e){
     console.error("Camera error",e);
-    const message=String((e && e.message) || e || "");
 
-    if(!/cancel|user cancelled|canceled/i.test(message)){
-      alert(
-        "Impossible de prendre la photo. Si l'accès Caméra a déjà été refusé, ouvrez Réglages > Mon Budget ZEN > Caméra et autorisez-le."
-      );
+    const message=String((e && e.message) || e || "Erreur inconnue");
+    const code=String((e && e.code) || "");
+
+    if(/cancel|user cancelled|canceled/i.test(message)){
+      return;
     }
+
+    alert(
+      "La caméra n'a pas pu s'ouvrir.\n\n" +
+      "Erreur iOS/Capacitor : " + message +
+      (code ? "\nCode : " + code : "") +
+      "\n\nSi le problème continue, cette erreur permettra d'identifier exactement ce qu'iOS refuse."
+    );
   }
 }
 
