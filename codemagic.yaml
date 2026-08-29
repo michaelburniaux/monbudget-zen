@@ -72,32 +72,89 @@ workflows:
           mkdir -p www
           cp index.html privacy.html about.html manifest.webmanifest sw.js ads.txt www/
 
-      - name: Create iOS project without AdMob
+      - name: Create clean iOS project
         script: |
+          # IMPORTANT :
+          # "npx cap add ios" lance déjà une synchronisation CocoaPods.
+          # On retire donc temporairement AdMob ET le plugin OCR avant de créer
+          # le projet iOS, afin d'éviter que ML Kit tente de s'installer
+          # alors que le Podfile est encore réglé sur iOS 15.0.
           npm uninstall @capacitor-community/admob
+          npm uninstall @pantrist/capacitor-plugin-ml-kit-text-recognition
           npx cap add ios
 
-      - name: Set iOS 15 before AdMob
+      - name: Set iOS 15.5 before native plugins
         script: |
-          sed -i '' "s/platform :ios, '[0-9.]*'/platform :ios, '15.0'/" ios/App/Podfile
+          echo "=== Passage du deployment target à iOS 15.5 ==="
 
-      - name: Reinstall AdMob
+          PODFILE="ios/App/Podfile"
+
+          if [ ! -f "$PODFILE" ]; then
+            echo "ERREUR : Podfile introuvable."
+            exit 1
+          fi
+
+          sed -i '' "s/platform :ios, '[0-9.]*'/platform :ios, '15.5'/" "$PODFILE"
+
+          if ! grep -q "platform :ios, '15.5'" "$PODFILE"; then
+            echo "ERREUR : impossible de régler le Podfile sur iOS 15.5."
+            cat "$PODFILE"
+            exit 1
+          fi
+
+          # Même valeur dans le projet Xcode pour éviter toute incohérence
+          # entre le projet principal et les Pods.
+          python3 <<'PYTHON'
+          from pathlib import Path
+
+          p = Path("ios/App/App.xcodeproj/project.pbxproj")
+          if not p.exists():
+              raise SystemExit("ERREUR : project.pbxproj introuvable")
+
+          text = p.read_text()
+
+          import re
+          text = re.sub(
+              r"IPHONEOS_DEPLOYMENT_TARGET = [0-9.]+;",
+              "IPHONEOS_DEPLOYMENT_TARGET = 15.5;",
+              text
+          )
+
+          p.write_text(text)
+          print("OK : deployment target Xcode réglé sur iOS 15.5.")
+          PYTHON
+
+          echo "OK : Podfile réglé sur iOS 15.5."
+
+      - name: Reinstall OCR and AdMob
         script: |
+          npm install @pantrist/capacitor-plugin-ml-kit-text-recognition@7
           npm install @capacitor-community/admob@7
 
       - name: Sync Capacitor plugins
         script: |
           npx cap sync ios
 
-      - name: Verify OCR plugin is detected by Capacitor
+      - name: Verify iOS 15.5 and OCR plugin
         script: |
-          echo "=== Plugins Capacitor iOS ==="
-          npx cap ls ios || true
+          echo "=== Vérification iOS 15.5 + OCR ==="
+
+          if ! grep -q "platform :ios, '15.5'" ios/App/Podfile; then
+            echo "ERREUR : le Podfile n'est pas réglé sur iOS 15.5."
+            exit 1
+          fi
+
           if [ ! -d "node_modules/@pantrist/capacitor-plugin-ml-kit-text-recognition" ]; then
             echo "ERREUR : le module OCR est absent de node_modules."
             exit 1
           fi
-          echo "OK : module OCR présent. Capacitor l'intégrera pendant la synchronisation iOS."
+
+          if ! grep -qi "TextRecognition" ios/App/Podfile.lock; then
+            echo "ERREUR : le module OCR / ML Kit TextRecognition n'apparaît pas dans Podfile.lock."
+            exit 1
+          fi
+
+          echo "OK : iOS 15.5 est actif et le module OCR est intégré."
 
       - name: Verify Camera plugin is installed
         script: |
@@ -233,6 +290,11 @@ workflows:
             exit 1
           fi
 
+          if [ "$BUILD_NUMBER" != "20" ]; then
+            echo "ERREUR : le numéro de build final n'est pas 20."
+            exit 1
+          fi
+
           if [ -z "$CAMERA_VALUE" ]; then
             echo "ERREUR : NSCameraUsageDescription est ABSENT de l'IPA finale."
             exit 1
@@ -243,7 +305,7 @@ workflows:
             exit 1
           fi
 
-          echo "OK : l'autorisation caméra est bien embarquée dans l'IPA finale."
+          echo "OK : build 20 vérifié, avec autorisations caméra présentes dans l'IPA finale."
 
     artifacts:
       - build/ios/ipa/*.ipa
