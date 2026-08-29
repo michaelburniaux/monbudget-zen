@@ -760,7 +760,7 @@ select:focus{
 
   <div class="header">
     <h1>💶 Mon Budget ZEN</h1>
-    <p>Mes économies • v2.7.5</p>
+    <p>Mes économies • v2.7.6</p>
 
     <div
       class="headerClock"
@@ -4865,9 +4865,23 @@ function renderDashboard(){
     euro(totals.inc);
 
 
+  /*
+  Le compteur Dépenses du tableau de bord doit afficher
+  exactement la même dépense que le graphique du mois :
+  dépenses enregistrées + dépenses prévues encore non payées.
+  */
+  const displayedExpense =
+
+    totals.exp
+
+    +
+
+    reserved;
+
+
   $("expenseTotal").textContent =
 
-    euro(totals.exp);
+    euro(displayedExpense);
 
 
   $("realAvailable").textContent =
