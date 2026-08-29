@@ -26,9 +26,11 @@ workflows:
           cd android
           chmod +x gradlew
           ./gradlew assembleDebug
+
     artifacts:
       - android/app/build/outputs/**/*.apk
-        ios-debug:
+
+  ios-debug:
     name: Mon Budget ZEN iPhone
     max_build_duration: 60
     environment:
