@@ -295,6 +295,74 @@ workflows:
           echo "OK : le projet iOS est intégralement réglé sur le build 27."
           cd ../..
 
+      - name: Configure Mon Budget ZEN app icon
+        script: |
+          set -e
+          echo "=== Installation de l'icône Mon Budget ZEN ==="
+
+          ICON_SOURCE="$CM_BUILD_DIR/Mon_Budget_ZEN_AppIcon_1024(1).png"
+          ICON_DIR="$CM_BUILD_DIR/ios/App/App/Assets.xcassets/AppIcon.appiconset"
+
+          if [ ! -f "$ICON_SOURCE" ]; then
+            echo "ERREUR : icône source introuvable : $ICON_SOURCE"
+            exit 1
+          fi
+
+          mkdir -p "$ICON_DIR"
+
+          python3 <<'PYTHON'
+          from pathlib import Path
+          import json
+          from PIL import Image
+
+          source = Path("Mon_Budget_ZEN_AppIcon_1024(1).png")
+          target = Path("ios/App/App/Assets.xcassets/AppIcon.appiconset")
+
+          if not source.exists():
+              raise SystemExit(f"ERREUR : {source} introuvable")
+
+          img = Image.open(source).convert("RGB")
+          if img.size != (1024, 1024):
+              img = img.resize((1024, 1024), Image.Resampling.LANCZOS)
+
+          icon_name = "AppIcon-512@2x.png"
+          img.save(target / icon_name, "PNG", optimize=True)
+
+          contents = {
+              "images": [
+                  {
+                      "filename": icon_name,
+                      "idiom": "universal",
+                      "platform": "ios",
+                      "size": "1024x1024"
+                  }
+              ],
+              "info": {
+                  "author": "xcode",
+                  "version": 1
+              }
+          }
+
+          (target / "Contents.json").write_text(
+              json.dumps(contents, indent=2) + "\n",
+              encoding="utf-8"
+          )
+
+          print("OK : AppIcon iOS 1024x1024 installé.")
+          PYTHON
+
+          if [ ! -f "$ICON_DIR/AppIcon-512@2x.png" ]; then
+            echo "ERREUR : l'icône iOS finale n'a pas été créée."
+            exit 1
+          fi
+
+          if [ ! -f "$ICON_DIR/Contents.json" ]; then
+            echo "ERREUR : Contents.json de l'AppIcon est absent."
+            exit 1
+          fi
+
+          echo "OK : nouvelle icône Mon Budget ZEN prête pour la compilation."
+
       - name: Apply Apple signing
         script: |
           cd ios/App
