@@ -300,6 +300,11 @@ workflows:
           set -e
           echo "=== Installation de l'icône Mon Budget ZEN ==="
 
+          # Pillow est nécessaire au script Python qui prépare l'icône.
+          # On l'installe explicitement dans l'environnement Codemagic.
+          python3 -m pip install --user --upgrade Pillow
+          python3 -c "from PIL import Image; print('OK : Pillow disponible, version', Image.__version__)"
+
           ICON_SOURCE="$CM_BUILD_DIR/Mon_Budget_ZEN_AppIcon_1024(1).png"
           ICON_DIR="$CM_BUILD_DIR/ios/App/App/Assets.xcassets/AppIcon.appiconset"
 
