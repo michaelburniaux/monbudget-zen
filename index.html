@@ -732,6 +732,61 @@ select:focus{
   border-radius:12px;
   border:1px solid var(--border);
   margin-top:8px;
+  cursor:zoom-in;
+}
+
+/* ===== v2.9.3 — corrections utilisateur synchronisées avec Assistant ZEN ===== */
+.documentViewer{
+  position:fixed;
+  inset:0;
+  z-index:260;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+  background:rgba(2,8,18,.96);
+}
+.documentViewer.show{display:flex;}
+.documentViewerInner{
+  position:relative;
+  width:100%;
+  height:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.documentViewerImage{
+  max-width:100%;
+  max-height:100%;
+  object-fit:contain;
+  border-radius:12px;
+  box-shadow:0 20px 60px rgba(0,0,0,.55);
+}
+.documentViewerClose{
+  position:absolute;
+  top:max(4px,env(safe-area-inset-top));
+  right:4px;
+  z-index:2;
+  width:46px;
+  height:46px;
+  border:0;
+  border-radius:50%;
+  background:rgba(20,42,70,.92);
+  color:white;
+  font-size:24px;
+  font-weight:800;
+}
+.documentViewerCaption{
+  position:absolute;
+  left:12px;
+  right:70px;
+  bottom:max(8px,env(safe-area-inset-bottom));
+  padding:10px 12px;
+  border-radius:12px;
+  background:rgba(7,20,38,.82);
+  color:white;
+  font-size:13px;
+  backdrop-filter:blur(10px);
 }
 
 
@@ -960,7 +1015,7 @@ select:focus{
 
   <div class="header">
     <h1>💶 Mon Budget ZEN</h1>
-    <p>Mes économies • v2.9.1</p>
+    <p>Mes économies • v2.9.3</p>
 
     <div
       class="headerClock"
@@ -1491,10 +1546,10 @@ select:focus{
       </div>
     </div>
 
-    <div class="archiveTitle">🔴 À payer / à traiter</div>
+    <div class="archiveTitle">🔴 Factures à payer</div>
     <div id="invoiceUpcoming"></div>
 
-    <div class="archiveTitle">✅ Dépenses payées / tickets</div>
+    <div class="archiveTitle">✅ Factures payées</div>
     <div id="invoicePaid"></div>
 
     <div class="archiveTitle">📁 Documents administratifs archivés</div>
@@ -1816,6 +1871,14 @@ select:focus{
 
   </div>
 
+</div>
+
+<div class="documentViewer" id="documentViewer" onclick="closeDocumentViewer(event)">
+  <div class="documentViewerInner">
+    <button type="button" class="documentViewerClose" aria-label="Fermer" onclick="closeDocumentViewer(event,true)">×</button>
+    <img id="documentViewerImage" class="documentViewerImage" alt="Document en plein écran">
+    <div id="documentViewerCaption" class="documentViewerCaption"></div>
+  </div>
 </div>
 
 <div class="bottomNav">
@@ -5001,7 +5064,38 @@ function currentAccountIncomeForPeriod(
 
 
 function documentTaskPriority(inv){const u=urgencyForDocument(inv.documentType||"autre",inv.dueDate||"");const rank={critical:0,urgent:1,watch:2,normal:3};return {key:u.key,label:u.label,rank:rank[u.key]??3};}
-function openDocumentFromTask(id){try{const b=[...document.querySelectorAll("button")].find(x=>(x.textContent||"").includes("Historique"));if(b)b.click();}catch(e){} setTimeout(()=>{const el=document.querySelector(`[data-document-id="${CSS.escape(String(id))}"]`);if(el)el.scrollIntoView({behavior:"smooth",block:"center"});},180);}
+function openDocumentImage(id){
+  const inv=(data.invoices||[]).find(x=>String(x.id)===String(id));
+  if(!inv || !inv.image){
+    alert("La photo de ce document n'est pas disponible.");
+    return;
+  }
+  const viewer=$("documentViewer");
+  const img=$("documentViewerImage");
+  const caption=$("documentViewerCaption");
+  if(!viewer||!img||!caption) return;
+  img.src=inv.image;
+  img.alt=inv.label||"Document";
+  caption.textContent=`${inv.label||"Document"}${Number(inv.amount)>0?` • ${euro(inv.amount)}`:""}${inv.dueDate?` • échéance ${formatDateFr(inv.dueDate)}`:""}`;
+  viewer.classList.add("show");
+  document.body.style.overflow="hidden";
+}
+
+function closeDocumentViewer(event,force=false){
+  const viewer=$("documentViewer");
+  if(!viewer) return;
+  if(!force && event && event.target!==viewer) return;
+  viewer.classList.remove("show");
+  document.body.style.overflow="";
+  const img=$("documentViewerImage");
+  if(img) img.src="";
+}
+
+function openDocumentFromTask(id){
+  const el=document.querySelector(`[data-document-id="${CSS.escape(String(id))}"]`);
+  if(el) el.scrollIntoView({behavior:"smooth",block:"center"});
+  setTimeout(()=>openDocumentImage(id),220);
+}
 
 function getNextDueDocument(){
   const now=new Date();
@@ -8066,6 +8160,48 @@ function applyDocumentAnalysis(info){
   setTimeout(()=>$('invoiceLabel').focus(),50);
 }
 
+/*
+  v2.9.3 — dès que l'utilisateur corrige une information détectée par l'OCR,
+  l'explication de l'Assistant ZEN est recalculée à partir des valeurs corrigées.
+  Le texte OCR brut reste inchangé afin de conserver la trace de ce qui a été lu
+  sur le document original.
+*/
+function correctedDocumentAnalysisFromForm(){
+  const original=pendingDocumentAnalysis||{};
+  const type=$("invoiceDocumentType").value||original.type||"autre";
+  const issuer=$("invoiceLabel").value.trim()||original.issuer||"Document";
+  const amount=Number($("invoiceAmount").value)||0;
+  const dueDate=$("invoiceDueDate").value||"";
+  const category=$("invoiceCategory").value||original.category||"Autre";
+  const text=original.text||"";
+  const urgency=urgencyForDocument(type,dueDate);
+  const base={...original,text,type,issuer,amount,dueDate,category,urgency};
+  return {...base,...buildDocumentAdvice(base)};
+}
+
+function refreshAssistantFromUserCorrections(){
+  if(!pendingDocumentAnalysis || !$("assistantResult")) return;
+  const info=correctedDocumentAnalysisFromForm();
+  pendingDocumentAnalysis=info;
+  $("assistantTitle").textContent=`${documentTypeLabel(info.type)} — ${info.issuer}`;
+  $("assistantUrgency").innerHTML=`<span class="urgencyBadge urgency-${info.urgency.key}">${escapeHtml(info.urgency.label)}</span>`;
+  $("assistantSummary").textContent=info.summary;
+  $("assistantAdvice").textContent=info.advice;
+  setAnalysisStatus("✅ Analyse mise à jour avec vos corrections.");
+}
+
+function installAssistantCorrectionListeners(){
+  ["invoiceLabel","invoiceAmount","invoiceDueDate","invoiceDocumentType","invoiceCategory"].forEach(id=>{
+    const el=$(id);
+    if(!el || el.dataset.zenCorrectionListener==="1") return;
+    const evt=(el.tagName==="SELECT" || el.type==="date")?"change":"input";
+    el.addEventListener(evt,refreshAssistantFromUserCorrections);
+    // Sur iPhone, change est aussi utile après fermeture du clavier/champ date.
+    if(evt!=="change") el.addEventListener("change",refreshAssistantFromUserCorrections);
+    el.dataset.zenCorrectionListener="1";
+  });
+}
+
 async function runDocumentAnalysis(){
   if(!pendingInvoiceImage) return;
   $("assistantResult").style.display="none";
@@ -8193,11 +8329,17 @@ async function saveAnalyzedDocument(targetStatus){
   const category=$("invoiceCategory").value||"Autre";
   const includeBudget=$("invoiceIncludeBudget").checked && amount>0 && targetStatus!=="archive";
 
-  const analysis=pendingDocumentAnalysis||{};
+  // Recalcul final obligatoire à partir des valeurs éventuellement corrigées
+  // par l'utilisateur avant l'enregistrement.
+  const analysis=pendingDocumentAnalysis
+    ? correctedDocumentAnalysisFromForm()
+    : {text:"",type,issuer:label,amount,dueDate,category,urgency:urgencyForDocument(type,dueDate)};
+  const finalAnalysis=(analysis.summary||analysis.advice) ? analysis : {...analysis,...buildDocumentAdvice(analysis)};
+  pendingDocumentAnalysis=finalAnalysis;
   const inv={
     id:uid(),label,amount,dueDate,status:targetStatus,image:pendingInvoiceImage,createdAt:Date.now(),
     paidAt:targetStatus==="paid"?Date.now():null,documentType:type,category,includeBudget,
-    ocrText:analysis.text||"",summary:analysis.summary||"",advice:analysis.advice||"",
+    ocrText:finalAnalysis.text||"",summary:finalAnalysis.summary||"",advice:finalAnalysis.advice||"",
     urgency:urgencyForDocument(type,dueDate),
     reminderEnabled:false
   };
@@ -8286,7 +8428,7 @@ function invoiceHtml(inv,mode){
     ? `<span class="docChip">${inv.reminderEnabled?"🔔 Rappel quotidien":"🔕 Rappel non autorisé"}</span>`
     : "";
   const advice=(inv.summary||inv.advice)?`<details style="margin-top:10px"><summary class="small" style="cursor:pointer">🤖 Voir l'explication et les démarches</summary>${inv.summary?`<div class="assistantAdvice" style="margin-top:8px"><strong>${escapeHtml(inv.summary)}</strong></div>`:''}${inv.advice?`<div class="assistantAdvice" style="margin-top:8px">${escapeHtml(inv.advice)}</div>`:''}</details>`:"";
-  return `<div class="invoiceItem" data-document-id="${escapeHtml(String(inv.id))}"><div class="invoiceHead"><div><strong>${mode==='paid'?'✅':mode==='archive'?'📁':'🧾'} ${escapeHtml(inv.label)}</strong><div class="small">${escapeHtml(typeLabel)} • ${escapeHtml(meta)} • ${escapeHtml(amountText)}</div><div class="docMetaLine"><span class="docChip">${escapeHtml(inv.category||'Autre')}</span>${linked}${reminder}${mode==='upcoming'?`<span class="urgencyBadge urgency-${urgency.key}">${escapeHtml(urgency.label)}</span>`:''}</div>${inv.image?`<img class="photoPreview" src="${inv.image}" alt="${escapeHtml(inv.label)}">`:''}${advice}</div>${Number(inv.amount)>0?`<strong class="${mode==='paid'?'green':mode==='archive'?'blue':'red'}">${euro(inv.amount)}</strong>`:''}</div><div class="invoiceActions">${mode==='upcoming'?`<button type="button" class="miniButton" onclick="markInvoicePaid('${inv.id}')">✓ Payé / traité</button>`:''}${mode==='paid'?`<button type="button" class="miniButton" onclick="restoreInvoice('${inv.id}')">↩ Remettre à traiter</button>`:''}<button type="button" class="miniButton" onclick="deleteInvoice('${inv.id}')">✕ Supprimer</button></div></div>`;
+  return `<div class="invoiceItem" data-document-id="${escapeHtml(String(inv.id))}"><div class="invoiceHead"><div><strong>${mode==='paid'?'✅':mode==='archive'?'📁':'🧾'} ${escapeHtml(inv.label)}</strong><div class="small">${escapeHtml(typeLabel)} • ${escapeHtml(meta)} • ${escapeHtml(amountText)}</div><div class="docMetaLine"><span class="docChip">${escapeHtml(inv.category||'Autre')}</span>${linked}${reminder}${mode==='upcoming'?`<span class="urgencyBadge urgency-${urgency.key}">${escapeHtml(urgency.label)}</span>`:''}</div>${inv.image?`<img class="photoPreview" src="${inv.image}" alt="${escapeHtml(inv.label)}" title="Toucher pour agrandir" onclick="openDocumentImage('${escapeHtml(String(inv.id))}')">`:''}${advice}</div>${Number(inv.amount)>0?`<strong class="${mode==='paid'?'green':mode==='archive'?'blue':'red'}">${euro(inv.amount)}</strong>`:''}</div><div class="invoiceActions">${mode==='upcoming'?`<button type="button" class="miniButton" onclick="markInvoicePaid('${inv.id}')">✓ Payé / traité</button>`:''}${mode==='paid'?`<button type="button" class="miniButton" onclick="restoreInvoice('${inv.id}')">↩ Remettre à traiter</button>`:''}<button type="button" class="miniButton" onclick="deleteInvoice('${inv.id}')">✕ Supprimer</button></div></div>`;
 }
 
 function renderInvoices(){
@@ -8294,8 +8436,8 @@ function renderInvoices(){
   const upcoming=all.filter(x=>x.status!=="paid"&&x.status!=="archive").sort((a,b)=>String(a.dueDate||"9999").localeCompare(String(b.dueDate||"9999")));
   const paid=all.filter(x=>x.status==="paid").sort((a,b)=>Number(b.paidAt||0)-Number(a.paidAt||0));
   const archived=all.filter(x=>x.status==="archive").sort((a,b)=>Number(b.createdAt||0)-Number(a.createdAt||0));
-  $("invoiceUpcoming").innerHTML=upcoming.length?upcoming.map(x=>invoiceHtml(x,"upcoming")).join(""):`<div class="small" style="padding:12px 0">Aucun document à payer ou à traiter.</div>`;
-  $("invoicePaid").innerHTML=paid.length?paid.map(x=>invoiceHtml(x,"paid")).join(""):`<div class="small" style="padding:12px 0">Aucune dépense payée archivée.</div>`;
+  $("invoiceUpcoming").innerHTML=upcoming.length?upcoming.map(x=>invoiceHtml(x,"upcoming")).join(""):`<div class="small" style="padding:12px 0">Aucune facture à payer.</div>`;
+  $("invoicePaid").innerHTML=paid.length?paid.map(x=>invoiceHtml(x,"paid")).join(""):`<div class="small" style="padding:12px 0">Aucune facture payée.</div>`;
   $("invoiceArchived").innerHTML=archived.length?archived.map(x=>invoiceHtml(x,"archive")).join(""):`<div class="small" style="padding:12px 0">Aucun document administratif archivé.</div>`;
 }
 
@@ -8339,6 +8481,8 @@ document.addEventListener(
 
   ()=>{
 
+
+    installAssistantCorrectionListeners();
 
     $("txDate").value =
 
