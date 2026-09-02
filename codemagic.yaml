@@ -278,13 +278,13 @@ workflows:
           PY
 
           # 3) Force aussi CFBundleVersion dans le vrai Info.plist de l'app.
-          /usr/libexec/PlistBuddy -c "Set :CFBundleVersion 54" App/Info.plist 2>/dev/null || \
-          /usr/libexec/PlistBuddy -c "Add :CFBundleVersion string 54" App/Info.plist
+          /usr/libexec/PlistBuddy -c "Set :CFBundleVersion 55" App/Info.plist 2>/dev/null || \
+          /usr/libexec/PlistBuddy -c "Add :CFBundleVersion string 55" App/Info.plist
 
           echo "=== Vérification AVANT signature ==="
           PLIST_BUILD=$(/usr/libexec/PlistBuddy -c "Print :CFBundleVersion" App/Info.plist)
           echo "Info.plist CFBundleVersion = $PLIST_BUILD"
-          if [ "$PLIST_BUILD" != "54" ]; then
+          if [ "$PLIST_BUILD" != "55" ]; then
             echo "ERREUR : Info.plist n'est pas au build 54."
             exit 1
           fi
@@ -420,7 +420,7 @@ workflows:
             exit 1
           fi
 
-          if [ "$BUILD_NUMBER" != "54" ]; then
+          if [ "$BUILD_NUMBER" != "55" ]; then
             echo "ERREUR : le numéro de build final n'est pas 54."
             exit 1
           fi
