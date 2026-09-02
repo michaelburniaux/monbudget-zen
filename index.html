@@ -647,14 +647,42 @@ select:focus{
 
 .monthRecurringRow{
   display:flex;
+  align-items:center;
   justify-content:space-between;
   gap:10px;
-  padding:8px 0;
+  padding:9px 0;
   border-bottom:1px solid var(--border);
 }
 
 .monthRecurringRow:last-child{
   border-bottom:0;
+}
+
+.monthRecurringChoice{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  min-width:0;
+  flex:1;
+}
+
+.monthRecurringChoice input{
+  width:21px;
+  height:21px;
+  flex:0 0 auto;
+  accent-color:#4ee2a2;
+}
+
+.monthRecurringSelectActions{
+  display:flex;
+  gap:8px;
+  margin:8px 0 2px;
+}
+
+.monthRecurringSelectActions button{
+  flex:1;
+  padding:8px 10px;
+  font-size:13px;
 }
 
 .savingActions{
@@ -754,6 +782,8 @@ select:focus{
   display:flex;
   align-items:center;
   justify-content:center;
+  overflow:hidden;
+  touch-action:none;
 }
 .documentViewerImage{
   max-width:100%;
@@ -761,6 +791,68 @@ select:focus{
   object-fit:contain;
   border-radius:12px;
   box-shadow:0 20px 60px rgba(0,0,0,.55);
+  transform-origin:center center;
+  will-change:transform;
+  user-select:none;
+  -webkit-user-drag:none;
+}
+.documentViewerToolbar{
+  position:absolute;
+  left:10px;
+  right:10px;
+  top:max(8px,env(safe-area-inset-top));
+  z-index:3;
+  display:flex;
+  flex-wrap:wrap;
+  gap:7px;
+  padding-right:54px;
+}
+.documentViewerTool{
+  border:1px solid rgba(255,255,255,.15);
+  background:rgba(20,42,70,.92);
+  color:white;
+  border-radius:999px;
+  padding:9px 11px;
+  font-size:12px;
+  font-weight:800;
+  backdrop-filter:blur(10px);
+}
+.documentViewerToolbarMinimal{
+  right:auto;
+  padding-right:0;
+}
+.documentLongPressAction{
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%) scale(.96);
+  z-index:5;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .14s ease,transform .14s ease;
+}
+.documentLongPressAction.show{
+  opacity:1;
+  pointer-events:auto;
+  transform:translate(-50%,-50%) scale(1);
+}
+.documentViewerSaveTool{
+  padding:13px 18px;
+  font-size:15px;
+  box-shadow:0 12px 36px rgba(0,0,0,.38);
+}
+.documentViewerHint{
+  position:absolute;
+  left:50%;
+  transform:translateX(-50%);
+  top:72px;
+  z-index:2;
+  padding:6px 9px;
+  border-radius:999px;
+  background:rgba(7,20,38,.72);
+  color:#dceaff;
+  font-size:11px;
+  pointer-events:none;
 }
 .documentViewerClose{
   position:absolute;
@@ -1006,6 +1098,339 @@ select:focus{
   }
 }
 
+
+/* ===== ZEN+ v5.6 TEST — IAP APPLE + SÉLECTION MENSUELLE — interface privée, achats et crédits fictifs ===== */
+.zenPlusTest{
+  margin-top:14px;
+  padding:14px;
+  border:1px solid rgba(255,255,255,.13);
+  border-radius:16px;
+  background:linear-gradient(145deg,rgba(88,80,236,.18),rgba(17,24,39,.45));
+}
+.zenPlusTestHead{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:8px;
+}
+.zenPlusBadge{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:5px 9px;
+  border-radius:999px;
+  font-size:.78rem;
+  font-weight:800;
+  background:rgba(255,255,255,.10);
+}
+.zenPlusCredits{
+  font-weight:900;
+  white-space:nowrap;
+}
+.zenPlusResult{
+  display:none;
+  margin-top:12px;
+  padding:12px;
+  border-radius:14px;
+  background:rgba(0,0,0,.18);
+  white-space:pre-wrap;
+  line-height:1.45;
+}
+.zenPlusTestNote{
+  margin-top:8px;
+  opacity:.72;
+  font-size:.78rem;
+}
+
+
+/* ===== ZEN+ v5.6 TEST — IAP APPLE + SÉLECTION MENSUELLE — visibilité dès l'accueil + présentation dédiée ===== */
+.zenPlusHomeStrip{margin:12px 0 14px;padding:14px;border-radius:18px;border:1px solid rgba(167,139,250,.38);background:linear-gradient(145deg,rgba(111,76,255,.22),rgba(21,35,58,.92));box-shadow:0 12px 32px rgba(0,0,0,.16)}
+.zenPlusHomeTop{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.zenPlusHomeTitle{font-size:16px;font-weight:900}
+.zenPlusHomeCredits{flex:none;padding:7px 10px;border-radius:999px;background:rgba(255,255,255,.10);font-size:13px;font-weight:900}
+.zenPlusHomeText{margin-top:7px;color:#c8d5e5;font-size:13px;line-height:1.45}
+.zenPlusHomeButton{width:100%;margin-top:11px}
+.zenPlusOverlay{position:fixed;inset:0;z-index:310;display:none;background:#071426;overflow:auto;padding:calc(18px + env(safe-area-inset-top)) 16px calc(28px + env(safe-area-inset-bottom))}
+.zenPlusOverlay.show{display:block}
+.zenPlusPage{width:min(520px,100%);margin:0 auto}
+.zenPlusPageHeader{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+.zenPlusPageHeader h2{margin:0;font-size:24px}
+.zenPlusClose{flex:none;width:42px;height:42px;border:0;border-radius:50%;background:#203a5d;color:white;font-size:24px;font-weight:800}
+.zenPlusHero{padding:18px;border-radius:22px;border:1px solid rgba(167,139,250,.42);background:linear-gradient(145deg,rgba(111,76,255,.28),rgba(16,35,63,.96))}
+.zenPlusHeroCredits{display:inline-flex;margin-top:10px;padding:7px 11px;border-radius:999px;background:rgba(255,255,255,.10);font-weight:900}
+.zenPlusFeature{margin-top:12px;padding:14px;border-radius:16px;background:#0b1d35;border:1px solid var(--border)}
+.zenPlusFeature strong{display:block;margin-bottom:5px}
+.zenPlusInfoActions{display:grid;gap:9px;margin-top:16px}
+.zenPlusOfferOverlay{position:fixed;inset:0;z-index:330;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(2,8,18,.88)}
+.zenPlusOfferOverlay.show{display:flex}
+.zenPlusOfferCard{width:min(430px,100%);padding:22px;border-radius:24px;border:1px solid rgba(167,139,250,.45);background:linear-gradient(145deg,#1a2850,#10233f);box-shadow:0 30px 80px rgba(0,0,0,.52)}
+.zenPlusOfferCard h2{margin:0 0 8px;font-size:23px}
+.zenPlusOfferCard p{color:#c8d5e5;line-height:1.5}
+.zenPlusOfferCredits{margin:12px 0;padding:10px 12px;border-radius:14px;background:rgba(255,255,255,.08);font-weight:900}
+.zenPlusOfferActions{display:grid;gap:9px;margin-top:14px}
+
+
+/* ===== v3.6 — ZEN+ premium dialogue ===== */
+.zenPlusDialogueOverlay{
+  position:fixed; inset:0; z-index:330; display:none;
+  align-items:center; justify-content:center; padding:18px;
+  background:rgba(2,8,18,.82); backdrop-filter:blur(10px);
+}
+.zenPlusDialogueOverlay.show{display:flex;}
+.zenPlusDialogueCard{
+  width:min(680px,100%); max-height:88vh; overflow:auto;
+  border-radius:24px; padding:20px;
+  background:linear-gradient(180deg,#102b4b,#071426);
+  border:1px solid rgba(109,190,255,.28);
+  box-shadow:0 28px 80px rgba(0,0,0,.55);
+}
+.zenPlusDialogueHeader{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.zenPlusDialogueBadge{font-weight:900;font-size:20px}
+.zenPlusDialogueClose{border:0;background:rgba(255,255,255,.10);color:white;width:38px;height:38px;border-radius:50%;font-size:22px}
+.zenPlusDialogueBody{line-height:1.55;font-size:15px;white-space:normal}
+.zenPlusDialogueBody h3{margin:18px 0 7px;font-size:16px}
+.zenPlusDialogueBody strong{font-weight:900}
+.zenPlusDialogueBody u{text-underline-offset:3px}
+.zenPlusDialogueFooter{margin-top:16px;font-size:12px;opacity:.72}
+.zenPlusDailyCard{
+  margin:14px 0;padding:16px;border-radius:20px;
+  background:linear-gradient(135deg,rgba(20,86,138,.34),rgba(32,173,120,.13));
+  border:1px solid rgba(109,190,255,.24);
+}
+.zenPlusDailyTitle{font-weight:900;font-size:16px;margin-bottom:8px}
+.zenPlusDailyText{line-height:1.5;white-space:pre-wrap}
+
+
+/* ===== v3.7 — POP-UP CONSEIL ZEN+ DU JOUR ===== */
+.zenPlusDailyOverlay{
+  position:fixed; inset:0; z-index:340; display:none;
+  align-items:center; justify-content:center; padding:18px;
+  background:rgba(2,8,18,.88); backdrop-filter:blur(12px);
+}
+.zenPlusDailyOverlay.show{display:flex;}
+.zenPlusDailyWindow{
+  width:min(700px,100%); max-height:88vh; overflow:auto;
+  border-radius:26px; padding:22px;
+  background:linear-gradient(180deg,#17395e,#0a182b);
+  border:1px solid rgba(118,201,255,.30);
+  box-shadow:0 30px 90px rgba(0,0,0,.60);
+}
+.zenPlusDailyWindowHeader{
+  display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:14px;
+}
+.zenPlusDailyWindowTitle{font-size:21px;font-weight:900}
+.zenPlusDailyWindowClose{
+  border:0;background:rgba(255,255,255,.10);color:#fff;
+  width:40px;height:40px;border-radius:50%;font-size:23px
+}
+.zenPlusDailyWindowBody{line-height:1.58;font-size:15px}
+.zenPlusDailyWindowBody h3{font-size:16px;margin:18px 0 7px}
+.zenPlusDailyWindowBody strong{font-weight:900}
+.zenPlusDailyWindowBody u{text-underline-offset:3px}
+
+.zenPlusPremiumFlash{
+  position:relative; overflow:hidden;
+  margin:0 0 18px; padding:18px;
+  border-radius:22px;
+  background:linear-gradient(135deg,rgba(255,210,76,.22),rgba(54,164,255,.20),rgba(126,87,255,.20));
+  border:1px solid rgba(255,225,135,.42);
+  box-shadow:0 14px 42px rgba(0,0,0,.24), inset 0 1px 0 rgba(255,255,255,.10);
+}
+.zenPlusPremiumFlash::after{
+  content:""; position:absolute; inset:-40% auto -40% -28%;
+  width:34%; transform:rotate(18deg);
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.22),transparent);
+  animation:zenPlusPremiumShine 3.8s ease-in-out infinite;
+}
+@keyframes zenPlusPremiumShine{
+  0%,55%{left:-35%}
+  85%,100%{left:130%}
+}
+.zenPlusPremiumFlashTitle{
+  position:relative; z-index:1;
+  display:flex; align-items:center; gap:9px;
+  font-size:20px; font-weight:950; letter-spacing:.2px;
+  margin-bottom:9px;
+}
+.zenPlusPremiumPill{
+  display:inline-block; padding:4px 8px; border-radius:999px;
+  font-size:11px; font-weight:900;
+  background:rgba(255,221,110,.18);
+  border:1px solid rgba(255,221,110,.38);
+}
+.zenPlusPremiumFlashText{
+  position:relative; z-index:1; line-height:1.5;
+}
+.zenPlusPremiumAdvantages{
+  position:relative; z-index:1;
+  display:grid; gap:7px; margin-top:12px;
+}
+.zenPlusPremiumAdvantage{
+  padding:9px 11px; border-radius:14px;
+  background:rgba(255,255,255,.055);
+  border:1px solid rgba(255,255,255,.08);
+}
+.zenPlusDailySeparator{
+  margin:18px 0 14px;
+  height:1px; background:linear-gradient(90deg,transparent,rgba(255,255,255,.24),transparent);
+}
+.zenPlusDailySectionTitle{
+  font-size:18px; font-weight:900; margin-bottom:10px;
+}
+.zenPlusUrgentBadge{
+  display:inline-block;margin-bottom:12px;padding:7px 10px;border-radius:999px;
+  background:rgba(255,92,92,.13);border:1px solid rgba(255,130,130,.25);font-weight:800
+}
+
+
+/* ===== v3.9 — ZEN+ GRATUIT / PREMIUM ===== */
+.zenPlusBuyBox{
+  margin-top:18px; padding:16px; border-radius:18px;
+  background:rgba(255,255,255,.055);
+  border:1px solid rgba(255,255,255,.10);
+}
+.zenPlusBuyPrice{
+  display:flex; align-items:center; justify-content:space-between;
+  gap:12px; margin-bottom:12px;
+}
+.zenPlusBuyPrice strong{font-size:22px}
+.zenPlusBuyButton{
+  width:100%; border:0; border-radius:16px; padding:14px 16px;
+  font-size:16px; font-weight:950; cursor:pointer;
+  background:linear-gradient(135deg,#ffd76b,#7fd3ff);
+  color:#071426;
+  box-shadow:0 12px 30px rgba(0,0,0,.28);
+}
+.zenPlusFreeNote{
+  margin-top:10px; font-size:12px; opacity:.76; line-height:1.4;
+}
+
+
+/* ===== v4.2 — AVIS & SUGGESTIONS ===== */
+.appReviewOverlay{
+  position:fixed; inset:0; z-index:360; display:none;
+  align-items:center; justify-content:center; padding:18px;
+  background:rgba(2,8,18,.88); backdrop-filter:blur(12px);
+}
+.appReviewOverlay.show{display:flex}
+.appReviewCard{
+  width:min(640px,100%); max-height:88vh; overflow:auto;
+  border-radius:26px; padding:22px;
+  background:linear-gradient(180deg,#17395e,#0a182b);
+  border:1px solid rgba(118,201,255,.30);
+  box-shadow:0 30px 90px rgba(0,0,0,.60);
+}
+.appReviewHead{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:12px}
+.appReviewTitle{font-size:22px;font-weight:950}
+.appReviewClose{
+  width:40px;height:40px;border-radius:50%;border:0;
+  background:rgba(255,255,255,.10);color:#fff;font-size:22px
+}
+.appReviewText{line-height:1.55;color:#d6e1ef;margin-bottom:16px}
+.appReviewActions{display:grid;gap:10px}
+.appReviewPrimary{
+  border:0;border-radius:16px;padding:14px 16px;font-size:16px;font-weight:900;
+  background:linear-gradient(135deg,#ffd76b,#7fd3ff);color:#071426
+}
+.appReviewSecondary{
+  border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:13px 16px;
+  background:rgba(255,255,255,.06);color:#fff;font-weight:800
+}
+.appReviewTextarea{
+  width:100%; min-height:130px; resize:vertical; border-radius:16px;
+  border:1px solid rgba(255,255,255,.15); background:rgba(0,0,0,.20);
+  color:#fff; padding:13px; font:inherit; box-sizing:border-box
+}
+.appReviewSmall{font-size:12px;opacity:.72;line-height:1.4;margin-top:10px}
+
+
+/* ===== v4.5 — ZEN+ COPILOTE FINANCIER ===== */
+.zenCopilotCard{margin-top:18px;padding:18px;border-radius:22px;background:linear-gradient(145deg,rgba(37,94,145,.32),rgba(65,55,130,.24));border:1px solid rgba(125,203,255,.22)}
+.zenCopilotHead{display:flex;justify-content:space-between;gap:12px;align-items:center}
+.zenCopilotTitle{font-size:20px;font-weight:950}
+.zenCopilotStatus{font-size:12px;padding:6px 9px;border-radius:999px;background:rgba(255,255,255,.08)}
+.zenCopilotBrief{margin-top:13px;line-height:1.5}
+.zenCopilotGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:14px}
+.zenCopilotMetric{padding:12px;border-radius:16px;background:rgba(0,0,0,.17);border:1px solid rgba(255,255,255,.07)}
+.zenCopilotMetric span{display:block;font-size:12px;opacity:.72;margin-bottom:4px}
+.zenCopilotMetric strong{font-size:17px}
+.zenCopilotAsk{margin-top:14px;display:flex;gap:9px}
+.zenCopilotAsk input{flex:1;min-width:0;border-radius:15px;border:1px solid rgba(255,255,255,.12);background:rgba(0,0,0,.22);color:#fff;padding:12px;font:inherit}
+.zenCopilotAsk button{border:0;border-radius:15px;padding:11px 14px;font-weight:900;background:linear-gradient(135deg,#ffd76b,#7fd3ff);color:#071426}
+.zenCopilotSuggestions{display:flex;gap:7px;overflow:auto;margin-top:10px;padding-bottom:2px}
+.zenCopilotChip{white-space:nowrap;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:#fff;border-radius:999px;padding:8px 10px;font-size:12px}
+.zenCopilotAnswer{display:none;margin-top:14px;padding:14px;border-radius:17px;background:rgba(0,0,0,.18);line-height:1.5}
+@media(max-width:430px){.zenCopilotGrid{grid-template-columns:1fr 1fr}.zenCopilotAsk{flex-direction:column}.zenCopilotAsk button{width:100%}}
+
+
+/* ===== v4.7 — FENÊTRE FACTURES URGENTES ===== */
+.urgentInvoicesTab{
+  width:100%;margin:12px 0 16px;padding:13px 14px;border:1px solid rgba(255,112,112,.28);
+  border-radius:16px;background:linear-gradient(135deg,rgba(175,35,55,.28),rgba(75,31,77,.30));
+  color:#fff;font-weight:900;font-size:15px;display:flex;align-items:center;justify-content:space-between;gap:10px
+}
+.urgentInvoicesBadge{min-width:28px;height:28px;padding:0 8px;border-radius:999px;background:rgba(255,255,255,.14);display:grid;place-items:center}
+.urgentInvoicesOverlay{position:fixed;inset:0;z-index:10050;background:rgba(3,8,18,.82);backdrop-filter:blur(10px);display:none;align-items:flex-end;justify-content:center}
+.urgentInvoicesOverlay.show{display:flex}
+.urgentInvoicesWindow{width:min(720px,100%);max-height:90vh;overflow:auto;background:linear-gradient(180deg,#111d32,#0b1322);border:1px solid rgba(255,255,255,.12);border-radius:26px 26px 0 0;padding:18px 16px calc(24px + env(safe-area-inset-bottom));box-shadow:0 -18px 50px rgba(0,0,0,.38)}
+.urgentInvoicesHeader{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;position:sticky;top:-18px;background:linear-gradient(180deg,#111d32 85%,rgba(17,29,50,0));padding:18px 0 12px;z-index:2}
+.urgentInvoicesHeader h2{margin:0;font-size:22px}
+.urgentInvoicesClose{width:38px;height:38px;border:0;border-radius:50%;background:rgba(255,255,255,.09);color:#fff;font-size:20px}
+.urgentInvoiceItem{padding:14px;margin:10px 0;border-radius:18px;background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.08)}
+.urgentInvoiceTop{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.urgentInvoiceName{font-weight:950;font-size:16px}
+.urgentInvoiceAmount{font-weight:950;white-space:nowrap}
+.urgentInvoiceMeta{font-size:13px;opacity:.76;margin-top:6px;line-height:1.45}
+.urgentInvoiceLevel{display:inline-flex;margin-top:9px;padding:6px 9px;border-radius:999px;background:rgba(255,84,84,.13);font-size:12px;font-weight:900}
+.urgentInvoiceActions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.urgentInvoiceActions button{flex:1;min-width:120px;border:0;border-radius:13px;padding:10px 11px;font-weight:850}
+.urgentInvoiceEmpty{text-align:center;padding:34px 12px;opacity:.75}
+
+
+/* ===== v4.8 — ZEN+ AUTOUR DE MOI ===== */
+.nearbyZenCard{margin:14px 0;padding:17px;border-radius:22px;background:linear-gradient(145deg,rgba(27,116,99,.27),rgba(40,72,130,.28));border:1px solid rgba(128,232,203,.20)}
+.nearbyZenTitle{font-size:19px;font-weight:950}
+.nearbyZenChoices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:13px}
+.nearbyZenChoice{border:1px solid rgba(255,255,255,.11);background:rgba(255,255,255,.065);color:#fff;border-radius:15px;padding:12px 8px;font-weight:850;min-height:66px}
+.nearbyZenOverlay{position:fixed;inset:0;z-index:10100;background:rgba(2,7,16,.84);backdrop-filter:blur(10px);display:none;align-items:flex-end;justify-content:center}
+.nearbyZenOverlay.show{display:flex}
+.nearbyZenWindow{width:min(720px,100%);max-height:91vh;overflow:auto;background:linear-gradient(180deg,#10243a,#0b1422);border-radius:26px 26px 0 0;padding:18px 16px calc(24px + env(safe-area-inset-bottom))}
+.nearbyZenHeader{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.nearbyZenClose{width:38px;height:38px;border:0;border-radius:50%;background:rgba(255,255,255,.09);color:#fff;font-size:20px}
+.nearbyZenLocation{margin-top:14px;padding:13px;border-radius:16px;background:rgba(255,255,255,.055)}
+.nearbyZenLocationRow{display:flex;gap:8px;margin-top:9px}
+.nearbyZenLocationRow input{flex:1;min-width:0;border-radius:13px;border:1px solid rgba(255,255,255,.12);background:rgba(0,0,0,.22);color:#fff;padding:11px}
+.nearbyZenLocationRow button,.nearbyZenSearch{border:0;border-radius:13px;padding:11px 12px;font-weight:900}
+.nearbyZenSearch{width:100%;margin-top:12px;background:linear-gradient(135deg,#ffd76b,#82d7ff);color:#071426}
+.nearbyZenQuery{width:100%;box-sizing:border-box;margin-top:12px;border-radius:14px;border:1px solid rgba(255,255,255,.12);background:rgba(0,0,0,.22);color:#fff;padding:12px;font:inherit}
+.nearbyZenResult{display:none;margin-top:14px;padding:14px;border-radius:17px;background:rgba(0,0,0,.18);line-height:1.5}
+@media(max-width:430px){.nearbyZenChoices{grid-template-columns:1fr}.nearbyZenLocationRow{flex-direction:column}}
+
+
+/* ===== v5.0 — ONGLET FACTURES À PAYER ===== */
+.payInvoicesTab{
+  width:100%;margin:12px 0 16px;padding:14px;border:1px solid rgba(255,122,122,.28);
+  border-radius:17px;background:linear-gradient(135deg,rgba(170,40,55,.30),rgba(65,34,88,.28));
+  color:#fff;font-weight:950;font-size:15px;display:flex;align-items:center;justify-content:space-between;gap:10px
+}
+.payInvoicesBadge{min-width:30px;height:30px;padding:0 9px;border-radius:999px;background:rgba(255,255,255,.14);display:grid;place-items:center}
+.payInvoicesOverlay{position:fixed;inset:0;z-index:10200;background:rgba(2,7,16,.86);backdrop-filter:blur(10px);display:none;align-items:flex-end;justify-content:center}
+.payInvoicesOverlay.show{display:flex}
+.payInvoicesWindow{width:min(760px,100%);max-height:92vh;overflow:auto;background:linear-gradient(180deg,#111d32,#0a1321);border-radius:26px 26px 0 0;padding:18px 16px calc(24px + env(safe-area-inset-bottom));border:1px solid rgba(255,255,255,.11)}
+.payInvoicesHeader{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;position:sticky;top:-18px;padding:18px 0 12px;background:linear-gradient(180deg,#111d32 86%,rgba(17,29,50,0));z-index:3}
+.payInvoicesHeader h2{margin:0;font-size:22px}
+.payInvoicesClose{width:38px;height:38px;border:0;border-radius:50%;background:rgba(255,255,255,.09);color:#fff;font-size:20px}
+.payInvoiceItem{padding:14px;margin:10px 0;border-radius:18px;background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.08)}
+.payInvoiceTop{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.payInvoiceName{font-weight:950;font-size:16px}
+.payInvoiceAmount{font-weight:950;white-space:nowrap}
+.payInvoiceMeta{font-size:13px;opacity:.78;margin-top:6px;line-height:1.45}
+.payInvoiceUrgency{display:inline-flex;margin-top:9px;padding:6px 9px;border-radius:999px;background:rgba(255,95,95,.13);font-size:12px;font-weight:900}
+.payInvoiceActions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.payInvoiceActions button{flex:1;min-width:120px;border:0;border-radius:13px;padding:10px 11px;font-weight:850}
+.payInvoicesEmpty{text-align:center;padding:34px 12px;opacity:.75}
+
 </style>
 </head>
 
@@ -1015,13 +1440,26 @@ select:focus{
 
   <div class="header">
     <h1>💶 Mon Budget ZEN</h1>
-    <p>Mes économies • v2.9.3</p>
+    <p>Mes économies • v5.6 TEST — IAP APPLE + SÉLECTION MENSUELLE</p>
 
     <div
       class="headerClock"
       id="currentDateTime">
       📅 Date • 🕒 Heure
     </div>
+  </div>
+
+  <div class="zenPlusHomeStrip" id="zenPlusHomeStrip">
+    <div class="zenPlusHomeTop">
+      <div class="zenPlusHomeTitle" id="zenPlusHomeTitle">✨ Découvrez ZEN+</div>
+      <div class="zenPlusHomeCredits"><span class="zenPlusCreditsValue">100</span> crédits TEST</div>
+    </div>
+    <div class="zenPlusHomeText" id="zenPlusHomeText">
+      ZEN+ va plus loin que la simple lecture d'un document : il tient compte de la facture corrigée et de votre budget pour vous donner un conseil plus personnalisé.
+    </div>
+    <button type="button" class="btnSave zenPlusHomeButton" id="zenPlusHomeButton" onclick="openZenPlusInfo()">
+      Découvrir ce que fait ZEN+
+    </button>
   </div>
 
   <div class="card">
@@ -1037,6 +1475,42 @@ select:focus{
         </div>
         <button class="zenDueAlertButton" id="zenDueAlertButton" type="button">Voir le document</button>
       </div>
+
+
+<section class="nearbyZenCard">
+  <div class="nearbyZenTitle">📍 Autour de moi</div>
+  <div class="small" style="margin-top:5px">ZEN+ vous aide à trouver des options économiques compatibles avec votre budget.</div>
+  <div class="nearbyZenChoices">
+    <button type="button" id="zenNearbyRestaurantBtn" class="nearbyZenChoice" onclick="launchNearbyNative('restaurant');return false;">🍽️<br>Manger moins cher</button>
+    <button type="button" id="zenNearbyCoursesBtn" class="nearbyZenChoice" onclick="launchNearbyNative('courses');return false;">🛒<br>Faire mes courses</button>
+    <button type="button" id="zenNearbyDealsBtn" class="nearbyZenChoice" onclick="launchNearbyNative('bonplan');return false;">🔎<br>Chercher un bon plan</button>
+  </div>
+</section>
+
+<section class="zenCopilotCard" id="zenCopilotCard">
+  <div class="zenCopilotHead">
+    <div class="zenCopilotTitle">🧠 ZEN+ Copilote</div>
+    <div class="zenCopilotStatus" id="zenCopilotStatus">Premium</div>
+  </div>
+  <div class="zenCopilotBrief" id="zenCopilotBrief">ZEN+ prépare votre situation financière…</div>
+  <div class="zenCopilotGrid">
+    <div class="zenCopilotMetric"><span>Situation</span><strong id="zenCopilotHealth">—</strong></div>
+    <div class="zenCopilotMetric"><span>Fin de mois estimée</span><strong id="zenCopilotForecast">—</strong></div>
+    <div class="zenCopilotMetric"><span>Urgences</span><strong id="zenCopilotUrgencies">—</strong></div>
+    <div class="zenCopilotMetric"><span>Budget / jour</span><strong id="zenCopilotDaily">—</strong></div>
+  </div>
+  <div class="zenCopilotAsk">
+    <input id="zenCopilotQuestion" maxlength="350" placeholder="Ex. Puis-je dépenser 80 € ce week-end ?">
+    <button type="button" onclick="askZenPlusCopilot()">Demander à ZEN+</button>
+  </div>
+  <div class="zenCopilotSuggestions">
+    <button class="zenCopilotChip" onclick="askZenPlusPreset('Quelles factures dois-je payer en premier ?')">Factures prioritaires</button>
+    <button class="zenCopilotChip" onclick="askZenPlusPreset('Combien puis-je raisonnablement dépenser ce week-end ?')">Budget week-end</button>
+    <button class="zenCopilotChip" onclick="askZenPlusPreset('Est-ce que je risque de manquer d’argent avant la fin du mois ?')">Risque fin de mois</button>
+  </div>
+  <div class="zenCopilotAnswer" id="zenCopilotAnswer"></div>
+</section>
+
 <h2>Ce mois-ci</h2>
 
     <div class="grid2">
@@ -1491,6 +1965,35 @@ select:focus{
         <div class="assistantAdvice" id="assistantSummary"></div>
         <div class="archiveTitle" style="margin-top:12px">Que dois-je faire maintenant ?</div>
         <div class="assistantAdvice" id="assistantAdvice"></div>
+
+        <div class="zenPlusTest" id="zenPlusTestBox">
+          <div class="zenPlusTestHead">
+            <div>
+              <strong id="zenPlusDocumentTitle">✨ ZEN+ — MODE TEST</strong>
+              <div class="small" id="zenPlusDocumentSubtitle">Conseil intelligent approfondi à partir du document corrigé et du budget affiché.</div>
+            </div>
+            <div class="zenPlusCredits"><span class="zenPlusCreditsValue">100</span> crédits</div>
+          </div>
+
+          <button type="button" class="btnSave" id="zenPlusDocumentMainButton" style="width:100%" onclick="runZenPlusTestAnalysis()">
+            ✨ Demander une analyse ZEN+
+          </button>
+
+          <div class="row" style="margin-top:8px">
+            <button type="button" class="btnSecondary" id="zenPlusDocumentPurchaseTestButton" style="flex:1" onclick="simulateZenPlusPurchase(25)">
+              🧪 Simuler l'achat de 25 crédits
+            </button>
+            <button type="button" class="btnSecondary" style="flex:1" onclick="resetZenPlusTestCredits()">
+              ↻ Remettre 100 crédits
+            </button>
+          </div>
+
+          <div class="zenPlusResult" id="zenPlusResult"></div>
+          <div class="zenPlusTestNote" id="zenPlusDocumentNote">
+            Version TEST : les crédits sont fictifs, mais les analyses ZEN+ utilisent réellement l’IA via le backend sécurisé. Aucun achat réel n’est effectué.
+          </div>
+        </div>
+
         <details style="margin-top:10px">
           <summary class="small" style="cursor:pointer">Voir le texte reconnu</summary>
           <div class="rawText" id="assistantRawText"></div>
@@ -1546,8 +2049,13 @@ select:focus{
       </div>
     </div>
 
-    <div class="archiveTitle">🔴 Factures à payer</div>
-    <div id="invoiceUpcoming"></div>
+    
+<button type="button" class="payInvoicesTab" onclick="openPayInvoicesPage()">
+  <span>🧾 Factures à payer</span>
+  <span class="payInvoicesBadge" id="payInvoicesBadge">0</span>
+</button>
+<div id="invoiceUpcoming" style="display:none"></div>
+
 
     <div class="archiveTitle">✅ Factures payées</div>
     <div id="invoicePaid"></div>
@@ -1698,7 +2206,13 @@ select:focus{
 
   <div class="card">
 
-    <h2>💡 Conseil ZEN</h2>
+    
+<div class="zenPlusDailyCard" id="zenPlusDailyCard">
+  <div class="zenPlusDailyTitle">✨ Conseil ZEN+ du jour</div>
+  <div class="zenPlusDailyText" id="zenPlusDailyText">ZEN+ prépare votre conseil personnalisé…</div>
+  <button type="button" class="miniButton" style="margin-top:10px" onclick="refreshZenPlusDailyAdvice(true,true)">↻ Actualiser mon conseil ZEN+</button>
+</div>
+<h2>💡 Conseil ZEN</h2>
 
     <div
       id="tip"
@@ -1718,6 +2232,8 @@ select:focus{
   <div class="card">
 
     <h2>💾 Sauvegarde et export</h2>
+
+    <button type="button" class="miniButton" style="margin-bottom:12px" onclick="openAppReviewPopup()">⭐ Noter Mon Budget ZEN / envoyer une suggestion</button>
 
     <div class="small" style="margin-bottom:12px">
       Vos données restent enregistrées sur votre appareil.
@@ -1811,14 +2327,22 @@ select:focus{
       id="monthRecurringList">
     </div>
 
+    <div class="monthRecurringSelectActions">
+      <button type="button" class="btnSecondary" onclick="setAllMonthRecurring(true)">
+        ✓ Tout cocher
+      </button>
+      <button type="button" class="btnSecondary" onclick="setAllMonthRecurring(false)">
+        ☐ Tout décocher
+      </button>
+    </div>
+
     <div
       class="small"
-      style="margin-bottom:12px">
+      style="margin:10px 0 12px">
 
-      Voulez-vous activer ces dépenses
-      récurrentes pour ce mois ?
-
-      Elles seront réservées dans votre disponible.
+      Cochez uniquement les dépenses récurrentes
+      que vous souhaitez réactiver pour ce nouveau mois.
+      Une dépense terminée peut donc rester décochée.
 
     </div>
 
@@ -1827,15 +2351,15 @@ select:focus{
       <button
         type="button"
         class="btnSave"
-        onclick="answerMonthRollover(true)">
-        Oui
+        onclick="answerMonthRolloverSelection()">
+        Activer la sélection
       </button>
 
       <button
         type="button"
         class="btnSecondary"
         onclick="answerMonthRollover(false)">
-        Non
+        Aucune
       </button>
 
     </div>
@@ -1874,10 +2398,121 @@ select:focus{
 </div>
 
 <div class="documentViewer" id="documentViewer" onclick="closeDocumentViewer(event)">
-  <div class="documentViewerInner">
+  <div class="documentViewerInner" id="documentViewerInner">
+    <div class="documentViewerToolbar documentViewerToolbarMinimal">
+      <button type="button" class="documentViewerTool" onclick="event.stopPropagation();shareCurrentDocument()">↗ Partager</button>
+    </div>
+    <div id="documentLongPressAction" class="documentLongPressAction" aria-hidden="true">
+      <button type="button" class="documentViewerTool documentViewerSaveTool" onclick="event.stopPropagation();hideDocumentLongPressAction();downloadCurrentDocument()">⬇ Enregistrer</button>
+    </div>
     <button type="button" class="documentViewerClose" aria-label="Fermer" onclick="closeDocumentViewer(event,true)">×</button>
-    <img id="documentViewerImage" class="documentViewerImage" alt="Document en plein écran">
+    <img id="documentViewerImage" class="documentViewerImage" alt="Document en plein écran" draggable="false">
     <div id="documentViewerCaption" class="documentViewerCaption"></div>
+  </div>
+</div>
+
+
+
+
+<div class="zenPlusDailyOverlay" id="zenPlusDailyOverlay" aria-hidden="true">
+  <div class="zenPlusDailyWindow" role="dialog" aria-modal="true" aria-labelledby="zenPlusDailyWindowTitle">
+    <div class="zenPlusDailyWindowHeader">
+      <div class="zenPlusDailyWindowTitle" id="zenPlusDailyWindowTitle">✨ Votre conseil ZEN+ du jour</div>
+      <button type="button" class="zenPlusDailyWindowClose" onclick="closeZenPlusDailyPopup()" aria-label="Fermer">×</button>
+    </div>
+    <div class="zenPlusDailyWindowBody" id="zenPlusDailyWindowBody"></div>
+  </div>
+</div>
+
+<div class="zenPlusDialogueOverlay" id="zenPlusDialogueOverlay" aria-hidden="true">
+  <div class="zenPlusDialogueCard" role="dialog" aria-modal="true" aria-labelledby="zenPlusDialogueTitle">
+    <div class="zenPlusDialogueHeader">
+      <div class="zenPlusDialogueBadge" id="zenPlusDialogueTitle">✨ ZEN+ — Analyse personnalisée</div>
+      <button type="button" class="zenPlusDialogueClose" onclick="closeZenPlusDialogue()" aria-label="Fermer">×</button>
+    </div>
+    <div class="zenPlusDialogueBody" id="zenPlusDialogueBody"></div>
+    <div class="zenPlusDialogueFooter">Analyse générée à partir des informations vérifiées dans Mon Budget ZEN.</div>
+  </div>
+</div>
+
+<div class="zenPlusOverlay" id="zenPlusInfoOverlay">
+  <div class="zenPlusPage">
+    <div class="zenPlusPageHeader">
+      <h2 id="zenPlusInfoTitle">✨ ZEN+</h2>
+      <button type="button" class="zenPlusClose" onclick="closeZenPlusInfo()" aria-label="Fermer">×</button>
+    </div>
+    <div class="zenPlusHero">
+      <strong style="font-size:18px">Votre assistant budget plus intelligent</strong>
+      <div class="small" id="zenPlusInfoText" style="margin-top:7px;line-height:1.5">
+        Assistant ZEN lit et classe votre document. ZEN+ utilise ensuite les informations que vous avez vérifiées ou corrigées pour vous expliquer l'impact concret sur votre budget et vous aider à décider quoi faire.
+      </div>
+      <div class="zenPlusHeroCredits" id="zenPlusInfoCredits">Solde TEST : <span class="zenPlusCreditsValue" style="margin-left:6px">100</span> crédits</div>
+    </div>
+    <div class="zenPlusFeature"><strong>📄 Comprendre le document</strong>ZEN+ repart du montant, de la date, du type de document et de l'organisme que vous avez confirmés.</div>
+    <div class="zenPlusFeature"><strong>💶 Le relier à votre budget</strong>Il tient compte du disponible réel, des revenus, des dépenses et du budget conseillé par jour affichés dans Mon Budget ZEN.</div>
+    <div class="zenPlusFeature"><strong>🧭 Vous dire quoi faire</strong>L'objectif est de transformer une facture en recommandation claire : urgence, marge disponible, précautions et prochaine action.</div>
+    <div class="zenPlusFeature"><strong>🔒 Version TEST</strong>Les crédits affichés restent fictifs pour les essais, mais ZEN+ utilise le backend IA sécurisé. L’achat ZEN+ passe désormais par l’achat intégré Apple en environnement de test.</div>
+    <div class="zenPlusInfoActions">
+      <button type="button" class="btnSave" id="zenPlusUseBtn" onclick="useZenPlusFromInfo()">✨ Utiliser ZEN+ sur le document</button>
+      <button type="button" class="btnSecondary" id="zenPlusDiscoverBtn" onclick="buyZenPlusPremium()"> Acheter ZEN+ — <span data-zenplus-price>4,99 €</span></button>
+      <button type="button" class="btnSecondary" onclick="restoreZenPlusPremium()">↻ Restaurer mes achats</button>
+      <button type="button" class="btnSecondary" id="zenPlusResetAppleTestBtn" onclick="resetZenPlusPremiumForAppleTest()">🧪 Réinitialiser ZEN+ pour test Apple</button>
+      <button type="button" class="btnSecondary" id="zenPlusContinueBtn" onclick="closeZenPlusInfo()">Retour à Mon Budget ZEN</button>
+    </div>
+  </div>
+</div>
+
+<div class="zenPlusOfferOverlay" id="zenPlusOfferOverlay">
+  <div class="zenPlusOfferCard">
+    <h2>✨ ZEN+ peut aller plus loin</h2>
+    <p>Le document vient d'être analysé. ZEN+ peut maintenant utiliser les informations vérifiées ainsi que votre budget pour vous donner un conseil plus approfondi.</p>
+    <div class="zenPlusOfferCredits">Vous avez <span class="zenPlusCreditsValue">100</span> crédits ZEN+ TEST.</div>
+    <div class="zenPlusOfferActions">
+      <button type="button" class="btnSave" onclick="openZenPlusInfoFromOffer()">Découvrir ZEN+</button>
+      <button type="button" class="btnSecondary" onclick="runZenPlusFromOffer()">✨ Utiliser ZEN+ maintenant</button>
+      <button type="button" class="btnSecondary" onclick="closeZenPlusOffer()">Continuer sans ZEN+</button>
+    </div>
+  </div>
+</div>
+
+
+<div class="appReviewOverlay" id="appReviewOverlay" aria-hidden="true">
+  <div class="appReviewCard" role="dialog" aria-modal="true" aria-labelledby="appReviewTitle">
+    <div class="appReviewHead">
+      <div class="appReviewTitle" id="appReviewTitle">💙 Vous aimez Mon Budget ZEN ?</div>
+      <button type="button" class="appReviewClose" onclick="closeAppReviewPopup()" aria-label="Fermer">×</button>
+    </div>
+    <div class="appReviewText">
+      Votre avis aide Mon Budget ZEN à progresser et permet à d’autres utilisateurs de découvrir l’application.
+    </div>
+    <div class="appReviewActions">
+      <button type="button" class="appReviewPrimary" onclick="openAppStoreReview()">⭐ Donner mon avis sur l’App Store</button>
+      <button type="button" class="appReviewSecondary" onclick="openAppSuggestion()">💬 J’ai une suggestion</button>
+      <button type="button" class="appReviewSecondary" onclick="postponeAppReview()">Plus tard</button>
+    </div>
+    <div class="appReviewSmall">
+      La note et le commentaire App Store sont laissés directement auprès d’Apple.
+    </div>
+  </div>
+</div>
+
+<div class="appReviewOverlay" id="appSuggestionOverlay" aria-hidden="true">
+  <div class="appReviewCard" role="dialog" aria-modal="true" aria-labelledby="appSuggestionTitle">
+    <div class="appReviewHead">
+      <div class="appReviewTitle" id="appSuggestionTitle">💬 Aidez-nous à améliorer l’application</div>
+      <button type="button" class="appReviewClose" onclick="closeAppSuggestion()" aria-label="Fermer">×</button>
+    </div>
+    <div class="appReviewText">
+      Une idée, une fonction manquante ou quelque chose qui pourrait être plus simple ? Écrivez votre suggestion ci-dessous.
+    </div>
+    <textarea class="appReviewTextarea" id="appSuggestionText" maxlength="1200" placeholder="Votre suggestion…"></textarea>
+    <div class="appReviewActions" style="margin-top:12px">
+      <button type="button" class="appReviewPrimary" onclick="saveAndShareSuggestion()">Envoyer ma suggestion</button>
+      <button type="button" class="appReviewSecondary" onclick="closeAppSuggestion()">Annuler</button>
+    </div>
+    <div class="appReviewSmall">
+      En version TEST, la suggestion est enregistrée sur l’appareil et peut être partagée avec le développeur.
+    </div>
   </div>
 </div>
 
@@ -2209,6 +2844,7 @@ function save(){
 
   );
 
+  setTimeout(refreshZenPlusCopilotEverywhere,0);
 }
 
 
@@ -2676,17 +3312,27 @@ function showMonthRollover(){
 
       <div class="monthRecurringRow">
 
-        <div>
+        <label class="monthRecurringChoice">
 
-          <strong>
-            ${escapeHtml(plannedLabel(p))}
-          </strong>
+          <input
+            type="checkbox"
+            class="monthRecurringCheckbox"
+            value="${escapeHtml(String(p.id))}"
+            checked>
 
-          <div class="small">
-            Le ${p.day}
-          </div>
+          <span>
 
-        </div>
+            <strong>
+              ${escapeHtml(plannedLabel(p))}
+            </strong>
+
+            <div class="small">
+              Le ${p.day}
+            </div>
+
+          </span>
+
+        </label>
 
         <strong>
           ${euro(p.amount)}
@@ -2702,6 +3348,56 @@ function showMonthRollover(){
   .classList
 
   .add("show");
+
+}
+
+
+function setAllMonthRecurring(checked){
+
+  document
+    .querySelectorAll(".monthRecurringCheckbox")
+    .forEach(cb=>cb.checked=!!checked);
+
+}
+
+
+function answerMonthRolloverSelection(){
+
+  const period=currentPeriod();
+
+  const selected=new Set(
+    Array.from(
+      document.querySelectorAll(".monthRecurringCheckbox:checked")
+    ).map(cb=>String(cb.value))
+  );
+
+  data.recurringDecisions[period]=true;
+
+  data.planned
+    .filter(p=>p.recurring)
+    .forEach(p=>{
+
+      p.activatedPeriods =
+        p.activatedPeriods.filter(x=>x!==period);
+
+      p.skippedPeriods =
+        p.skippedPeriods.filter(x=>x!==period);
+
+      if(selected.has(String(p.id))){
+        p.activatedPeriods.push(period);
+      }else{
+        p.skippedPeriods.push(period);
+      }
+
+    });
+
+  save();
+
+  $("monthOverlay")
+    .classList
+    .remove("show");
+
+  render();
 
 }
 
@@ -5064,6 +5760,43 @@ function currentAccountIncomeForPeriod(
 
 
 function documentTaskPriority(inv){const u=urgencyForDocument(inv.documentType||"autre",inv.dueDate||"");const rank={critical:0,urgent:1,watch:2,normal:3};return {key:u.key,label:u.label,rank:rank[u.key]??3};}
+let currentDocumentViewerId=null;
+let documentZoom=1;
+let documentPanX=0;
+let documentPanY=0;
+let documentPointerState=new Map();
+let documentStartDistance=0;
+let documentStartZoom=1;
+let documentDragStart=null;
+let documentLastTap=0;
+
+function currentViewerDocument(){
+  return (data.invoices||[]).find(x=>String(x.id)===String(currentDocumentViewerId));
+}
+
+function applyDocumentTransform(){
+  const img=$("documentViewerImage");
+  if(!img) return;
+  img.style.transform=`translate(${documentPanX}px,${documentPanY}px) scale(${documentZoom})`;
+}
+
+function resetDocumentZoom(){
+  documentZoom=1;
+  documentPanX=0;
+  documentPanY=0;
+  applyDocumentTransform();
+}
+
+function zoomDocument(delta){
+  const next=Math.max(1,Math.min(5,documentZoom+delta));
+  documentZoom=next;
+  if(documentZoom===1){
+    documentPanX=0;
+    documentPanY=0;
+  }
+  applyDocumentTransform();
+}
+
 function openDocumentImage(id){
   const inv=(data.invoices||[]).find(x=>String(x.id)===String(id));
   if(!inv || !inv.image){
@@ -5074,9 +5807,14 @@ function openDocumentImage(id){
   const img=$("documentViewerImage");
   const caption=$("documentViewerCaption");
   if(!viewer||!img||!caption) return;
+  currentDocumentViewerId=inv.id;
+  hideDocumentLongPressAction();
+  resetDocumentZoom();
   img.src=inv.image;
   img.alt=inv.label||"Document";
   caption.textContent=`${inv.label||"Document"}${Number(inv.amount)>0?` • ${euro(inv.amount)}`:""}${inv.dueDate?` • échéance ${formatDateFr(inv.dueDate)}`:""}`;
+  viewer.style.display="flex";
+  viewer.setAttribute("aria-hidden","false");
   viewer.classList.add("show");
   document.body.style.overflow="hidden";
 }
@@ -5084,11 +5822,149 @@ function openDocumentImage(id){
 function closeDocumentViewer(event,force=false){
   const viewer=$("documentViewer");
   if(!viewer) return;
+
+  // Le bouton X doit toujours fermer, même si un geste/zoom est encore actif.
+  if(event){
+    event.preventDefault();
+    event.stopPropagation();
+  }
   if(!force && event && event.target!==viewer) return;
+
+  clearTimeout(documentLongPressTimer);
+  documentLongPressTimer=null;
+  documentLongPressTriggered=false;
+  documentLongPressStart=null;
+  documentPointerState.clear();
+  documentDragStart=null;
+  documentPinchStart=null;
+  hideDocumentLongPressAction();
+
+  // Ferme immédiatement la surcouche et rend l'écran précédent utilisable.
   viewer.classList.remove("show");
+  viewer.style.display="none";
+  viewer.setAttribute("aria-hidden","true");
   document.body.style.overflow="";
+
   const img=$("documentViewerImage");
-  if(img) img.src="";
+  if(img){
+    img.src="";
+    img.style.transform="";
+  }
+  currentDocumentViewerId=null;
+  documentZoom=1;
+  documentPanX=0;
+  documentPanY=0;
+}
+
+function dataUrlToBlob(dataUrl){
+  const parts=String(dataUrl||"").split(",");
+  if(parts.length<2) throw new Error("Image invalide");
+  const mime=(parts[0].match(/data:([^;]+)/)||[])[1]||"image/jpeg";
+  const bytes=atob(parts[1]);
+  const arr=new Uint8Array(bytes.length);
+  for(let i=0;i<bytes.length;i++) arr[i]=bytes.charCodeAt(i);
+  return new Blob([arr],{type:mime});
+}
+
+function documentFileName(inv,blob){
+  const safe=String(inv?.label||"document")
+    .normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+    .replace(/[^a-zA-Z0-9_-]+/g,"-")
+    .replace(/^-+|-+$/g,"")
+    .slice(0,50) || "document";
+  const ext=(blob.type||"").includes("png")?"png":"jpg";
+  return `${safe}.${ext}`;
+}
+
+async function shareCurrentDocument(){
+  const inv=currentViewerDocument();
+  if(!inv?.image) return;
+  try{
+    const blob=dataUrlToBlob(inv.image);
+    const file=new File([blob],documentFileName(inv,blob),{type:blob.type});
+    if(navigator.share && (!navigator.canShare || navigator.canShare({files:[file]}))){
+      await navigator.share({
+        title:inv.label||"Document Mon Budget ZEN",
+        text:`Document enregistré dans Mon Budget ZEN${Number(inv.amount)>0?` • ${euro(inv.amount)}`:""}`,
+        files:[file]
+      });
+      return;
+    }
+    alert("Le partage de fichier n'est pas disponible sur cet appareil.");
+  }catch(e){
+    if(e?.name!=="AbortError"){
+      console.warn(e);
+      alert("Impossible de partager cette image.");
+    }
+  }
+}
+
+async function downloadCurrentDocument(){
+  const inv=currentViewerDocument();
+  if(!inv?.image) return;
+  try{
+    const blob=dataUrlToBlob(inv.image);
+    const file=new File([blob],documentFileName(inv,blob),{type:blob.type});
+    if(navigator.share && (!navigator.canShare || navigator.canShare({files:[file]}))){
+      await navigator.share({title:"Enregistrer le document",files:[file]});
+      return;
+    }
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement("a");
+    a.href=url;
+    a.download=documentFileName(inv,blob);
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),1200);
+  }catch(e){
+    if(e?.name!=="AbortError"){
+      console.warn(e);
+      alert("Impossible d'enregistrer cette image.");
+    }
+  }
+}
+
+async function copyCurrentDocumentImage(){
+  const inv=currentViewerDocument();
+  if(!inv?.image) return;
+  try{
+    const blob=dataUrlToBlob(inv.image);
+    if(navigator.clipboard && window.ClipboardItem){
+      await navigator.clipboard.write([new ClipboardItem({[blob.type]:blob})]);
+      alert("Image copiée dans le presse-papiers.");
+      return;
+    }
+    alert("La copie directe d'image n'est pas prise en charge par cet iPhone. Utilisez Partager.");
+  }catch(e){
+    console.warn(e);
+    alert("iOS n'autorise pas la copie directe de cette image ici. Utilisez Partager.");
+  }
+}
+
+async function copyCurrentDocumentText(){
+  const inv=currentViewerDocument();
+  if(!inv) return;
+  const txt=String(inv.ocrText||"").trim();
+  if(!txt){
+    alert("Aucun texte OCR n'est disponible pour ce document.");
+    return;
+  }
+  try{
+    await navigator.clipboard.writeText(txt);
+    alert("Texte reconnu copié.");
+  }catch(e){
+    const ta=document.createElement("textarea");
+    ta.value=txt;
+    ta.style.position="fixed";
+    ta.style.opacity="0";
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    document.execCommand("copy");
+    ta.remove();
+    alert("Texte reconnu copié.");
+  }
 }
 
 function openDocumentFromTask(id){
@@ -5096,6 +5972,126 @@ function openDocumentFromTask(id){
   if(el) el.scrollIntoView({behavior:"smooth",block:"center"});
   setTimeout(()=>openDocumentImage(id),220);
 }
+
+let documentLongPressTimer=null;
+let documentLongPressTriggered=false;
+let documentLongPressStart=null;
+
+function showDocumentLongPressAction(){
+  const action=$("documentLongPressAction");
+  if(!action) return;
+  action.classList.add("show");
+  action.setAttribute("aria-hidden","false");
+}
+
+function hideDocumentLongPressAction(){
+  clearTimeout(documentLongPressTimer);
+  documentLongPressTimer=null;
+  documentLongPressTriggered=false;
+  documentLongPressStart=null;
+  const action=$("documentLongPressAction");
+  if(action){
+    action.classList.remove("show");
+    action.setAttribute("aria-hidden","true");
+  }
+}
+
+function setupDocumentViewerGestures(){
+  const area=$("documentViewerInner");
+  if(!area || area.dataset.gesturesReady==="1") return;
+  area.dataset.gesturesReady="1";
+  area.addEventListener("contextmenu",e=>e.preventDefault());
+
+  area.addEventListener("pointerdown",e=>{
+    if(e.target.closest("button")) return;
+    area.setPointerCapture?.(e.pointerId);
+    documentPointerState.set(e.pointerId,{x:e.clientX,y:e.clientY});
+    if(documentPointerState.size===1){
+      documentDragStart={x:e.clientX,y:e.clientY,panX:documentPanX,panY:documentPanY};
+      documentLongPressStart={pointerId:e.pointerId,x:e.clientX,y:e.clientY};
+      clearTimeout(documentLongPressTimer);
+      documentLongPressTimer=setTimeout(()=>{
+        if(documentPointerState.size===1 && documentLongPressStart?.pointerId===e.pointerId){
+          documentLongPressTriggered=true;
+          showDocumentLongPressAction();
+          if(navigator.vibrate) navigator.vibrate(25);
+        }
+      },650);
+    }else if(documentPointerState.size===2){
+      clearTimeout(documentLongPressTimer);
+      documentLongPressTimer=null;
+      documentLongPressStart=null;
+      const pts=[...documentPointerState.values()];
+      documentStartDistance=Math.hypot(pts[0].x-pts[1].x,pts[0].y-pts[1].y);
+      documentStartZoom=documentZoom;
+    }
+  });
+
+  area.addEventListener("pointermove",e=>{
+    if(!documentPointerState.has(e.pointerId)) return;
+    documentPointerState.set(e.pointerId,{x:e.clientX,y:e.clientY});
+    if(documentLongPressStart?.pointerId===e.pointerId){
+      const moved=Math.hypot(e.clientX-documentLongPressStart.x,e.clientY-documentLongPressStart.y);
+      if(moved>12){
+        clearTimeout(documentLongPressTimer);
+        documentLongPressTimer=null;
+        documentLongPressStart=null;
+      }
+    }
+    if(documentPointerState.size===2){
+      const pts=[...documentPointerState.values()];
+      const d=Math.hypot(pts[0].x-pts[1].x,pts[0].y-pts[1].y);
+      if(documentStartDistance>0){
+        documentZoom=Math.max(1,Math.min(5,documentStartZoom*(d/documentStartDistance)));
+        applyDocumentTransform();
+      }
+    }else if(documentPointerState.size===1 && documentZoom>1 && documentDragStart){
+      documentPanX=documentDragStart.panX+(e.clientX-documentDragStart.x);
+      documentPanY=documentDragStart.panY+(e.clientY-documentDragStart.y);
+      applyDocumentTransform();
+    }
+  });
+
+  const endPointer=e=>{
+    documentPointerState.delete(e.pointerId);
+    clearTimeout(documentLongPressTimer);
+    documentLongPressTimer=null;
+    documentLongPressStart=null;
+    if(documentPointerState.size===0) documentDragStart=null;
+    if(documentPointerState.size===1){
+      const p=[...documentPointerState.values()][0];
+      documentDragStart={x:p.x,y:p.y,panX:documentPanX,panY:documentPanY};
+    }
+  };
+  area.addEventListener("pointerup",endPointer);
+  area.addEventListener("pointercancel",endPointer);
+
+  area.addEventListener("dblclick",e=>{
+    if(e.target.closest("button")) return;
+    if(documentZoom>1) resetDocumentZoom();
+    else{
+      documentZoom=2.2;
+      applyDocumentTransform();
+    }
+  });
+
+  area.addEventListener("click",e=>{
+    if(e.target.closest("button")) return;
+    const now=Date.now();
+    if(now-documentLastTap<320){
+      if(documentZoom>1) resetDocumentZoom();
+      else{
+        documentZoom=2.2;
+        applyDocumentTransform();
+      }
+      documentLastTap=0;
+    }else{
+      documentLastTap=now;
+    }
+  });
+}
+
+setTimeout(setupDocumentViewerGestures,0);
 
 function getNextDueDocument(){
   const now=new Date();
@@ -7294,7 +8290,62 @@ async function exportXLS(){
            ${tableRows || `<tr><td colspan="7">Aucune opération</td></tr>`}
          </tbody>
        </table>
-     </body>
+     
+<div class="urgentInvoicesOverlay" id="urgentInvoicesOverlay" aria-hidden="true" onclick="closeUrgentInvoicesWindow(event)">
+  <div class="urgentInvoicesWindow" onclick="event.stopPropagation()">
+    <div class="urgentInvoicesHeader">
+      <div>
+        <h2>🚨 Factures urgentes</h2>
+        <div class="small" id="urgentInvoicesSummary">Vos échéances prioritaires enregistrées depuis vos photos.</div>
+      </div>
+      <button type="button" class="urgentInvoicesClose" onclick="closeUrgentInvoicesWindow(null,true)">×</button>
+    </div>
+    <div id="urgentInvoicesList"></div>
+  </div>
+</div>
+
+
+<div class="nearbyZenOverlay" id="nearbyZenOverlay" aria-hidden="true" onclick="closeZenNearby(event)">
+  <div class="nearbyZenWindow" onclick="event.stopPropagation()">
+    <div class="nearbyZenHeader">
+      <div>
+        <h2 style="margin:0">📍 ZEN+ autour de moi</h2>
+        <div class="small" id="nearbyZenSubtitle">Des options économiques près de vous.</div>
+      </div>
+      <button class="nearbyZenClose" onclick="closeZenNearby(null,true)">×</button>
+    </div>
+
+    <div class="nearbyZenLocation">
+      <strong>Votre zone</strong>
+      <div class="small" style="margin-top:4px">La localisation n’est utilisée que lorsque vous demandez cette recherche. Vous pouvez aussi saisir une ville.</div>
+      <div class="nearbyZenLocationRow">
+        <input id="nearbyZenCity" placeholder="Ville ou commune">
+        <button type="button" onclick="useZenNearbyLocation()">📍 Ma position</button>
+      </div>
+      <div class="small" id="nearbyZenLocationStatus" style="margin-top:7px"></div>
+    </div>
+
+    <input class="nearbyZenQuery" id="nearbyZenQuery" maxlength="300" placeholder="Que recherchez-vous ?">
+    <button class="nearbyZenSearch" type="button" onclick="searchZenNearby()">✨ Chercher avec ZEN+</button>
+    <div class="nearbyZenResult" id="nearbyZenResult"></div>
+  </div>
+</div>
+
+
+<div class="payInvoicesOverlay" id="payInvoicesOverlay" aria-hidden="true" onclick="closePayInvoicesPage(event)">
+  <div class="payInvoicesWindow" onclick="event.stopPropagation()">
+    <div class="payInvoicesHeader">
+      <div>
+        <h2>🧾 Factures à payer</h2>
+        <div class="small" id="payInvoicesSummary">Toutes vos factures non payées, classées par échéance et urgence.</div>
+      </div>
+      <button type="button" class="payInvoicesClose" onclick="closePayInvoicesPage(null,true)">×</button>
+    </div>
+    <div id="payInvoicesList"></div>
+  </div>
+</div>
+
+</body>
      </html>`;
 
 
@@ -8157,7 +9208,11 @@ function applyDocumentAnalysis(info){
   $("assistantRawText").textContent=info.text||"Aucun texte reconnu.";
   $("assistantResult").style.display="block";
   setAnalysisStatus("✅ Analyse terminée. Vérifiez les informations ci-dessous avant de les valider.");
-  setTimeout(()=>$('invoiceLabel').focus(),50);
+  renderZenPlusTestCredits();
+  if(hasZenPlusPremium()){
+    localStorage.removeItem(ZEN_PLUS_DAILY_KEY);
+  }
+  setTimeout(showZenPlusAnalysisOffer,350);
 }
 
 /*
@@ -8188,6 +9243,9 @@ function refreshAssistantFromUserCorrections(){
   $("assistantSummary").textContent=info.summary;
   $("assistantAdvice").textContent=info.advice;
   setAnalysisStatus("✅ Analyse mise à jour avec vos corrections.");
+  if(hasZenPlusPremium()){
+    localStorage.removeItem(ZEN_PLUS_DAILY_KEY);
+  }
 }
 
 function installAssistantCorrectionListeners(){
@@ -8363,6 +9421,12 @@ async function saveAnalyzedDocument(targetStatus){
     inv.reminderEnabled=await scheduleDocumentReminder(inv,true);
     try{ save(); }catch(e){ console.warn("État du rappel non sauvegardé",e); }
   }
+  // ZEN+ doit immédiatement recalculer son conseil si une nouvelle facture
+  // urgente vient d'être enregistrée.
+  if(hasZenPlusPremium()){
+    localStorage.removeItem(ZEN_PLUS_DAILY_KEY);
+    setTimeout(()=>refreshZenPlusDailyAdvice(true,false),250);
+  }
 
   cancelInvoiceForm();
   render();
@@ -8428,7 +9492,196 @@ function invoiceHtml(inv,mode){
     ? `<span class="docChip">${inv.reminderEnabled?"🔔 Rappel quotidien":"🔕 Rappel non autorisé"}</span>`
     : "";
   const advice=(inv.summary||inv.advice)?`<details style="margin-top:10px"><summary class="small" style="cursor:pointer">🤖 Voir l'explication et les démarches</summary>${inv.summary?`<div class="assistantAdvice" style="margin-top:8px"><strong>${escapeHtml(inv.summary)}</strong></div>`:''}${inv.advice?`<div class="assistantAdvice" style="margin-top:8px">${escapeHtml(inv.advice)}</div>`:''}</details>`:"";
-  return `<div class="invoiceItem" data-document-id="${escapeHtml(String(inv.id))}"><div class="invoiceHead"><div><strong>${mode==='paid'?'✅':mode==='archive'?'📁':'🧾'} ${escapeHtml(inv.label)}</strong><div class="small">${escapeHtml(typeLabel)} • ${escapeHtml(meta)} • ${escapeHtml(amountText)}</div><div class="docMetaLine"><span class="docChip">${escapeHtml(inv.category||'Autre')}</span>${linked}${reminder}${mode==='upcoming'?`<span class="urgencyBadge urgency-${urgency.key}">${escapeHtml(urgency.label)}</span>`:''}</div>${inv.image?`<img class="photoPreview" src="${inv.image}" alt="${escapeHtml(inv.label)}" title="Toucher pour agrandir" onclick="openDocumentImage('${escapeHtml(String(inv.id))}')">`:''}${advice}</div>${Number(inv.amount)>0?`<strong class="${mode==='paid'?'green':mode==='archive'?'blue':'red'}">${euro(inv.amount)}</strong>`:''}</div><div class="invoiceActions">${mode==='upcoming'?`<button type="button" class="miniButton" onclick="markInvoicePaid('${inv.id}')">✓ Payé / traité</button>`:''}${mode==='paid'?`<button type="button" class="miniButton" onclick="restoreInvoice('${inv.id}')">↩ Remettre à traiter</button>`:''}<button type="button" class="miniButton" onclick="deleteInvoice('${inv.id}')">✕ Supprimer</button></div></div>`;
+  return `<div class="invoiceItem" data-document-id="${escapeHtml(String(inv.id))}"><div class="invoiceHead"><div><strong>${mode==='paid'?'✅':mode==='archive'?'📁':'🧾'} ${escapeHtml(inv.label)}</strong><div class="small">${escapeHtml(typeLabel)} • ${escapeHtml(meta)} • ${escapeHtml(amountText)}</div><div class="docMetaLine"><span class="docChip">${escapeHtml(inv.category||'Autre')}</span>${linked}${reminder}${mode==='upcoming'?`<span class="urgencyBadge urgency-${urgency.key}">${escapeHtml(urgency.label)}</span>`:''}</div>${inv.image?`<img class="photoPreview" src="${inv.image}" alt="${escapeHtml(inv.label)}" title="Toucher pour ouvrir, zoomer, partager ou enregistrer" onclick="openDocumentImage('${escapeHtml(String(inv.id))}')">`:''}${advice}</div>${Number(inv.amount)>0?`<strong class="${mode==='paid'?'green':mode==='archive'?'blue':'red'}">${euro(inv.amount)}</strong>`:''}</div><div class="invoiceActions">${mode==='upcoming'?`<button type="button" class="miniButton" onclick="markInvoicePaid('${inv.id}')">✓ Payé / traité</button>`:''}${mode==='paid'?`<button type="button" class="miniButton" onclick="restoreInvoice('${inv.id}')">↩ Remettre à traiter</button>`:''}<button type="button" class="miniButton" onclick="deleteInvoice('${inv.id}')">✕ Supprimer</button></div></div>`;
+}
+
+
+function savedUrgentInvoices(){
+  const today=new Date();
+  today.setHours(0,0,0,0);
+  return (data.invoices||[])
+    .filter(inv=>inv.status!=="paid" && inv.status!=="archive" && inv.dueDate)
+    .map(inv=>{
+      const due=new Date(String(inv.dueDate)+"T12:00:00");
+      const dueDay=new Date(due.getFullYear(),due.getMonth(),due.getDate());
+      const days=Math.ceil((dueDay-today)/86400000);
+      const priority=days<0?0:days<=2?1:days<=7?2:3;
+      return {...inv,_urgentDays:days,_urgentPriority:priority};
+    })
+    .filter(inv=>inv._urgentDays<=14)
+    .sort((a,b)=>a._urgentPriority-b._urgentPriority || a._urgentDays-b._urgentDays || Number(b.amount||0)-Number(a.amount||0));
+}
+
+function urgentInvoiceLabel(inv){
+  const d=inv._urgentDays;
+  if(d<0) return `⚠️ En retard de ${Math.abs(d)} jour${Math.abs(d)>1?"s":""}`;
+  if(d===0) return "🔴 À payer aujourd’hui";
+  if(d===1) return "🔴 À payer demain";
+  if(d<=2) return `🔴 Dans ${d} jours`;
+  if(d<=7) return `🟠 Dans ${d} jours`;
+  return `🟡 Dans ${d} jours`;
+}
+
+function renderUrgentInvoicesWindow(){
+  const list=$("urgentInvoicesList");
+  const badge=$("urgentInvoicesBadge");
+  const summary=$("urgentInvoicesSummary");
+  const invoices=savedUrgentInvoices();
+
+  if(badge) badge.textContent=String(invoices.length);
+  if(summary){
+    const total=invoices.reduce((s,x)=>s+(Number(x.amount)||0),0);
+    summary.textContent=invoices.length
+      ? `${invoices.length} facture${invoices.length>1?"s":""} prioritaire${invoices.length>1?"s":""} • ${euro(total)} au total`
+      : "Aucune facture urgente enregistrée pour le moment.";
+  }
+  if(!list) return;
+
+  if(!invoices.length){
+    list.innerHTML=`<div class="urgentInvoiceEmpty">✅ Rien d’urgent pour le moment.<br><span class="small">Les factures enregistrées depuis vos photos apparaîtront automatiquement ici lorsqu’une échéance approche.</span></div>`;
+    return;
+  }
+
+  list.innerHTML=invoices.map(inv=>`
+    <div class="urgentInvoiceItem">
+      <div class="urgentInvoiceTop">
+        <div class="urgentInvoiceName">🧾 ${escapeHtml(inv.label||"Facture")}</div>
+        <div class="urgentInvoiceAmount">${Number(inv.amount)>0?euro(inv.amount):"Montant non renseigné"}</div>
+      </div>
+      <div class="urgentInvoiceMeta">
+        Échéance : <strong>${formatDateFr(inv.dueDate)}</strong>
+        ${inv.category?` • ${escapeHtml(inv.category)}`:""}
+      </div>
+      <div class="urgentInvoiceLevel">${urgentInvoiceLabel(inv)}</div>
+      <div class="urgentInvoiceActions">
+        ${inv.image?`<button type="button" class="btnSecondary" onclick="openDocumentImage('${escapeHtml(String(inv.id))}')">👁 Voir la facture</button>`:""}
+        <button type="button" class="btnSave" onclick="markInvoicePaidFromUrgent('${escapeHtml(String(inv.id))}')">✅ Marquer payée</button>
+      </div>
+    </div>
+  `).join("");
+}
+
+function openUrgentInvoicesWindow(){
+  renderUrgentInvoicesWindow();
+  const overlay=$("urgentInvoicesOverlay");
+  if(!overlay) return;
+  overlay.classList.add("show");
+  overlay.setAttribute("aria-hidden","false");
+  document.body.style.overflow="hidden";
+}
+
+function closeUrgentInvoicesWindow(event,force=false){
+  const overlay=$("urgentInvoicesOverlay");
+  if(!overlay) return;
+  if(event && !force && event.target!==overlay) return;
+  overlay.classList.remove("show");
+  overlay.setAttribute("aria-hidden","true");
+  document.body.style.overflow="";
+}
+
+async function markInvoicePaidFromUrgent(id){
+  await markInvoicePaid(id);
+  renderUrgentInvoicesWindow();
+}
+
+
+function unpaidInvoicesChronological(){
+  const today=new Date();
+  today.setHours(0,0,0,0);
+
+  return (data.invoices||[])
+    .filter(inv=>inv.status!=="paid" && inv.status!=="archive")
+    .map(inv=>{
+      let days=null;
+      if(inv.dueDate){
+        const due=new Date(String(inv.dueDate)+"T12:00:00");
+        const dueDay=new Date(due.getFullYear(),due.getMonth(),due.getDate());
+        days=Math.ceil((dueDay-today)/86400000);
+      }
+      return {...inv,_payDays:days};
+    })
+    .sort((a,b)=>{
+      // D'abord les échéances connues : retard, aujourd'hui, demain, puis chronologique.
+      if(a._payDays===null && b._payDays!==null) return 1;
+      if(a._payDays!==null && b._payDays===null) return -1;
+      if(a._payDays!==null && b._payDays!==null && a._payDays!==b._payDays) return a._payDays-b._payDays;
+      return Number(b.amount||0)-Number(a.amount||0);
+    });
+}
+
+function payInvoiceUrgencyLabel(inv){
+  const d=inv._payDays;
+  if(d===null) return "⚪ Échéance à vérifier";
+  if(d<0) return `⚠️ En retard de ${Math.abs(d)} jour${Math.abs(d)>1?"s":""}`;
+  if(d===0) return "🔴 À payer aujourd’hui";
+  if(d===1) return "🔴 À payer demain";
+  if(d<=3) return `🔴 Urgent • dans ${d} jours`;
+  if(d<=7) return `🟠 Bientôt • dans ${d} jours`;
+  if(d<=14) return `🟡 À prévoir • dans ${d} jours`;
+  return `🟢 Prévu • dans ${d} jours`;
+}
+
+function renderPayInvoicesPage(){
+  const invoices=unpaidInvoicesChronological();
+  const list=$("payInvoicesList");
+  const badge=$("payInvoicesBadge");
+  const summary=$("payInvoicesSummary");
+
+  if(badge) badge.textContent=String(invoices.length);
+
+  const total=invoices.reduce((s,x)=>s+(Number(x.amount)||0),0);
+  if(summary){
+    summary.textContent=invoices.length
+      ? `${invoices.length} facture${invoices.length>1?"s":""} à payer • ${euro(total)} au total`
+      : "Aucune facture à payer pour le moment.";
+  }
+
+  if(!list) return;
+  if(!invoices.length){
+    list.innerHTML=`<div class="payInvoicesEmpty">✅ Aucune facture à payer.<br><span class="small">Les nouvelles factures enregistrées depuis vos photos apparaîtront automatiquement ici.</span></div>`;
+    return;
+  }
+
+  list.innerHTML=invoices.map(inv=>`
+    <div class="payInvoiceItem">
+      <div class="payInvoiceTop">
+        <div class="payInvoiceName">🧾 ${escapeHtml(inv.label||"Facture")}</div>
+        <div class="payInvoiceAmount">${Number(inv.amount)>0?euro(inv.amount):"Montant non renseigné"}</div>
+      </div>
+      <div class="payInvoiceMeta">
+        ${inv.dueDate?`Échéance : <strong>${formatDateFr(inv.dueDate)}</strong>`:"Échéance non renseignée"}
+        ${inv.category?` • ${escapeHtml(inv.category)}`:""}
+      </div>
+      <div class="payInvoiceUrgency">${payInvoiceUrgencyLabel(inv)}</div>
+      <div class="payInvoiceActions">
+        ${inv.image?`<button type="button" class="btnSecondary" onclick="openDocumentImage('${escapeHtml(String(inv.id))}')">👁 Voir la facture</button>`:""}
+        <button type="button" class="btnSave" onclick="markInvoicePaidFromPayPage('${escapeHtml(String(inv.id))}')">✅ Marquer payée</button>
+      </div>
+    </div>
+  `).join("");
+}
+
+function openPayInvoicesPage(){
+  renderPayInvoicesPage();
+  const overlay=$("payInvoicesOverlay");
+  if(!overlay) return;
+  overlay.classList.add("show");
+  overlay.setAttribute("aria-hidden","false");
+  document.body.style.overflow="hidden";
+}
+
+function closePayInvoicesPage(event,force=false){
+  const overlay=$("payInvoicesOverlay");
+  if(!overlay) return;
+  if(event && !force && event.target!==overlay) return;
+  overlay.classList.remove("show");
+  overlay.setAttribute("aria-hidden","true");
+  document.body.style.overflow="";
+}
+
+async function markInvoicePaidFromPayPage(id){
+  await markInvoicePaid(id);
+  renderPayInvoicesPage();
 }
 
 function renderInvoices(){
@@ -8439,6 +9692,8 @@ function renderInvoices(){
   $("invoiceUpcoming").innerHTML=upcoming.length?upcoming.map(x=>invoiceHtml(x,"upcoming")).join(""):`<div class="small" style="padding:12px 0">Aucune facture à payer.</div>`;
   $("invoicePaid").innerHTML=paid.length?paid.map(x=>invoiceHtml(x,"paid")).join(""):`<div class="small" style="padding:12px 0">Aucune facture payée.</div>`;
   $("invoiceArchived").innerHTML=archived.length?archived.map(x=>invoiceHtml(x,"archive")).join(""):`<div class="small" style="padding:12px 0">Aucun document administratif archivé.</div>`;
+  renderUrgentInvoicesWindow();
+  renderPayInvoicesPage();
 }
 
 
@@ -8542,6 +9797,1248 @@ document.addEventListener(
   }
 
 );
+
+/* ==========================================================
+   ZEN+ v5.6 TEST — IAP APPLE + SÉLECTION MENSUELLE
+   - 100 crédits fictifs au premier lancement
+   - 1 crédit consommé par analyse test
+   - faux achat de crédits (toujours fictif pendant le test)
+   - analyse ZEN+ réelle via Worker Cloudflare
+   - aucune clé OpenAI dans l'application
+   ========================================================== */
+
+
+const APP_REVIEW_STATE_KEY="monBudgetZenReviewStateV1";
+const APP_REVIEW_APPSTORE_URL="https://apps.apple.com/app/id6806391628?action=write-review";
+
+function getAppReviewState(){
+  try{
+    return JSON.parse(localStorage.getItem(APP_REVIEW_STATE_KEY)||'{"positiveMoments":0,"asked":false,"lastAsked":0}');
+  }catch(_){
+    return {positiveMoments:0,asked:false,lastAsked:0};
+  }
+}
+function setAppReviewState(state){
+  localStorage.setItem(APP_REVIEW_STATE_KEY,JSON.stringify(state));
+}
+function markPositiveAppMoment(){
+  const s=getAppReviewState();
+  s.positiveMoments=(Number(s.positiveMoments)||0)+1;
+  setAppReviewState(s);
+
+  // Ne pas harceler l'utilisateur : première proposition seulement après plusieurs expériences positives.
+  if(!s.asked && s.positiveMoments>=3){
+    setTimeout(()=>openAppReviewPopup(),900);
+  }
+}
+function openAppReviewPopup(){
+  const s=getAppReviewState();
+  const overlay=$("appReviewOverlay");
+  if(!overlay) return;
+  s.asked=true;
+  s.lastAsked=Date.now();
+  setAppReviewState(s);
+  overlay.classList.add("show");
+  overlay.setAttribute("aria-hidden","false");
+  document.body.style.overflow="hidden";
+}
+function closeAppReviewPopup(){
+  const overlay=$("appReviewOverlay");
+  if(!overlay) return;
+  overlay.classList.remove("show");
+  overlay.setAttribute("aria-hidden","true");
+  document.body.style.overflow="";
+}
+function postponeAppReview(){
+  closeAppReviewPopup();
+}
+function openAppStoreReview(){
+  closeAppReviewPopup();
+  try{
+    window.location.href=APP_REVIEW_APPSTORE_URL;
+  }catch(_){
+    window.open(APP_REVIEW_APPSTORE_URL,"_blank");
+  }
+}
+function openAppSuggestion(){
+  closeAppReviewPopup();
+  const overlay=$("appSuggestionOverlay");
+  if(!overlay) return;
+  overlay.classList.add("show");
+  overlay.setAttribute("aria-hidden","false");
+  document.body.style.overflow="hidden";
+  setTimeout(()=>{ const t=$("appSuggestionText"); if(t) t.focus(); },120);
+}
+function closeAppSuggestion(){
+  const overlay=$("appSuggestionOverlay");
+  if(!overlay) return;
+  overlay.classList.remove("show");
+  overlay.setAttribute("aria-hidden","true");
+  document.body.style.overflow="";
+}
+async function saveAndShareSuggestion(){
+  const input=$("appSuggestionText");
+  const value=String(input?.value||"").trim();
+  if(!value){
+    alert("Écrivez d'abord votre suggestion.");
+    return;
+  }
+
+  const suggestions=JSON.parse(localStorage.getItem("monBudgetZenSuggestionsV1")||"[]");
+  suggestions.unshift({date:new Date().toISOString(),text:value});
+  localStorage.setItem("monBudgetZenSuggestionsV1",JSON.stringify(suggestions.slice(0,20)));
+
+  const shareText="Suggestion pour Mon Budget ZEN :\n\n"+value;
+  try{
+    if(navigator.share){
+      await navigator.share({title:"Suggestion Mon Budget ZEN",text:shareText});
+    }else if(navigator.clipboard){
+      await navigator.clipboard.writeText(shareText);
+      alert("Suggestion enregistrée et copiée. Vous pouvez maintenant l'envoyer au développeur.");
+    }else{
+      alert("Suggestion enregistrée sur cet appareil.");
+    }
+  }catch(_){}
+  closeAppSuggestion();
+}
+
+
+const ZEN_PLUS_ANALYZED_DOCS_KEY="zenPlusAnalyzedDocumentsV1";
+
+function zenPlusCurrentDocumentKey(){
+  try{
+    const a=correctedDocumentAnalysisFromForm();
+    return [
+      String(a?.issuer||"").trim().toLowerCase(),
+      Number(a?.amount)||0,
+      String(a?.dueDate||""),
+      String(a?.rawText||pendingDocumentAnalysis?.rawText||"").trim().slice(0,180)
+    ].join("|");
+  }catch(_){ return ""; }
+}
+function zenPlusWasUsedOnCurrentDocument(){
+  const key=zenPlusCurrentDocumentKey();
+  if(!key) return false;
+  try{
+    return JSON.parse(localStorage.getItem(ZEN_PLUS_ANALYZED_DOCS_KEY)||"[]").includes(key);
+  }catch(_){ return false; }
+}
+function markZenPlusUsedOnCurrentDocument(){
+  const key=zenPlusCurrentDocumentKey();
+  if(!key) return;
+  let used=[];
+  try{ used=JSON.parse(localStorage.getItem(ZEN_PLUS_ANALYZED_DOCS_KEY)||"[]"); }catch(_){}
+  used=[key,...used.filter(x=>x!==key)].slice(0,100);
+  localStorage.setItem(ZEN_PLUS_ANALYZED_DOCS_KEY,JSON.stringify(used));
+  renderZenPlusDocumentOfferState();
+}
+function renderZenPlusDocumentOfferState(){
+  const already=zenPlusWasUsedOnCurrentDocument();
+  const active=hasZenPlusPremium();
+  const title=$("zenPlusDocumentTitle");
+  const subtitle=$("zenPlusDocumentSubtitle");
+  const main=$("zenPlusDocumentMainButton");
+  const purchase=$("zenPlusDocumentPurchaseTestButton");
+  const note=$("zenPlusDocumentNote");
+
+  if(already){
+    if(title) title.textContent="✅ Analyse ZEN+ effectuée";
+    if(subtitle) subtitle.textContent="ZEN+ a déjà analysé cette facture et vous a présenté ses recommandations.";
+    if(main) main.style.display="none";
+    if(purchase) purchase.style.display="none";
+    if(note) note.textContent="Aucune nouvelle analyse n’est nécessaire pour cette photo.";
+    return;
+  }
+  if(main) main.style.display="";
+  if(active){
+    if(title) title.textContent="✨ ZEN+ PREMIUM — Analyse IA";
+    if(subtitle) subtitle.textContent="Votre document vérifié, votre budget et vos urgences sont pris en compte pour produire une recommandation IA améliorée.";
+    if(main) main.textContent="✨ Obtenir mon conseil IA amélioré";
+    if(purchase) purchase.style.display="none";
+    if(note) note.textContent="ZEN+ Premium est actif. Les analyses utilisent réellement l’IA via le backend sécurisé.";
+  }else{
+    if(title) title.textContent="✨ Découvrez tout ZEN+ Premium";
+    if(subtitle) subtitle.textContent="ZEN+ Premium analyse vos documents, détecte vos urgences, répond à vos questions de budget, estime votre fin de mois et vous aide aussi à trouver des options économiques autour de vous.";
+    if(main) main.textContent="✨ Découvrir les avantages ZEN+";
+    if(purchase) purchase.style.display="";
+    if(note) note.textContent="Version TEST : l’achat est simulé. Les analyses IA sont réservées à ZEN+ Premium.";
+  }
+}
+
+
+
+
+
+function launchNearbyNative(mode){
+  const q=nearbyMapQuery(mode);
+  const mapsUrl="maps://?q="+encodeURIComponent(q);
+
+  // 1) Solution native Capacitor : ouvre directement Apple Plans.
+  try{
+    const launcher=window.Capacitor &&
+      window.Capacitor.Plugins &&
+      window.Capacitor.Plugins.AppLauncher;
+
+    if(launcher && typeof launcher.openUrl==="function"){
+      launcher.openUrl({url:mapsUrl}).catch(()=>{
+        // 2) Secours immédiat par schéma iOS.
+        window.location.href=mapsUrl;
+      });
+      return;
+    }
+  }catch(_){}
+
+  // 3) Secours sans plugin.
+  try{
+    window.location.href=mapsUrl;
+  }catch(_){
+    // 4) Dernier secours : lien universel Apple Maps.
+    window.location.href="https://maps.apple.com/?q="+encodeURIComponent(q);
+  }
+}
+
+function openExternalMapUrl(url){
+  try{
+    // Sur iPhone, les liens maps.apple.com ouvrent l'app Plans.
+    window.location.href=url;
+  }catch(_){
+    window.open(url,"_blank");
+  }
+}
+
+function nearbyMapQuery(mode){
+  if(mode==="restaurant") return "restaurants pas chers";
+  if(mode==="courses") return "supermarché discount courses pas chères";
+  return "magasins bonnes affaires";
+}
+
+function openNearbyMaps(mode){
+  const q=nearbyMapQuery(mode);
+
+  const openAtPosition=(lat,lng)=>{
+    const url="https://maps.apple.com/?q="+encodeURIComponent(q)+
+      "&sll="+encodeURIComponent(lat+","+lng);
+    openExternalMapUrl(url);
+  };
+
+  // Demande la localisation uniquement à l'appui.
+  if(navigator.geolocation){
+    navigator.geolocation.getCurrentPosition(
+      p=>openAtPosition(p.coords.latitude,p.coords.longitude),
+      ()=>{
+        // Même sans autorisation, Plans peut effectuer une recherche autour
+        // de la position courante autorisée dans Plans.
+        openExternalMapUrl("https://maps.apple.com/?q="+encodeURIComponent(q));
+      },
+      {enableHighAccuracy:false,timeout:7000,maximumAge:300000}
+    );
+  }else{
+    openExternalMapUrl("https://maps.apple.com/?q="+encodeURIComponent(q));
+  }
+}
+
+// Alternative Google Maps, sans clé API, utilisable plus tard si souhaité.
+function openNearbyGoogleMaps(mode){
+  const q=nearbyMapQuery(mode);
+  const url="https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(q);
+  openExternalMapUrl(url);
+}
+
+let zenNearbyMode="bonplan";
+let zenNearbyCoords=null;
+
+function openZenNearby(mode){
+  zenNearbyMode=mode||"bonplan";
+
+  const presets={
+    restaurant:["🍽️ Manger moins cher","Ex. restaurant italien pour moins de 20 € par personne"],
+    courses:["🛒 Faire mes courses","Ex. supermarché économique ou produits ménagers"],
+    bonplan:["🔎 Chercher un bon plan","Ex. activité familiale gratuite ou petit prix"]
+  };
+  const p=presets[zenNearbyMode]||presets.bonplan;
+
+  const overlay=document.getElementById("nearbyZenOverlay");
+  const subtitle=document.getElementById("nearbyZenSubtitle");
+  const query=document.getElementById("nearbyZenQuery");
+  const result=document.getElementById("nearbyZenResult");
+
+  if(!overlay){
+    alert("Impossible d’ouvrir « Autour de moi ».");
+    return;
+  }
+
+  if(subtitle) subtitle.textContent=p[0];
+  if(query){
+    query.placeholder=p[1];
+    query.value="";
+  }
+  if(result){
+    result.style.display="none";
+    result.innerHTML="";
+  }
+
+  overlay.style.setProperty("display","flex","important");
+  overlay.classList.add("show");
+  overlay.setAttribute("aria-hidden","false");
+  document.body.style.overflow="hidden";
+}
+
+function closeZenNearby(event,force=false){
+  const o=$("nearbyZenOverlay");
+  if(!o) return;
+  if(event && !force && event.target!==o) return;
+  o.classList.remove("show");
+  o.style.setProperty("display","none","important");
+  o.setAttribute("aria-hidden","true");
+  document.body.style.overflow="";
+}
+
+function useZenNearbyLocation(){
+  const status=$("nearbyZenLocationStatus");
+  if(!navigator.geolocation){
+    status.textContent="La localisation n’est pas disponible sur cet appareil. Saisissez votre ville.";
+    return;
+  }
+  status.textContent="📍 Recherche de votre position…";
+  navigator.geolocation.getCurrentPosition(
+    p=>{
+      zenNearbyCoords={latitude:p.coords.latitude,longitude:p.coords.longitude};
+      status.textContent="✅ Position obtenue pour cette recherche.";
+    },
+    _=>{
+      zenNearbyCoords=null;
+      status.textContent="Localisation refusée ou indisponible. Vous pouvez saisir votre ville manuellement.";
+    },
+    {enableHighAccuracy:false,timeout:8000,maximumAge:300000}
+  );
+}
+
+async function searchZenNearby(){
+  if(!hasZenPlusPremium()){
+    closeZenNearby(null,true);
+    setTimeout(()=>openZenPlusDailyPopup("",0),50);
+    return;
+  }
+
+  const result=$("nearbyZenResult");
+  const city=String($("nearbyZenCity")?.value||"").trim();
+  const query=String($("nearbyZenQuery")?.value||"").trim();
+  if(!query){ alert("Indiquez ce que vous recherchez."); return; }
+  if(!city && !zenNearbyCoords){ alert("Indiquez une ville ou utilisez votre position."); return; }
+
+  const snap=zenPlusCopilotSnapshot();
+  const locationText=city || (zenNearbyCoords?`${zenNearbyCoords.latitude.toFixed(4)}, ${zenNearbyCoords.longitude.toFixed(4)}`:"");
+  result.style.display="block";
+  result.innerHTML="✨ ZEN+ prépare votre recherche…";
+
+  // Le backend actuel ne possède pas encore de moteur local/web fiable.
+  // On envoie donc la demande au copilote sans prétendre fournir des prix locaux en temps réel.
+  const payload={
+    document:{
+      nom:"Recherche locale ZEN+",
+      type:"recherche locale",
+      categorie:zenNearbyMode,
+      montant:0,
+      echeance:"",
+      texteOCR:
+        `Demande locale de l'utilisateur : ${query}. Zone : ${locationText}. `+
+        `Budget disponible indiqué par l'application : ${Number(snap.budget.available)||0} €. `+
+        `Budget journalier : ${Number(snap.budget.daily)||0} €. `+
+        `IMPORTANT : tu n'as pas de données web/locales temps réel dans cette requête. `+
+        `N'invente aucun commerce, restaurant, tarif, horaire ou promotion. `+
+        `Explique que la recherche locale en temps réel doit être connectée pour donner des établissements vérifiés, `+
+        `mais donne si utile un conseil budgétaire concret à partir du budget fourni.`
+    },
+    budget:{
+      revenus:Number(snap.budget.income)||0,
+      depenses:Number(snap.budget.expenses)||0,
+      disponible:Number(snap.budget.available)||0,
+      epargne:Number(snap.budget.savings)||0,
+      budgetJournalier:Number(snap.budget.daily)||0
+    }
+  };
+
+  try{
+    const r=await fetch(ZEN_PLUS_API_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
+    const d=await r.json();
+    if(!r.ok||!d?.ok||!d?.advice) throw new Error("nearby");
+    result.innerHTML=zenPlusRichText(String(d.advice).trim())+
+      `<div class="small" style="margin-top:12px">📍 La zone est utilisée uniquement pour cette recherche. Les résultats locaux vérifiés en temps réel seront activés lorsque le moteur de recherche locale sera connecté.</div>`;
+  }catch(_){
+    result.innerHTML="<strong>ZEN+ est temporairement indisponible.</strong> Réessayez dans un instant.";
+  }
+}
+
+function zenPlusCopilotSnapshot(){
+  const b=zenPlusCurrentBudgetSnapshot();
+  const urg=zenPlusUrgentInvoices();
+  const now=new Date();
+  const lastDay=new Date(now.getFullYear(),now.getMonth()+1,0).getDate();
+  const remainingDays=Math.max(1,lastDay-now.getDate()+1);
+  const available=Number(b.available)||0;
+  const urgentTotal=urg.reduce((s,x)=>s+(Number(x.montant)||0),0);
+  const afterUrgent=available-urgentTotal;
+  const forecast=afterUrgent; // prudente : disponible actuel moins urgences connues
+  let health="À surveiller";
+  if(afterUrgent<0) health="⚠️ Attention";
+  else if(afterUrgent >= Math.max(100,(Number(b.income)||0)*.10)) health="✅ Saine";
+  return {budget:b,urgencies:urg,urgentTotal,afterUrgent,forecast,remainingDays,health};
+}
+function renderZenPlusCopilot(){
+  const active=hasZenPlusPremium();
+  const card=$("zenCopilotCard");
+  if(!card) return;
+  const s=zenPlusCopilotSnapshot();
+  $("zenCopilotStatus").textContent=active?"ZEN+ Premium":"À débloquer";
+  $("zenCopilotHealth").textContent=active?s.health:"🔒 ZEN+";
+  $("zenCopilotForecast").textContent=active?euro(s.forecast):"🔒";
+  $("zenCopilotUrgencies").textContent=active?String(s.urgencies.length):"🔒";
+  $("zenCopilotDaily").textContent=active?euro(Number(s.budget.daily)||0):"🔒";
+  if(active){
+    const urgentMsg=s.urgencies.length
+      ? `${s.urgencies.length} facture${s.urgencies.length>1?"s":""} urgente${s.urgencies.length>1?"s":""} (${euro(s.urgentTotal)}) à traiter en priorité.`
+      : "Aucune facture urgente détectée pour le moment.";
+    $("zenCopilotBrief").innerHTML=`<strong>${s.health}</strong> — ${urgentMsg} Après les urgences connues, votre marge estimée est de <strong>${euro(s.afterUrgent)}</strong>.`;
+  }else{
+    $("zenCopilotBrief").innerHTML=`<strong>Débloquez votre copilote financier.</strong> ZEN+ peut répondre à vos questions, anticiper les urgences et estimer votre marge de fin de mois.`;
+  }
+}
+function zenPlusCopilotContext(question){
+  const s=zenPlusCopilotSnapshot();
+  return {
+    document:{
+      nom:"Question au copilote financier ZEN+",
+      type:"budget",
+      categorie:"Copilote ZEN+",
+      montant:0,
+      echeance:"",
+      texteOCR:
+        "Réponds comme un copilote budgétaire prudent, clair et concret. "+
+        "QUESTION UTILISATEUR : "+String(question||"").slice(0,350)+
+        ". FACTURES URGENTES : "+JSON.stringify(s.urgencies)+
+        ". Donne une réponse directe, puis explique brièvement avec les chiffres fournis. "+
+        "N'invente aucune transaction, facture ni revenu."
+    },
+    budget:{
+      revenus:Number(s.budget.income)||0,
+      depenses:Number(s.budget.expenses)||0,
+      disponible:Number(s.budget.available)||0,
+      epargne:Number(s.budget.savings)||0,
+      budgetJournalier:Number(s.budget.daily)||0
+    }
+  };
+}
+async function askZenPlusCopilot(){
+  if(!hasZenPlusPremium()){ openZenPlusDailyPopup("",0); return; }
+  const input=$("zenCopilotQuestion");
+  const answer=$("zenCopilotAnswer");
+  const q=String(input?.value||"").trim();
+  if(!q){ alert("Écrivez votre question à ZEN+."); return; }
+  answer.style.display="block";
+  answer.innerHTML="✨ ZEN+ analyse votre situation…";
+  try{
+    const r=await fetch(ZEN_PLUS_API_URL,{
+      method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify(zenPlusCopilotContext(q))
+    });
+    const d=await r.json();
+    if(!r.ok||!d?.ok||!d?.advice) throw new Error("copilot");
+    answer.innerHTML=zenPlusRichText(String(d.advice).trim());
+    markPositiveAppMoment();
+  }catch(_){
+    answer.innerHTML="<strong>ZEN+ est temporairement indisponible.</strong> Réessayez dans un instant.";
+  }
+}
+function askZenPlusPreset(q){
+  const input=$("zenCopilotQuestion");
+  if(input) input.value=q;
+  askZenPlusCopilot();
+}
+function refreshZenPlusCopilotEverywhere(){
+  try{ renderZenPlusCopilot(); }catch(_){}
+}
+
+
+function zenPlusBenefitsHtml(){
+  return `<strong>ZEN+ Premium vous accompagne au quotidien :</strong><br>
+  🧾 Analyse IA des factures et documents<br>
+  🚨 Factures urgentes classées par priorité<br>
+  🧠 Copilote financier : posez vos questions librement<br>
+  🔮 Estimation de la marge de fin de mois<br>
+  📊 Conseils personnalisés selon votre budget<br>
+  📍 Autour de moi : manger moins cher, courses et bons plans<br>
+  🎯 Aide à la décision avant une dépense`;
+}
+
+const ZEN_PLUS_TEST_ENTITLEMENT_KEY="zenPlusPremiumEntitlementV1";
+const ZEN_PLUS_PRICE_LABEL="4,99 €";
+
+function hasZenPlusPremium(){
+  return localStorage.getItem(ZEN_PLUS_TEST_ENTITLEMENT_KEY)==="1";
+}
+
+function setZenPlusPremium(active){
+  localStorage.setItem(ZEN_PLUS_TEST_ENTITLEMENT_KEY,active?"1":"0");
+  renderZenPlusPremiumState();
+}
+
+function renderZenPlusPremiumState(){
+  const active=hasZenPlusPremium();
+  const infoText=$("zenPlusInfoText");
+  if(infoText) infoText.innerHTML=zenPlusBenefitsHtml();
+
+  document.querySelectorAll("[data-zenplus-premium-state]").forEach(el=>{
+    el.textContent=active ? "ZEN+ Premium actif" : "ZEN+ non activé";
+  });
+
+  const title=$("zenPlusHomeTitle");
+  const homeText=$("zenPlusHomeText");
+  const button=$("zenPlusHomeButton");
+
+  if(active){
+    if(title) title.textContent="✨ ZEN+ Premium est actif";
+    if(homeText) homeText.innerHTML=
+      "<strong>Vous avez opté pour ZEN+.</strong> Profitez maintenant de vos conseils IA personnalisés, "+
+      "avec vos factures urgentes et votre budget pris en compte en priorité.";
+    if(button) button.textContent="✨ Voir mes avantages ZEN+";
+  }else{
+    if(title) title.textContent="✨ Découvrez ZEN+";
+    if(homeText) homeText.textContent=
+      "ZEN+ va plus loin que la simple lecture d'un document : il tient compte de la facture corrigée et de votre budget pour vous donner un conseil plus personnalisé.";
+    if(button) button.textContent="Découvrir ce que fait ZEN+";
+  }
+  const docTitle=$("zenPlusDocumentTitle");
+  const docSubtitle=$("zenPlusDocumentSubtitle");
+  const docMain=$("zenPlusDocumentMainButton");
+  const docPurchase=$("zenPlusDocumentPurchaseTestButton");
+  const docNote=$("zenPlusDocumentNote");
+
+  if(active){
+    if(docTitle) docTitle.textContent="✨ ZEN+ PREMIUM — Analyse IA";
+    if(docSubtitle) docSubtitle.textContent="Votre document vérifié, votre budget et vos urgences sont pris en compte pour produire une recommandation IA améliorée.";
+    if(docMain) docMain.textContent="✨ Obtenir mon conseil IA amélioré";
+    if(docPurchase) docPurchase.style.display="none";
+    if(docNote) docNote.textContent="ZEN+ Premium est actif. Les analyses utilisent réellement l’IA via le backend sécurisé.";
+  }else{
+    if(docTitle) docTitle.textContent="✨ Découvrez tout ZEN+ Premium";
+    if(docSubtitle) docSubtitle.textContent="ZEN+ Premium analyse vos documents, détecte vos urgences, répond à vos questions de budget, estime votre fin de mois et vous aide aussi à trouver des options économiques autour de vous.";
+    if(docMain) docMain.textContent="✨ Découvrir les avantages ZEN+";
+    if(docPurchase) docPurchase.style.display="";
+    if(docNote) docNote.textContent="Version TEST : l’achat est simulé. Les analyses IA sont réservées à ZEN+ Premium.";
+  }
+
+  renderZenPlusDocumentOfferState();
+  refreshZenPlusCopilotEverywhere();
+}
+
+const ZENPLUS_APPLE_PRODUCT_ID="ZENPREMIUM";
+let zenPlusAppleProduct=null;
+
+function zenNativePurchases(){
+  return window.Capacitor?.Plugins?.NativePurchases || null;
+}
+async function loadZenPlusAppleProduct(){
+  const n=zenNativePurchases(); if(!n) return null;
+  try{
+    const s=await n.isBillingSupported();
+    if(!s?.isBillingSupported) return null;
+    const r=await n.getProducts({productIdentifiers:[ZENPLUS_APPLE_PRODUCT_ID],productType:"inapp"});
+    zenPlusAppleProduct=r?.products?.[0]||null;
+    const price=zenPlusAppleProduct?.priceString;
+    if(price) document.querySelectorAll("[data-zenplus-price]").forEach(e=>e.textContent=price);
+    return zenPlusAppleProduct;
+  }catch(e){console.warn("StoreKit ZEN+",e);return null;}
+}
+async function buyZenPlusPremium(){
+  const n=zenNativePurchases();
+  if(!n){alert("L’achat Apple n’est pas disponible dans cette version.");return;}
+  try{
+    const p=zenPlusAppleProduct||await loadZenPlusAppleProduct();
+    if(!p){alert("ZEN+ Premium n’est pas encore disponible sur l’App Store.");return;}
+    const r=await n.purchaseProduct({productIdentifier:ZENPLUS_APPLE_PRODUCT_ID,productType:"inapp",quantity:1});
+    if(r?.productIdentifier===ZENPLUS_APPLE_PRODUCT_ID){
+      localStorage.setItem("zenPlusPremiumEntitlementV1","1");
+      refreshZenPlusPremiumUI();
+      alert("ZEN+ Premium est activé. Merci !");
+    }
+  }catch(e){
+    const msg=String(e?.message||e||"");
+    if(/cancel|cancell/i.test(msg)) return;
+    console.error(e); alert("L’achat n’a pas pu être terminé.");
+  }
+}
+async function restoreZenPlusPremium(){
+  const n=zenNativePurchases();
+  if(!n){alert("La restauration Apple n’est pas disponible.");return;}
+  try{
+    await n.restorePurchases();
+    const r=await n.getPurchases({productType:"inapp",onlyCurrentEntitlements:true});
+    const ok=(r?.purchases||[]).some(p=>p?.productIdentifier===ZENPLUS_APPLE_PRODUCT_ID);
+    if(ok){
+      localStorage.setItem("zenPlusPremiumEntitlementV1","1");
+      refreshZenPlusPremiumUI();
+      alert("ZEN+ Premium a été restauré.");
+    }else alert("Aucun achat ZEN+ Premium n’a été trouvé pour ce compte Apple.");
+  }catch(e){console.error(e);alert("Impossible de restaurer les achats pour le moment.");}
+}
+async function syncZenPlusAppleEntitlement(){
+  const n=zenNativePurchases(); if(!n) return false;
+  try{
+    const r=await n.getPurchases({productType:"inapp",onlyCurrentEntitlements:true});
+    const ok=(r?.purchases||[]).some(p=>p?.productIdentifier===ZENPLUS_APPLE_PRODUCT_ID);
+    if(ok){localStorage.setItem("zenPlusPremiumEntitlementV1","1");refreshZenPlusPremiumUI();}
+    return ok;
+  }catch(e){return false;}
+}
+
+function resetZenPlusPremiumForAppleTest(){
+  if(!confirm("Réinitialiser uniquement le statut ZEN+ sur cet appareil pour tester l’achat Apple ?\n\nVotre budget, vos factures, vos opérations et votre épargne ne seront pas supprimés.")){
+    return;
+  }
+
+  localStorage.removeItem(ZEN_PLUS_TEST_ENTITLEMENT_KEY);
+  localStorage.removeItem(ZEN_PLUS_DAILY_KEY);
+
+  renderZenPlusPremiumState();
+  refreshZenPlusPremiumUI();
+  loadZenPlusAppleProduct();
+
+  alert("Statut ZEN+ local réinitialisé.\n\nVous pouvez maintenant tester le véritable achat Apple Sandbox.");
+}
+
+function resetZenPlusPremiumTest(){
+  resetZenPlusPremiumForAppleTest();
+}
+
+const ZEN_PLUS_TEST_CREDITS_KEY="zenPlusTestCreditsV1";
+
+function getZenPlusTestCredits(){
+  const raw=localStorage.getItem(ZEN_PLUS_TEST_CREDITS_KEY);
+  if(raw===null){
+    localStorage.setItem(ZEN_PLUS_TEST_CREDITS_KEY,"100");
+    return 100;
+  }
+  const n=parseInt(raw,10);
+  return Number.isFinite(n) && n>=0 ? n : 100;
+}
+
+function setZenPlusTestCredits(value){
+  const safe=Math.max(0,Math.floor(Number(value)||0));
+  localStorage.setItem(ZEN_PLUS_TEST_CREDITS_KEY,String(safe));
+  renderZenPlusTestCredits();
+  return safe;
+}
+
+function renderZenPlusTestCredits(){
+  const value=String(getZenPlusTestCredits());
+  document.querySelectorAll(".zenPlusCreditsValue").forEach(el=>{
+    el.textContent=value;
+  });
+}
+
+function simulateZenPlusPurchase(count){
+  const add=Math.max(0,Math.floor(Number(count)||0));
+  const total=setZenPlusTestCredits(getZenPlusTestCredits()+add);
+  setZenPlusPremium(true);
+  alert(`🧪 Achat TEST simulé : ZEN+ Premium activé + ${add} crédits.\n\nSolde fictif : ${total} crédits.\nAucun paiement n'a été effectué.`);
+}
+
+function resetZenPlusTestCredits(){
+  setZenPlusTestCredits(100);
+  setZenPlusPremium(false);
+  localStorage.removeItem(ZEN_PLUS_DAILY_KEY);
+  const box=$("zenPlusResult");
+  if(box){
+    box.style.display="none";
+    box.textContent="";
+  }
+}
+
+function parseEuroDisplay(text){
+  const cleaned=String(text||"")
+    .replace(/\s/g,"")
+    .replace("€","")
+    .replace(/\./g,"")
+    .replace(",",".")
+    .replace(/[^\d.-]/g,"");
+  const n=Number(cleaned);
+  return Number.isFinite(n)?n:0;
+}
+
+function zenPlusCurrentBudgetSnapshot(){
+  return {
+    available: parseEuroDisplay($("realAvailable")?.textContent),
+    daily: parseEuroDisplay($("dailyBudget")?.textContent),
+    income: parseEuroDisplay($("incomeTotal")?.textContent),
+    expenses: parseEuroDisplay($("expenseTotal")?.textContent),
+    savings: parseEuroDisplay($("savingTotal")?.textContent || $("savingsTotal")?.textContent)
+  };
+}
+
+function zenPlusDaysUntil(dateStr){
+  if(!dateStr) return null;
+  const d=new Date(dateStr+"T12:00:00");
+  if(Number.isNaN(d.getTime())) return null;
+  const now=new Date();
+  const today=new Date(now.getFullYear(),now.getMonth(),now.getDate(),12,0,0);
+  return Math.ceil((d-today)/86400000);
+}
+
+function buildZenPlusTestAdvice(info,budget){
+  const amount=Number(info.amount)||0;
+  const days=zenPlusDaysUntil(info.dueDate);
+  const due=info.dueDate
+    ? new Date(info.dueDate+"T12:00:00").toLocaleDateString("fr-BE")
+    : null;
+
+  let lines=[];
+  lines.push(`✨ ANALYSE ZEN+ TEST — ${info.issuer||"Document"}`);
+  lines.push("");
+
+  if(info.type==="facture" || info.type==="rappel"){
+    if(amount>0 && due){
+      lines.push(`Cette somme de ${euro(amount)} doit être traitée pour le ${due}.`);
+    }else if(amount>0){
+      lines.push(`Montant identifié : ${euro(amount)}. La date limite doit encore être vérifiée.`);
+    }else{
+      lines.push("Je n'ai pas de montant suffisamment fiable pour calculer l'impact exact sur votre budget.");
+    }
+
+    if(days!==null){
+      if(days<0) lines.push(`⚠️ La date détectée est dépassée de ${Math.abs(days)} jour(s) : vérifiez immédiatement si le document a déjà été payé ou traité.`);
+      else if(days===0) lines.push("⚠️ L'échéance est aujourd'hui.");
+      else if(days<=7) lines.push(`⚠️ Il reste seulement ${days} jour(s) avant l'échéance.`);
+      else lines.push(`Il reste environ ${days} jour(s) avant l'échéance.`);
+    }
+
+    if(amount>0 && budget.available>0){
+      const after=budget.available-amount;
+      const share=(amount/budget.available)*100;
+      lines.push("");
+      lines.push(`Impact sur votre disponible actuel : environ ${share.toFixed(0)} %.`);
+      lines.push(`Si vous réservez cette somme maintenant, il resterait environ ${euro(after)} de disponible.`);
+
+      if(after<0){
+        lines.push("🔴 Cette facture dépasse votre disponible actuel. Avant de payer, vérifiez les rentrées prévues et contactez le créancier si un étalement est nécessaire.");
+      }else if(share>=50){
+        lines.push("🟠 Cette facture absorbe une grosse partie du disponible. Je vous conseille de réserver la somme immédiatement et d'éviter les dépenses non essentielles jusqu'au paiement.");
+      }else{
+        lines.push("🟢 Le paiement semble compatible avec le disponible actuel, sous réserve des autres dépenses prévues.");
+      }
+    }
+  }else{
+    lines.push(info.summary || "Le document a été lu et classé.");
+    if(due) lines.push(`Date à surveiller : ${due}.`);
+  }
+
+  if(budget.daily>0){
+    lines.push("");
+    lines.push(`Repère actuel de l'application : environ ${euro(budget.daily)} de budget conseillé par jour.`);
+  }
+
+  lines.push("");
+  lines.push("✅ ACTIONS CONSEILLÉES");
+  if(info.type==="facture" || info.type==="rappel"){
+    lines.push("1. Vérifiez une dernière fois le montant, la date et le bénéficiaire.");
+    lines.push("2. Réservez la somme dans votre budget si elle n'est pas encore payée.");
+    lines.push("3. Après paiement, conservez la preuve et marquez la facture comme payée.");
+    if(info.type==="rappel") lines.push("4. Si vous avez déjà payé, ne payez pas deux fois : comparez d'abord avec vos opérations bancaires.");
+  }else{
+    lines.push("1. Vérifiez les informations corrigées avant d'archiver.");
+    lines.push("2. Respectez toute échéance ou action demandée dans le document.");
+  }
+
+  lines.push("");
+  lines.push("🧪 Ceci est une simulation locale de ZEN+. La future version IA pourra produire un conseil plus nuancé à partir du texte OCR, sans envoyer votre clé API dans l'application.");
+
+  return lines.join("\n");
+}
+
+
+function openZenPlusInfo(){
+  const overlay=$("zenPlusInfoOverlay");
+  const title=$("zenPlusInfoTitle");
+  const textBox=$("zenPlusInfoText");
+  const creditsBox=$("zenPlusInfoCredits");
+  const discoverBtn=$("zenPlusDiscoverBtn");
+  const useBtn=$("zenPlusUseBtn");
+  const continueBtn=$("zenPlusContinueBtn");
+
+  if(!overlay) return;
+
+  const active=hasZenPlusPremium();
+
+  if(active){
+    if(title) title.textContent="✨ Votre ZEN+ Premium est actif";
+    if(textBox) textBox.innerHTML=
+      "<strong>Vous avez opté pour ZEN+ Premium.</strong><br><br>"+
+      "Votre document vient d'être analysé. ZEN+ peut maintenant utiliser les informations vérifiées, "+
+      "votre budget et vos échéances pour vous proposer un <strong>conseil IA amélioré et personnalisé</strong>.";
+    if(creditsBox) creditsBox.textContent=`ZEN+ Premium actif • ${getZenPlusTestCredits()} crédits TEST disponibles.`;
+    if(discoverBtn) discoverBtn.style.display="none";
+    const resetBtn=$("zenPlusResetAppleTestBtn");
+    if(resetBtn) resetBtn.style.display="";
+    if(useBtn){
+      useBtn.style.display="";
+      useBtn.textContent="✨ Voir les conseils IA améliorés";
+    }
+    if(continueBtn) continueBtn.textContent="Continuer sans afficher le conseil";
+  }else{
+    if(title) title.textContent="✨ ZEN+ peut aller plus loin";
+    if(textBox) textBox.textContent=
+      "Le document vient d'être analysé. ZEN+ peut maintenant utiliser les informations vérifiées ainsi que votre budget pour vous donner un conseil plus approfondi.";
+    if(creditsBox) creditsBox.textContent=`Vous avez ${getZenPlusTestCredits()} crédits ZEN+ TEST.`;
+    if(discoverBtn){
+      discoverBtn.style.display="";
+      discoverBtn.innerHTML=' Acheter ZEN+ — <span data-zenplus-price>'+ZEN_PLUS_PRICE_LABEL+'</span>';
+      loadZenPlusAppleProduct();
+    }
+    const resetBtn=$("zenPlusResetAppleTestBtn");
+    if(resetBtn) resetBtn.style.display="none";
+    if(useBtn){
+      useBtn.style.display="";
+      useBtn.textContent="✨ Utiliser ZEN+ maintenant";
+    }
+    if(continueBtn) continueBtn.textContent="Continuer sans ZEN+";
+  }
+
+  overlay.classList.add("show");
+  overlay.setAttribute("aria-hidden","false");
+}
+function closeZenPlusInfo(){
+  const overlay=$("zenPlusInfoOverlay");
+  if(overlay) overlay.classList.remove("show");
+}
+function showZenPlusAnalysisOffer(){
+  renderZenPlusTestCredits();
+  renderZenPlusDocumentOfferState();
+
+  // ZEN+ a déjà été utilisé avec succès sur cette photo : ne plus le reproposer.
+  if(zenPlusWasUsedOnCurrentDocument()){
+    const overlay=$("zenPlusOfferOverlay");
+    if(overlay) overlay.classList.remove("show");
+    return;
+  }
+
+  if(hasZenPlusPremium()){
+    openZenPlusInfo();
+    return;
+  }
+
+  const overlay=$("zenPlusOfferOverlay");
+  if(overlay) overlay.classList.add("show");
+}
+function closeZenPlusOffer(){
+  const overlay=$("zenPlusOfferOverlay");
+  if(overlay) overlay.classList.remove("show");
+}
+function openZenPlusInfoFromOffer(){
+  closeZenPlusOffer();
+  openZenPlusInfo();
+}
+function runZenPlusFromOffer(){
+  closeZenPlusOffer();
+  runZenPlusTestAnalysis();
+}
+function useZenPlusFromInfo(){
+  closeZenPlusInfo();
+  if(pendingDocumentAnalysis){
+    runZenPlusTestAnalysis();
+    return;
+  }
+  const section=$("invoiceSection");
+  if(section) section.scrollIntoView({behavior:"smooth",block:"start"});
+  alert("Photographiez ou importez d'abord un document. Après l'analyse, ZEN+ vous sera proposé automatiquement.");
+}
+
+
+function zenPlusRichText(raw){
+  const safe=escapeHtml(String(raw||""));
+  return safe
+    .replace(/^###\s+(.+)$/gm,"<h3>$1</h3>")
+    .replace(/^##\s+(.+)$/gm,"<h3>$1</h3>")
+    .replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>")
+    .replace(/__(.+?)__/g,"<u>$1</u>")
+    .replace(/\n/g,"<br>");
+}
+function openZenPlusDialogue(content,loading=false){
+  const overlay=$("zenPlusDialogueOverlay"), body=$("zenPlusDialogueBody");
+  if(!overlay||!body) return;
+  body.innerHTML=loading ? "<strong>✨ ZEN+ réfléchit…</strong><br><br>Analyse personnalisée en cours." : zenPlusRichText(content);
+  overlay.classList.add("show");
+  overlay.setAttribute("aria-hidden","false");
+  document.body.style.overflow="hidden";
+}
+function closeZenPlusDialogue(){
+  const overlay=$("zenPlusDialogueOverlay");
+  if(!overlay) return;
+  overlay.classList.remove("show");
+  overlay.setAttribute("aria-hidden","true");
+  document.body.style.overflow="";
+}
+
+const ZEN_PLUS_API_URL="https://mon-budget-zen-plus.explorebex.workers.dev/";
+
+async function runZenPlusTestAnalysis(){
+  if(!hasZenPlusPremium()){
+    openZenPlusDailyPopup("",0);
+    return;
+  }
+
+  if(!pendingDocumentAnalysis){
+    alert("Analysez d'abord un document avec Assistant ZEN.");
+    return;
+  }
+
+  const credits=getZenPlusTestCredits();
+  if(credits<=0){
+    alert("Vous n'avez plus de crédits ZEN+ TEST. Utilisez le bouton d'achat fictif pour continuer le test.");
+    return;
+  }
+
+  // Les champs corrigés manuellement ont toujours priorité sur l'OCR.
+  const info=correctedDocumentAnalysisFromForm();
+  pendingDocumentAnalysis=info;
+  const budget=zenPlusCurrentBudgetSnapshot();
+
+  const box=$("zenPlusResult");
+  if(!box) return;
+
+  const buttons=[...document.querySelectorAll('button[onclick*="runZenPlusTestAnalysis"], button[onclick*="runZenPlusFromOffer"]')];
+  buttons.forEach(btn=>btn.disabled=true);
+
+  box.style.display="none";
+  openZenPlusDialogue("",true);
+
+  try{
+    const payload={
+      document:{
+        nom: info.issuer || "Document",
+        type: info.type || "autre",
+        categorie: info.category || "Autre",
+        montant: Number(info.amount)||0,
+        echeance: info.dueDate || "",
+        // Seulement un extrait OCR : la photo elle-même n'est jamais envoyée.
+        texteOCR: String(info.text||"").slice(0,3000)
+      },
+      budget:{
+        revenus: Number(budget.income)||0,
+        depenses: Number(budget.expenses)||0,
+        disponible: Number(budget.available)||0,
+        epargne: Number(budget.savings)||0,
+        budgetJournalier: Number(budget.daily)||0
+      }
+    };
+
+    const response=await fetch(ZEN_PLUS_API_URL,{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify(payload)
+    });
+
+    let data=null;
+    try{ data=await response.json(); }catch(_){}
+
+    if(!response.ok || !data?.ok || !data?.advice){
+      throw new Error(data?.error || `Erreur ZEN+ (${response.status})`);
+    }
+
+    // Un crédit fictif n'est consommé qu'après une vraie réponse réussie.
+    setZenPlusTestCredits(credits-1);
+    markZenPlusUsedOnCurrentDocument();
+    openZenPlusDialogue(data.advice,false);
+  }catch(error){
+    console.error("ZEN+ AI error",error);
+    openZenPlusDialogue("⚠️ **ZEN+ n'a pas pu terminer l'analyse.**\n\nVérifiez votre connexion et réessayez.\n\n__Aucun crédit TEST n'a été consommé.__",false);
+  }finally{
+    buttons.forEach(btn=>btn.disabled=false);
+  }
+}
+
+
+function ensureDueDatePickerOpens(){
+  const input=$("invoiceDueDate");
+  if(!input || input.dataset.pickerReady==="1") return;
+  input.dataset.pickerReady="1";
+  const openPicker=()=>{
+    try{
+      input.focus({preventScroll:true});
+      if(typeof input.showPicker==="function") input.showPicker();
+    }catch(_){}
+  };
+  input.addEventListener("click",openPicker);
+  input.addEventListener("touchend",()=>setTimeout(openPicker,0),{passive:true});
+}
+document.addEventListener("DOMContentLoaded",ensureDueDatePickerOpens);
+
+document.addEventListener("DOMContentLoaded",()=>{renderZenPlusTestCredits();renderZenPlusPremiumState();refreshZenPlusCopilotEverywhere();});
+
+
+function zenPlusUrgentInvoices(){
+  const now=new Date();
+  const today=new Date(now.getFullYear(),now.getMonth(),now.getDate(),12,0,0,0);
+
+  const candidates=[];
+
+  // 1) Toutes les factures enregistrées encore à traiter.
+  (data.invoices||[]).forEach(inv=>{
+    const status=String(inv.status||"upcoming").toLowerCase();
+    if(status==="paid" || status==="archive") return;
+    candidates.push({
+      id:String(inv.id||""),
+      nom:String(inv.label||inv.issuer||"Facture").slice(0,120),
+      montant:Number(inv.amount)||0,
+      echeance:String(inv.dueDate||""),
+      categorie:String(inv.category||"").slice(0,80),
+      source:"enregistrée"
+    });
+  });
+
+  // 2) La facture actuellement analysée depuis une photo,
+  // même si l'utilisateur ne l'a pas encore sauvegardée.
+  try{
+    if(pendingDocumentAnalysis || pendingInvoiceImage){
+      const current=correctedDocumentAnalysisFromForm();
+      if(current?.dueDate){
+        candidates.push({
+          id:"CURRENT_ANALYSIS",
+          nom:String(current.issuer||"Facture analysée").slice(0,120),
+          montant:Number(current.amount)||0,
+          echeance:String(current.dueDate||""),
+          categorie:String(current.category||"").slice(0,80),
+          source:"photo en cours d’analyse"
+        });
+      }
+    }
+  }catch(_){}
+
+  const seen=new Set();
+  return candidates
+    .filter(inv=>inv.echeance)
+    .map(inv=>{
+      const due=new Date(String(inv.echeance)+"T12:00:00");
+      const diff=Math.ceil((due-today)/86400000);
+      return {
+        ...inv,
+        joursRestants:diff,
+        urgence: diff<0 ? "ÉCHUE" : diff===0 ? "AUJOURD'HUI" : diff===1 ? "DEMAIN" : `DANS ${diff} JOURS`
+      };
+    })
+    .filter(inv=>Number.isFinite(inv.joursRestants) && inv.joursRestants<=14)
+    .filter(inv=>{
+      const key=[inv.nom.toLowerCase(),Number(inv.montant)||0,inv.echeance].join("|");
+      if(seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    })
+    .sort((a,b)=>a.joursRestants-b.joursRestants)
+    .slice(0,10);
+}
+
+
+function zenPlusUrgentSummaryHtml(items){
+  if(!items || !items.length) return "";
+  const rows=items.map(inv=>{
+    const amount=Number(inv.montant)>0 ? ` • <strong>${euro(inv.montant)}</strong>` : "";
+    const due=inv.echeance ? ` • échéance ${formatDateFr(inv.echeance)}` : "";
+    const urgency=escapeHtml(inv.urgence||"URGENT");
+    const source=inv.source==="photo en cours d’analyse" ? ` <span class="small">• photo analysée</span>` : "";
+    return `<div class="zenPlusPremiumAdvantage">🔴 <strong>${escapeHtml(inv.nom)}</strong>${amount}${due}${source}<br><u>${urgency}</u></div>`;
+  }).join("");
+  return `<div class="zenPlusDailySectionTitle">⚠️ Urgences détectées dans vos factures</div>
+          <div class="zenPlusPremiumAdvantages">${rows}</div>
+          <div class="zenPlusDailySeparator"></div>`;
+}
+
+function openZenPlusDailyPopup(content,urgentCount=0){
+  const overlay=$("zenPlusDailyOverlay");
+  const body=$("zenPlusDailyWindowBody");
+  const title=$("zenPlusDailyWindowTitle");
+  if(!overlay||!body) return;
+
+  const active=hasZenPlusPremium();
+
+  if(!active){
+    if(title) title.textContent="✨ Découvrez tout ZEN+ Premium";
+    body.innerHTML=`
+      <div class="zenPlusPremiumFlash">
+        <div class="zenPlusPremiumFlashTitle">✨ ZEN+ PREMIUM <span class="zenPlusPremiumPill">À DÉCOUVRIR</span></div>
+        <div class="zenPlusPremiumFlashText">
+          <strong>Passez à une version plus intelligente de Mon Budget ZEN.</strong>
+          ZEN+ utilise l'IA pour transformer vos données en recommandations personnalisées et concrètes.
+        </div>
+        <div class="zenPlusPremiumAdvantages">
+          <div class="zenPlusPremiumAdvantage">⚠️ <strong>Factures urgentes repérées en priorité</strong> selon leurs échéances.</div>
+          <div class="zenPlusPremiumAdvantage">🤖 <strong>Conseil IA personnalisé du jour</strong> basé sur votre situation réelle.</div>
+          <div class="zenPlusPremiumAdvantage">📄 <strong>Analyse intelligente de vos documents</strong> avec actions à entreprendre.</div>
+          <div class="zenPlusPremiumAdvantage">💶 <strong>Impact sur votre budget expliqué</strong> avant vos décisions.</div>
+        </div>
+      </div>
+      <div class="zenPlusBuyBox">
+        <div class="zenPlusBuyPrice">
+          <span>Débloquer ZEN+ Premium</span>
+          <strong>${ZEN_PLUS_PRICE_LABEL}</strong>
+        </div>
+        <button type="button" class="zenPlusBuyButton" onclick="buyZenPlusPremium()">
+          J'achète ZEN+ — ${ZEN_PLUS_PRICE_LABEL}
+        </button>
+<button type="button" class="secondaryBtn" onclick="restoreZenPlusPremium()">↻ Restaurer mes achats</button>
+        <div class="zenPlusFreeNote">
+          Version TEST : l'achat intégré Apple fonctionne dans l'environnement Sandbox/TestFlight et ne génère pas de facturation réelle.
+        </div>
+      </div>`;
+  }else{
+    if(title) title.textContent="✨ Votre conseil ZEN+ du jour";
+    const badge=urgentCount>0
+      ? `<div class="zenPlusUrgentBadge">⚠️ ${urgentCount} facture${urgentCount>1?"s":""} urgente${urgentCount>1?"s":""} prise${urgentCount>1?"s":""} en compte en priorité</div>`
+      : "";
+    const premiumIntro=`
+      <div class="zenPlusPremiumFlash">
+        <div class="zenPlusPremiumFlashTitle">✨ ZEN+ PREMIUM <span class="zenPlusPremiumPill">AVANTAGES ACTIVÉS</span></div>
+        <div class="zenPlusPremiumFlashText">
+          <strong>Vous avez opté pour ZEN+ Premium.</strong> Vous profitez donc de fonctions intelligentes supplémentaires pour anticiper les urgences et mieux comprendre votre budget.
+        </div>
+        <div class="zenPlusPremiumAdvantages">
+          <div class="zenPlusPremiumAdvantage">🤖 <strong>Conseils IA personnalisés</strong> selon votre budget réel.</div>
+          <div class="zenPlusPremiumAdvantage">⚠️ <strong>Factures urgentes prioritaires</strong> selon leurs échéances.</div>
+          <div class="zenPlusPremiumAdvantage">📄 <strong>Analyse intelligente des documents</strong> et actions concrètes à entreprendre.</div>
+          <div class="zenPlusPremiumAdvantage">💶 <strong>Impact budgétaire expliqué</strong> avant de dépenser ou de payer.</div>
+        </div>
+      </div>
+      <div class="zenPlusDailySeparator"></div>
+      <div class="zenPlusDailySectionTitle">📌 Votre conseil du jour</div>`;
+    const urgentItems=zenPlusUrgentInvoices();
+    body.innerHTML=premiumIntro+badge+zenPlusUrgentSummaryHtml(urgentItems)+zenPlusRichText(content);
+  }
+
+  overlay.classList.add("show");
+  overlay.setAttribute("aria-hidden","false");
+  document.body.style.overflow="hidden";
+}
+function closeZenPlusDailyPopup(){
+  const overlay=$("zenPlusDailyOverlay");
+  if(!overlay) return;
+  overlay.classList.remove("show");
+  overlay.setAttribute("aria-hidden","true");
+  document.body.style.overflow="";
+}
+
+const ZEN_PLUS_DAILY_KEY="zenPlusDailyAdviceV1";
+function zenPlusTodayKey(){
+  const d=new Date();
+  const y=d.getFullYear();
+  const m=String(d.getMonth()+1).padStart(2,"0");
+  const day=String(d.getDate()).padStart(2,"0");
+  return `${y}-${m}-${day}`;
+}
+async function refreshZenPlusDailyAdvice(force=false,showPopup=false){
+  if(!hasZenPlusPremium()){
+    const el=$("zenPlusDailyText");
+    if(el) el.textContent="Passez à ZEN+ Premium pour recevoir votre conseil IA personnalisé du jour.";
+    if(showPopup) openZenPlusDailyPopup("",0);
+    return;
+  }
+
+  const el=$("zenPlusDailyText");
+  if(!el) return;
+
+  const urgent=zenPlusUrgentInvoices();
+  let cached=null;
+  try{ cached=JSON.parse(localStorage.getItem(ZEN_PLUS_DAILY_KEY)||"null"); }catch(_){}
+
+  // Le cache reste valable seulement si la liste des urgences n'a pas changé.
+  const urgentSignature=JSON.stringify(urgent.map(x=>[x.nom,x.montant,x.echeance,x.joursRestants,x.source||""]));
+  if(!force && cached?.date===zenPlusTodayKey() && cached?.text && cached?.urgentSignature===urgentSignature){
+    el.textContent=cached.text;
+    if(showPopup) openZenPlusDailyPopup(cached.text,urgent.length);
+    return;
+  }
+
+  const b=zenPlusCurrentBudgetSnapshot();
+  el.textContent="ZEN+ prépare votre conseil personnalisé…";
+
+  try{
+    const response=await fetch(ZEN_PLUS_API_URL,{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        document:{
+          nom:"Conseil budgétaire quotidien ZEN+",
+          type:"budget",
+          categorie:"Conseil ZEN+",
+          montant:0,
+          echeance:"",
+          texteOCR:
+            "Génère un conseil budgétaire du jour clair, concret et personnalisé. " +
+            "PRIORITÉ ABSOLUE : commence la réponse par un bloc '⚠️ URGENCES À TRAITER'. " +
+            "Reprends explicitement chaque facture urgente fournie avec son nom, son montant, son échéance et le nombre de jours restant. " +
+            "Signale clairement les factures échues, dues aujourd'hui ou demain. Explique ensuite l'impact sur le disponible. " +
+            "Seulement après les urgences, ajoute un conseil budgétaire général si utile. N'invente aucune facture. " +
+            "Les éléments peuvent provenir de factures déjà enregistrées OU de la photo actuellement analysée. " +
+            "FACTURES URGENTES STRUCTURÉES : " + JSON.stringify(urgent)
+        },
+        budget:{
+          revenus:Number(b.income)||0,
+          depenses:Number(b.expenses)||0,
+          disponible:Number(b.available)||0,
+          epargne:Number(b.savings)||0,
+          budgetJournalier:Number(b.daily)||0
+        }
+      })
+    });
+
+    const data=await response.json();
+    if(!response.ok || !data?.ok || !data?.advice) throw new Error("daily");
+
+    const compact=String(data.advice).trim();
+    el.textContent=compact;
+    markPositiveAppMoment();
+    localStorage.setItem(
+      ZEN_PLUS_DAILY_KEY,
+      JSON.stringify({
+        date:zenPlusTodayKey(),
+        text:compact,
+        urgentSignature
+      })
+    );
+
+    if(showPopup) openZenPlusDailyPopup(compact,urgent.length);
+  }catch(_){
+    const fallback=cached?.text || "Conseil ZEN+ temporairement indisponible.";
+    el.textContent=fallback;
+    if(showPopup) openZenPlusDailyPopup(fallback,urgent.length);
+  }
+}
+
+// Au démarrage : le conseil ZEN+ apparaît dans SA PROPRE FENÊTRE.
+document.addEventListener("DOMContentLoaded",()=>setTimeout(()=>refreshZenPlusDailyAdvice(false,true),650));
+
+
+
+function bindZenNearbyButtons(){
+  const bindings=[
+    ["zenNearbyRestaurantBtn","restaurant"],
+    ["zenNearbyCoursesBtn","courses"],
+    ["zenNearbyDealsBtn","bonplan"]
+  ];
+  bindings.forEach(([id,mode])=>{
+    const btn=document.getElementById(id);
+    if(!btn || btn.dataset.zenBound==="1") return;
+    btn.dataset.zenBound="1";
+    btn.addEventListener("click",function(ev){
+      ev.preventDefault();
+      ev.stopPropagation();
+      launchNearbyNative(mode);
+    });
+  });
+}
+document.addEventListener("DOMContentLoaded",bindZenNearbyButtons);
+setTimeout(bindZenNearbyButtons,300);
+
+
+
+
+window.addEventListener("DOMContentLoaded",()=>{setTimeout(async()=>{await loadZenPlusAppleProduct();await syncZenPlusAppleEntitlement();},700);});
 </script>
 
 </body>
