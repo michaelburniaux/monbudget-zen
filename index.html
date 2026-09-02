@@ -1099,15 +1099,15 @@ select:focus{
 }
 
 
-/* ===== ZEN+ v5.6 TEST — IAP APPLE + SÉLECTION MENSUELLE — interface privée, achats et crédits fictifs ===== */
-.zenPlusTest{
+/* ===== ZEN+ FINAL — ZEN+ PREMIUM + SÉLECTION MENSUELLE — interface Premium ===== */
+.zenPlusPremium{
   margin-top:14px;
   padding:14px;
   border:1px solid rgba(255,255,255,.13);
   border-radius:16px;
   background:linear-gradient(145deg,rgba(88,80,236,.18),rgba(17,24,39,.45));
 }
-.zenPlusTestHead{
+.zenPlusPremiumHead{
   display:flex;
   align-items:center;
   justify-content:space-between;
@@ -1137,14 +1137,14 @@ select:focus{
   white-space:pre-wrap;
   line-height:1.45;
 }
-.zenPlusTestNote{
+.zenPlusPremiumNote{
   margin-top:8px;
   opacity:.72;
   font-size:.78rem;
 }
 
 
-/* ===== ZEN+ v5.6 TEST — IAP APPLE + SÉLECTION MENSUELLE — visibilité dès l'accueil + présentation dédiée ===== */
+/* ===== ZEN+ FINAL — ZEN+ PREMIUM + SÉLECTION MENSUELLE — visibilité dès l'accueil + présentation dédiée ===== */
 .zenPlusHomeStrip{margin:12px 0 14px;padding:14px;border-radius:18px;border:1px solid rgba(167,139,250,.38);background:linear-gradient(145deg,rgba(111,76,255,.22),rgba(21,35,58,.92));box-shadow:0 12px 32px rgba(0,0,0,.16)}
 .zenPlusHomeTop{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .zenPlusHomeTitle{font-size:16px;font-weight:900}
@@ -1440,7 +1440,7 @@ select:focus{
 
   <div class="header">
     <h1>💶 Mon Budget ZEN</h1>
-    <p>Mes économies • v5.7 TEST — DIAGNOSTIC STOREKIT</p>
+    <p>Mes économies • ZEN+ Premium</p>
 
     <div
       class="headerClock"
@@ -1452,7 +1452,6 @@ select:focus{
   <div class="zenPlusHomeStrip" id="zenPlusHomeStrip">
     <div class="zenPlusHomeTop">
       <div class="zenPlusHomeTitle" id="zenPlusHomeTitle">✨ Découvrez ZEN+</div>
-      <div class="zenPlusHomeCredits"><span class="zenPlusCreditsValue">100</span> crédits TEST</div>
     </div>
     <div class="zenPlusHomeText" id="zenPlusHomeText">
       ZEN+ va plus loin que la simple lecture d'un document : il tient compte de la facture corrigée et de votre budget pour vous donner un conseil plus personnalisé.
@@ -1966,31 +1965,21 @@ select:focus{
         <div class="archiveTitle" style="margin-top:12px">Que dois-je faire maintenant ?</div>
         <div class="assistantAdvice" id="assistantAdvice"></div>
 
-        <div class="zenPlusTest" id="zenPlusTestBox">
-          <div class="zenPlusTestHead">
+        <div class="zenPlusPremium" id="zenPlusPremiumBox">
+          <div class="zenPlusPremiumHead">
             <div>
-              <strong id="zenPlusDocumentTitle">✨ ZEN+ — MODE TEST</strong>
+              <strong id="zenPlusDocumentTitle">✨ Découvrez tout ZEN+ Premium</strong>
               <div class="small" id="zenPlusDocumentSubtitle">Conseil intelligent approfondi à partir du document corrigé et du budget affiché.</div>
             </div>
-            <div class="zenPlusCredits"><span class="zenPlusCreditsValue">100</span> crédits</div>
           </div>
 
-          <button type="button" class="btnSave" id="zenPlusDocumentMainButton" style="width:100%" onclick="runZenPlusTestAnalysis()">
-            ✨ Demander une analyse ZEN+
+          <button type="button" class="btnSave" id="zenPlusDocumentMainButton" style="width:100%" onclick="runZenPlusAnalysis()">
+            ✨ Découvrir les avantages ZEN+
           </button>
 
-          <div class="row" style="margin-top:8px">
-            <button type="button" class="btnSecondary" id="zenPlusDocumentPurchaseTestButton" style="flex:1" onclick="simulateZenPlusPurchase(25)">
-              🧪 Simuler l'achat de 25 crédits
-            </button>
-            <button type="button" class="btnSecondary" style="flex:1" onclick="resetZenPlusTestCredits()">
-              ↻ Remettre 100 crédits
-            </button>
-          </div>
-
           <div class="zenPlusResult" id="zenPlusResult"></div>
-          <div class="zenPlusTestNote" id="zenPlusDocumentNote">
-            Version TEST : les crédits sont fictifs, mais les analyses ZEN+ utilisent réellement l’IA via le backend sécurisé. Aucun achat réel n’est effectué.
+          <div class="zenPlusPremiumNote" id="zenPlusDocumentNote">
+            ZEN+ Premium analyse vos documents, détecte vos urgences et vous donne des conseils personnalisés selon votre budget.
           </div>
         </div>
 
@@ -2446,17 +2435,16 @@ select:focus{
       <div class="small" id="zenPlusInfoText" style="margin-top:7px;line-height:1.5">
         Assistant ZEN lit et classe votre document. ZEN+ utilise ensuite les informations que vous avez vérifiées ou corrigées pour vous expliquer l'impact concret sur votre budget et vous aider à décider quoi faire.
       </div>
-      <div class="zenPlusHeroCredits" id="zenPlusInfoCredits">Solde TEST : <span class="zenPlusCreditsValue" style="margin-left:6px">100</span> crédits</div>
+      <div class="zenPlusHeroCredits" id="zenPlusInfoCredits">ZEN+ Premium • achat unique</div>
     </div>
     <div class="zenPlusFeature"><strong>📄 Comprendre le document</strong>ZEN+ repart du montant, de la date, du type de document et de l'organisme que vous avez confirmés.</div>
     <div class="zenPlusFeature"><strong>💶 Le relier à votre budget</strong>Il tient compte du disponible réel, des revenus, des dépenses et du budget conseillé par jour affichés dans Mon Budget ZEN.</div>
     <div class="zenPlusFeature"><strong>🧭 Vous dire quoi faire</strong>L'objectif est de transformer une facture en recommandation claire : urgence, marge disponible, précautions et prochaine action.</div>
-    <div class="zenPlusFeature"><strong>🔒 Version TEST</strong>Les crédits affichés restent fictifs pour les essais, mais ZEN+ utilise le backend IA sécurisé. L’achat ZEN+ passe désormais par l’achat intégré Apple en environnement de test.</div>
+    <div class="zenPlusFeature"><strong>🔒 Achat unique</strong>ZEN+ Premium se débloque par un achat intégré Apple non consommable. Aucun abonnement.</div>
     <div class="zenPlusInfoActions">
       <button type="button" class="btnSave" id="zenPlusUseBtn" onclick="useZenPlusFromInfo()">✨ Utiliser ZEN+ sur le document</button>
       <button type="button" class="btnSecondary" id="zenPlusDiscoverBtn" onclick="buyZenPlusPremium()"> Acheter ZEN+ — <span data-zenplus-price>4,99 €</span></button>
       <button type="button" class="btnSecondary" onclick="restoreZenPlusPremium()">↻ Restaurer mes achats</button>
-      <button type="button" class="btnSecondary" id="zenPlusResetAppleTestBtn" onclick="resetZenPlusPremiumForAppleTest()">🧪 Réinitialiser ZEN+ pour test Apple</button>
       <button type="button" class="btnSecondary" id="zenPlusContinueBtn" onclick="closeZenPlusInfo()">Retour à Mon Budget ZEN</button>
     </div>
   </div>
@@ -2466,7 +2454,6 @@ select:focus{
   <div class="zenPlusOfferCard">
     <h2>✨ ZEN+ peut aller plus loin</h2>
     <p>Le document vient d'être analysé. ZEN+ peut maintenant utiliser les informations vérifiées ainsi que votre budget pour vous donner un conseil plus approfondi.</p>
-    <div class="zenPlusOfferCredits">Vous avez <span class="zenPlusCreditsValue">100</span> crédits ZEN+ TEST.</div>
     <div class="zenPlusOfferActions">
       <button type="button" class="btnSave" onclick="openZenPlusInfoFromOffer()">Découvrir ZEN+</button>
       <button type="button" class="btnSecondary" onclick="runZenPlusFromOffer()">✨ Utiliser ZEN+ maintenant</button>
@@ -2511,7 +2498,7 @@ select:focus{
       <button type="button" class="appReviewSecondary" onclick="closeAppSuggestion()">Annuler</button>
     </div>
     <div class="appReviewSmall">
-      En version TEST, la suggestion est enregistrée sur l’appareil et peut être partagée avec le développeur.
+      La suggestion est enregistrée sur l’appareil et peut être partagée avec le développeur.
     </div>
   </div>
 </div>
@@ -9208,7 +9195,6 @@ function applyDocumentAnalysis(info){
   $("assistantRawText").textContent=info.text||"Aucun texte reconnu.";
   $("assistantResult").style.display="block";
   setAnalysisStatus("✅ Analyse terminée. Vérifiez les informations ci-dessous avant de les valider.");
-  renderZenPlusTestCredits();
   if(hasZenPlusPremium()){
     localStorage.removeItem(ZEN_PLUS_DAILY_KEY);
   }
@@ -9799,11 +9785,9 @@ document.addEventListener(
 );
 
 /* ==========================================================
-   ZEN+ v5.6 TEST — IAP APPLE + SÉLECTION MENSUELLE
-   - 100 crédits fictifs au premier lancement
-   - 1 crédit consommé par analyse test
-   - faux achat de crédits (toujours fictif pendant le test)
-   - analyse ZEN+ réelle via Worker Cloudflare
+   ZEN+ FINAL — ZEN+ PREMIUM + SÉLECTION MENSUELLE
+   - achat intégré Apple non consommable
+   - analyse ZEN+ via backend sécurisé
    - aucune clé OpenAI dans l'application
    ========================================================== */
 
@@ -9938,14 +9922,12 @@ function renderZenPlusDocumentOfferState(){
   const title=$("zenPlusDocumentTitle");
   const subtitle=$("zenPlusDocumentSubtitle");
   const main=$("zenPlusDocumentMainButton");
-  const purchase=$("zenPlusDocumentPurchaseTestButton");
   const note=$("zenPlusDocumentNote");
 
   if(already){
     if(title) title.textContent="✅ Analyse ZEN+ effectuée";
     if(subtitle) subtitle.textContent="ZEN+ a déjà analysé cette facture et vous a présenté ses recommandations.";
     if(main) main.style.display="none";
-    if(purchase) purchase.style.display="none";
     if(note) note.textContent="Aucune nouvelle analyse n’est nécessaire pour cette photo.";
     return;
   }
@@ -9954,14 +9936,12 @@ function renderZenPlusDocumentOfferState(){
     if(title) title.textContent="✨ ZEN+ PREMIUM — Analyse IA";
     if(subtitle) subtitle.textContent="Votre document vérifié, votre budget et vos urgences sont pris en compte pour produire une recommandation IA améliorée.";
     if(main) main.textContent="✨ Obtenir mon conseil IA amélioré";
-    if(purchase) purchase.style.display="none";
     if(note) note.textContent="ZEN+ Premium est actif. Les analyses utilisent réellement l’IA via le backend sécurisé.";
   }else{
     if(title) title.textContent="✨ Découvrez tout ZEN+ Premium";
     if(subtitle) subtitle.textContent="ZEN+ Premium analyse vos documents, détecte vos urgences, répond à vos questions de budget, estime votre fin de mois et vous aide aussi à trouver des options économiques autour de vous.";
     if(main) main.textContent="✨ Découvrir les avantages ZEN+";
-    if(purchase) purchase.style.display="";
-    if(note) note.textContent="Version TEST : l’achat est simulé. Les analyses IA sont réservées à ZEN+ Premium.";
+    if(note) note.textContent="Les analyses IA personnalisées sont réservées à ZEN+ Premium.";
   }
 }
 
@@ -10270,15 +10250,15 @@ function zenPlusBenefitsHtml(){
   🎯 Aide à la décision avant une dépense`;
 }
 
-const ZEN_PLUS_TEST_ENTITLEMENT_KEY="zenPlusPremiumEntitlementV1";
-const ZEN_PLUS_PRICE_LABEL="4,99 €";
+const ZEN_PLUS_ENTITLEMENT_KEY="zenPlusPremiumEntitlementV1";
+let ZEN_PLUS_PRICE_LABEL="4,99 €";
 
 function hasZenPlusPremium(){
-  return localStorage.getItem(ZEN_PLUS_TEST_ENTITLEMENT_KEY)==="1";
+  return localStorage.getItem(ZEN_PLUS_ENTITLEMENT_KEY)==="1";
 }
 
 function setZenPlusPremium(active){
-  localStorage.setItem(ZEN_PLUS_TEST_ENTITLEMENT_KEY,active?"1":"0");
+  localStorage.setItem(ZEN_PLUS_ENTITLEMENT_KEY,active?"1":"0");
   renderZenPlusPremiumState();
 }
 
@@ -10310,21 +10290,18 @@ function renderZenPlusPremiumState(){
   const docTitle=$("zenPlusDocumentTitle");
   const docSubtitle=$("zenPlusDocumentSubtitle");
   const docMain=$("zenPlusDocumentMainButton");
-  const docPurchase=$("zenPlusDocumentPurchaseTestButton");
   const docNote=$("zenPlusDocumentNote");
 
   if(active){
     if(docTitle) docTitle.textContent="✨ ZEN+ PREMIUM — Analyse IA";
     if(docSubtitle) docSubtitle.textContent="Votre document vérifié, votre budget et vos urgences sont pris en compte pour produire une recommandation IA améliorée.";
     if(docMain) docMain.textContent="✨ Obtenir mon conseil IA amélioré";
-    if(docPurchase) docPurchase.style.display="none";
     if(docNote) docNote.textContent="ZEN+ Premium est actif. Les analyses utilisent réellement l’IA via le backend sécurisé.";
   }else{
     if(docTitle) docTitle.textContent="✨ Découvrez tout ZEN+ Premium";
     if(docSubtitle) docSubtitle.textContent="ZEN+ Premium analyse vos documents, détecte vos urgences, répond à vos questions de budget, estime votre fin de mois et vous aide aussi à trouver des options économiques autour de vous.";
     if(docMain) docMain.textContent="✨ Découvrir les avantages ZEN+";
-    if(docPurchase) docPurchase.style.display="";
-    if(docNote) docNote.textContent="Version TEST : l’achat est simulé. Les analyses IA sont réservées à ZEN+ Premium.";
+    if(docNote) docNote.textContent="Les analyses IA personnalisées sont réservées à ZEN+ Premium.";
   }
 
   renderZenPlusDocumentOfferState();
@@ -10333,115 +10310,43 @@ function renderZenPlusPremiumState(){
 
 const ZENPLUS_APPLE_PRODUCT_ID="ZENPREMIUM";
 let zenPlusAppleProduct=null;
-let zenPlusStoreDiagnostic=null;
 
 function zenNativePurchases(){
   return window.Capacitor?.Plugins?.NativePurchases || null;
 }
-function zenPlusErrorDetails(e){
-  if(!e) return "Erreur inconnue";
-  const parts=[];
-  if(e.code!==undefined) parts.push("code="+String(e.code));
-  if(e.message!==undefined) parts.push("message="+String(e.message));
-  if(e.errorMessage!==undefined) parts.push("errorMessage="+String(e.errorMessage));
-  if(e.localizedDescription!==undefined) parts.push("description="+String(e.localizedDescription));
-  if(!parts.length) parts.push(String(e));
-  return parts.join("\n");
-}
-async function loadZenPlusAppleProduct(showDiagnostic=false){
-  const diagnostic={
-    productId:ZENPLUS_APPLE_PRODUCT_ID,
-    pluginDetected:false,
-    pluginVersion:"",
-    billingSupported:null,
-    storefront:"",
-    productsCount:null,
-    returnedIds:[],
-    error:""
-  };
-  zenPlusStoreDiagnostic=diagnostic;
-
+async function loadZenPlusAppleProduct(){
   const n=zenNativePurchases();
-  if(!n){
-    diagnostic.error="Plugin NativePurchases introuvable dans window.Capacitor.Plugins.";
-    if(showDiagnostic) alert("🧪 DIAGNOSTIC STOREKIT\n\n"+diagnostic.error);
-    return null;
-  }
-  diagnostic.pluginDetected=true;
-
+  if(!n) return null;
   try{
-    if(typeof n.getPluginVersion==="function"){
-      try{
-        const v=await n.getPluginVersion();
-        diagnostic.pluginVersion=String(v?.version||"");
-      }catch(_){}
-    }
-    if(typeof n.getStorefront==="function"){
-      try{
-        const sf=await n.getStorefront();
-        diagnostic.storefront=String(sf?.countryCode||sf?.storefront||sf?.identifier||"");
-      }catch(_){}
-    }
-
     const s=await n.isBillingSupported();
-    diagnostic.billingSupported=!!s?.isBillingSupported;
-    if(!diagnostic.billingSupported){
-      diagnostic.error="isBillingSupported() a renvoyé false.";
-      if(showDiagnostic) alert(zenPlusStoreDiagnosticText(diagnostic));
-      return null;
-    }
-
+    if(!s?.isBillingSupported) return null;
     const r=await n.getProducts({
       productIdentifiers:[ZENPLUS_APPLE_PRODUCT_ID],
       productType:"inapp"
     });
     const products=Array.isArray(r?.products)?r.products:[];
-    diagnostic.productsCount=products.length;
-    diagnostic.returnedIds=products.map(p=>String(p?.productIdentifier||p?.identifier||p?.id||"?"));
-
     zenPlusAppleProduct=products.find(
       p=>String(p?.productIdentifier||p?.identifier||p?.id||"")===ZENPLUS_APPLE_PRODUCT_ID
-    ) || products[0] || null;
-
+    ) || null;
     const price=zenPlusAppleProduct?.priceString;
-    if(price) document.querySelectorAll("[data-zenplus-price]").forEach(e=>e.textContent=price);
-
-    if(!zenPlusAppleProduct){
-      diagnostic.error="StoreKit n’a renvoyé aucun produit pour ZENPREMIUM.";
-    }
-    if(showDiagnostic) alert(zenPlusStoreDiagnosticText(diagnostic));
+    if(price){ ZEN_PLUS_PRICE_LABEL=price; document.querySelectorAll("[data-zenplus-price]").forEach(e=>e.textContent=price); }
     return zenPlusAppleProduct;
   }catch(e){
-    diagnostic.error=zenPlusErrorDetails(e);
-    console.error("StoreKit ZEN+ diagnostic",e);
-    if(showDiagnostic) alert(zenPlusStoreDiagnosticText(diagnostic));
+    console.error("StoreKit ZEN+ product load",e);
     return null;
   }
 }
-function zenPlusStoreDiagnosticText(d){
-  return [
-    "🧪 DIAGNOSTIC STOREKIT — BUILD 56",
-    "",
-    "Produit demandé : "+d.productId,
-    "Plugin détecté : "+(d.pluginDetected?"OUI":"NON"),
-    "Version plugin : "+(d.pluginVersion||"non retournée"),
-    "Billing supporté : "+(d.billingSupported===null?"non testé":(d.billingSupported?"OUI":"NON")),
-    "Storefront : "+(d.storefront||"non retourné"),
-    "Produits renvoyés : "+(d.productsCount===null?"non testé":String(d.productsCount)),
-    "Identifiants renvoyés : "+(d.returnedIds.length?d.returnedIds.join(", "):"aucun"),
-    d.error ? "Erreur : "+d.error : "Erreur : aucune"
-  ].join("\n");
-}
+
 async function buyZenPlusPremium(){
   const n=zenNativePurchases();
   if(!n){
-    await loadZenPlusAppleProduct(true);
+    alert("L’achat ZEN+ Premium n’est pas disponible pour le moment.");
     return;
   }
   try{
-    const p=zenPlusAppleProduct||await loadZenPlusAppleProduct(false);
+    const p=zenPlusAppleProduct||await loadZenPlusAppleProduct();
     if(!p){
-      await loadZenPlusAppleProduct(true);
+      alert("ZEN+ Premium n’est pas encore disponible sur l’App Store. Réessayez dans quelques instants.");
       return;
     }
     const r=await n.purchaseProduct({
@@ -10451,18 +10356,17 @@ async function buyZenPlusPremium(){
     });
     if(r?.productIdentifier===ZENPLUS_APPLE_PRODUCT_ID){
       localStorage.setItem("zenPlusPremiumEntitlementV1","1");
-      refreshZenPlusPremiumUI();
+      renderZenPlusPremiumState();
       alert("ZEN+ Premium est activé. Merci !");
-    }else{
-      alert("🧪 DIAGNOSTIC ACHAT\n\nStoreKit a terminé l’appel mais l’identifiant retourné ne correspond pas à ZENPREMIUM.\n\nIdentifiant : "+String(r?.productIdentifier||"non retourné"));
     }
   }catch(e){
     const msg=String(e?.message||e||"");
     if(/cancel|cancell/i.test(msg)) return;
     console.error("StoreKit purchase ZEN+",e);
-    alert("🧪 ERREUR ACHAT STOREKIT\n\n"+zenPlusErrorDetails(e));
+    alert("L’achat n’a pas pu être finalisé. Réessayez dans quelques instants.");
   }
 }
+
 async function restoreZenPlusPremium(){
   const n=zenNativePurchases();
   if(!n){alert("La restauration Apple n’est pas disponible.");return;}
@@ -10472,7 +10376,7 @@ async function restoreZenPlusPremium(){
     const ok=(r?.purchases||[]).some(p=>p?.productIdentifier===ZENPLUS_APPLE_PRODUCT_ID);
     if(ok){
       localStorage.setItem("zenPlusPremiumEntitlementV1","1");
-      refreshZenPlusPremiumUI();
+      renderZenPlusPremiumState();
       alert("ZEN+ Premium a été restauré.");
     }else alert("Aucun achat ZEN+ Premium n’a été trouvé pour ce compte Apple.");
   }catch(e){console.error(e);alert("Impossible de restaurer les achats pour le moment.");}
@@ -10482,73 +10386,13 @@ async function syncZenPlusAppleEntitlement(){
   try{
     const r=await n.getPurchases({productType:"inapp",onlyCurrentEntitlements:true});
     const ok=(r?.purchases||[]).some(p=>p?.productIdentifier===ZENPLUS_APPLE_PRODUCT_ID);
-    if(ok){localStorage.setItem("zenPlusPremiumEntitlementV1","1");refreshZenPlusPremiumUI();}
+    if(ok) localStorage.setItem("zenPlusPremiumEntitlementV1","1");
+    else localStorage.removeItem("zenPlusPremiumEntitlementV1");
+    renderZenPlusPremiumState();
     return ok;
   }catch(e){return false;}
 }
 
-function resetZenPlusPremiumForAppleTest(){
-  if(!confirm("Réinitialiser uniquement le statut ZEN+ sur cet appareil pour tester l’achat Apple ?\n\nVotre budget, vos factures, vos opérations et votre épargne ne seront pas supprimés.")){
-    return;
-  }
-
-  localStorage.removeItem(ZEN_PLUS_TEST_ENTITLEMENT_KEY);
-  localStorage.removeItem(ZEN_PLUS_DAILY_KEY);
-
-  renderZenPlusPremiumState();
-  refreshZenPlusPremiumUI();
-  loadZenPlusAppleProduct();
-
-  alert("Statut ZEN+ local réinitialisé.\n\nVous pouvez maintenant tester le véritable achat Apple Sandbox.");
-}
-
-function resetZenPlusPremiumTest(){
-  resetZenPlusPremiumForAppleTest();
-}
-
-const ZEN_PLUS_TEST_CREDITS_KEY="zenPlusTestCreditsV1";
-
-function getZenPlusTestCredits(){
-  const raw=localStorage.getItem(ZEN_PLUS_TEST_CREDITS_KEY);
-  if(raw===null){
-    localStorage.setItem(ZEN_PLUS_TEST_CREDITS_KEY,"100");
-    return 100;
-  }
-  const n=parseInt(raw,10);
-  return Number.isFinite(n) && n>=0 ? n : 100;
-}
-
-function setZenPlusTestCredits(value){
-  const safe=Math.max(0,Math.floor(Number(value)||0));
-  localStorage.setItem(ZEN_PLUS_TEST_CREDITS_KEY,String(safe));
-  renderZenPlusTestCredits();
-  return safe;
-}
-
-function renderZenPlusTestCredits(){
-  const value=String(getZenPlusTestCredits());
-  document.querySelectorAll(".zenPlusCreditsValue").forEach(el=>{
-    el.textContent=value;
-  });
-}
-
-function simulateZenPlusPurchase(count){
-  const add=Math.max(0,Math.floor(Number(count)||0));
-  const total=setZenPlusTestCredits(getZenPlusTestCredits()+add);
-  setZenPlusPremium(true);
-  alert(`🧪 Achat TEST simulé : ZEN+ Premium activé + ${add} crédits.\n\nSolde fictif : ${total} crédits.\nAucun paiement n'a été effectué.`);
-}
-
-function resetZenPlusTestCredits(){
-  setZenPlusTestCredits(100);
-  setZenPlusPremium(false);
-  localStorage.removeItem(ZEN_PLUS_DAILY_KEY);
-  const box=$("zenPlusResult");
-  if(box){
-    box.style.display="none";
-    box.textContent="";
-  }
-}
 
 function parseEuroDisplay(text){
   const cleaned=String(text||"")
@@ -10580,77 +10424,6 @@ function zenPlusDaysUntil(dateStr){
   return Math.ceil((d-today)/86400000);
 }
 
-function buildZenPlusTestAdvice(info,budget){
-  const amount=Number(info.amount)||0;
-  const days=zenPlusDaysUntil(info.dueDate);
-  const due=info.dueDate
-    ? new Date(info.dueDate+"T12:00:00").toLocaleDateString("fr-BE")
-    : null;
-
-  let lines=[];
-  lines.push(`✨ ANALYSE ZEN+ TEST — ${info.issuer||"Document"}`);
-  lines.push("");
-
-  if(info.type==="facture" || info.type==="rappel"){
-    if(amount>0 && due){
-      lines.push(`Cette somme de ${euro(amount)} doit être traitée pour le ${due}.`);
-    }else if(amount>0){
-      lines.push(`Montant identifié : ${euro(amount)}. La date limite doit encore être vérifiée.`);
-    }else{
-      lines.push("Je n'ai pas de montant suffisamment fiable pour calculer l'impact exact sur votre budget.");
-    }
-
-    if(days!==null){
-      if(days<0) lines.push(`⚠️ La date détectée est dépassée de ${Math.abs(days)} jour(s) : vérifiez immédiatement si le document a déjà été payé ou traité.`);
-      else if(days===0) lines.push("⚠️ L'échéance est aujourd'hui.");
-      else if(days<=7) lines.push(`⚠️ Il reste seulement ${days} jour(s) avant l'échéance.`);
-      else lines.push(`Il reste environ ${days} jour(s) avant l'échéance.`);
-    }
-
-    if(amount>0 && budget.available>0){
-      const after=budget.available-amount;
-      const share=(amount/budget.available)*100;
-      lines.push("");
-      lines.push(`Impact sur votre disponible actuel : environ ${share.toFixed(0)} %.`);
-      lines.push(`Si vous réservez cette somme maintenant, il resterait environ ${euro(after)} de disponible.`);
-
-      if(after<0){
-        lines.push("🔴 Cette facture dépasse votre disponible actuel. Avant de payer, vérifiez les rentrées prévues et contactez le créancier si un étalement est nécessaire.");
-      }else if(share>=50){
-        lines.push("🟠 Cette facture absorbe une grosse partie du disponible. Je vous conseille de réserver la somme immédiatement et d'éviter les dépenses non essentielles jusqu'au paiement.");
-      }else{
-        lines.push("🟢 Le paiement semble compatible avec le disponible actuel, sous réserve des autres dépenses prévues.");
-      }
-    }
-  }else{
-    lines.push(info.summary || "Le document a été lu et classé.");
-    if(due) lines.push(`Date à surveiller : ${due}.`);
-  }
-
-  if(budget.daily>0){
-    lines.push("");
-    lines.push(`Repère actuel de l'application : environ ${euro(budget.daily)} de budget conseillé par jour.`);
-  }
-
-  lines.push("");
-  lines.push("✅ ACTIONS CONSEILLÉES");
-  if(info.type==="facture" || info.type==="rappel"){
-    lines.push("1. Vérifiez une dernière fois le montant, la date et le bénéficiaire.");
-    lines.push("2. Réservez la somme dans votre budget si elle n'est pas encore payée.");
-    lines.push("3. Après paiement, conservez la preuve et marquez la facture comme payée.");
-    if(info.type==="rappel") lines.push("4. Si vous avez déjà payé, ne payez pas deux fois : comparez d'abord avec vos opérations bancaires.");
-  }else{
-    lines.push("1. Vérifiez les informations corrigées avant d'archiver.");
-    lines.push("2. Respectez toute échéance ou action demandée dans le document.");
-  }
-
-  lines.push("");
-  lines.push("🧪 Ceci est une simulation locale de ZEN+. La future version IA pourra produire un conseil plus nuancé à partir du texte OCR, sans envoyer votre clé API dans l'application.");
-
-  return lines.join("\n");
-}
-
-
 function openZenPlusInfo(){
   const overlay=$("zenPlusInfoOverlay");
   const title=$("zenPlusInfoTitle");
@@ -10670,10 +10443,8 @@ function openZenPlusInfo(){
       "<strong>Vous avez opté pour ZEN+ Premium.</strong><br><br>"+
       "Votre document vient d'être analysé. ZEN+ peut maintenant utiliser les informations vérifiées, "+
       "votre budget et vos échéances pour vous proposer un <strong>conseil IA amélioré et personnalisé</strong>.";
-    if(creditsBox) creditsBox.textContent=`ZEN+ Premium actif • ${getZenPlusTestCredits()} crédits TEST disponibles.`;
+    if(creditsBox) creditsBox.textContent="ZEN+ Premium actif • achat unique";
     if(discoverBtn) discoverBtn.style.display="none";
-    const resetBtn=$("zenPlusResetAppleTestBtn");
-    if(resetBtn) resetBtn.style.display="";
     if(useBtn){
       useBtn.style.display="";
       useBtn.textContent="✨ Voir les conseils IA améliorés";
@@ -10683,14 +10454,12 @@ function openZenPlusInfo(){
     if(title) title.textContent="✨ ZEN+ peut aller plus loin";
     if(textBox) textBox.textContent=
       "Le document vient d'être analysé. ZEN+ peut maintenant utiliser les informations vérifiées ainsi que votre budget pour vous donner un conseil plus approfondi.";
-    if(creditsBox) creditsBox.textContent=`Vous avez ${getZenPlusTestCredits()} crédits ZEN+ TEST.`;
+    if(creditsBox) creditsBox.textContent="ZEN+ Premium • achat unique, sans abonnement";
     if(discoverBtn){
       discoverBtn.style.display="";
       discoverBtn.innerHTML=' Acheter ZEN+ — <span data-zenplus-price>'+ZEN_PLUS_PRICE_LABEL+'</span>';
       loadZenPlusAppleProduct();
     }
-    const resetBtn=$("zenPlusResetAppleTestBtn");
-    if(resetBtn) resetBtn.style.display="none";
     if(useBtn){
       useBtn.style.display="";
       useBtn.textContent="✨ Utiliser ZEN+ maintenant";
@@ -10706,7 +10475,6 @@ function closeZenPlusInfo(){
   if(overlay) overlay.classList.remove("show");
 }
 function showZenPlusAnalysisOffer(){
-  renderZenPlusTestCredits();
   renderZenPlusDocumentOfferState();
 
   // ZEN+ a déjà été utilisé avec succès sur cette photo : ne plus le reproposer.
@@ -10734,12 +10502,12 @@ function openZenPlusInfoFromOffer(){
 }
 function runZenPlusFromOffer(){
   closeZenPlusOffer();
-  runZenPlusTestAnalysis();
+  runZenPlusAnalysis();
 }
 function useZenPlusFromInfo(){
   closeZenPlusInfo();
   if(pendingDocumentAnalysis){
-    runZenPlusTestAnalysis();
+    runZenPlusAnalysis();
     return;
   }
   const section=$("invoiceSection");
@@ -10775,7 +10543,7 @@ function closeZenPlusDialogue(){
 
 const ZEN_PLUS_API_URL="https://mon-budget-zen-plus.explorebex.workers.dev/";
 
-async function runZenPlusTestAnalysis(){
+async function runZenPlusAnalysis(){
   if(!hasZenPlusPremium()){
     openZenPlusDailyPopup("",0);
     return;
@@ -10783,12 +10551,6 @@ async function runZenPlusTestAnalysis(){
 
   if(!pendingDocumentAnalysis){
     alert("Analysez d'abord un document avec Assistant ZEN.");
-    return;
-  }
-
-  const credits=getZenPlusTestCredits();
-  if(credits<=0){
-    alert("Vous n'avez plus de crédits ZEN+ TEST. Utilisez le bouton d'achat fictif pour continuer le test.");
     return;
   }
 
@@ -10800,7 +10562,7 @@ async function runZenPlusTestAnalysis(){
   const box=$("zenPlusResult");
   if(!box) return;
 
-  const buttons=[...document.querySelectorAll('button[onclick*="runZenPlusTestAnalysis"], button[onclick*="runZenPlusFromOffer"]')];
+  const buttons=[...document.querySelectorAll('button[onclick*="runZenPlusAnalysis"], button[onclick*="runZenPlusFromOffer"]')];
   buttons.forEach(btn=>btn.disabled=true);
 
   box.style.display="none";
@@ -10839,13 +10601,11 @@ async function runZenPlusTestAnalysis(){
       throw new Error(data?.error || `Erreur ZEN+ (${response.status})`);
     }
 
-    // Un crédit fictif n'est consommé qu'après une vraie réponse réussie.
-    setZenPlusTestCredits(credits-1);
     markZenPlusUsedOnCurrentDocument();
     openZenPlusDialogue(data.advice,false);
   }catch(error){
     console.error("ZEN+ AI error",error);
-    openZenPlusDialogue("⚠️ **ZEN+ n'a pas pu terminer l'analyse.**\n\nVérifiez votre connexion et réessayez.\n\n__Aucun crédit TEST n'a été consommé.__",false);
+    openZenPlusDialogue("⚠️ **ZEN+ n'a pas pu terminer l'analyse.**\n\nVérifiez votre connexion et réessayez.",false);
   }finally{
     buttons.forEach(btn=>btn.disabled=false);
   }
@@ -10867,7 +10627,7 @@ function ensureDueDatePickerOpens(){
 }
 document.addEventListener("DOMContentLoaded",ensureDueDatePickerOpens);
 
-document.addEventListener("DOMContentLoaded",()=>{renderZenPlusTestCredits();renderZenPlusPremiumState();refreshZenPlusCopilotEverywhere();});
+document.addEventListener("DOMContentLoaded",()=>{renderZenPlusPremiumState();refreshZenPlusCopilotEverywhere();});
 
 
 function zenPlusUrgentInvoices(){
@@ -10980,7 +10740,7 @@ function openZenPlusDailyPopup(content,urgentCount=0){
         </button>
 <button type="button" class="secondaryBtn" onclick="restoreZenPlusPremium()">↻ Restaurer mes achats</button>
         <div class="zenPlusFreeNote">
-          Version TEST : l'achat intégré Apple fonctionne dans l'environnement Sandbox/TestFlight et ne génère pas de facturation réelle.
+          Achat unique via l’App Store • aucun abonnement. Vous pouvez restaurer votre achat sur vos appareils compatibles.
         </div>
       </div>`;
   }else{
