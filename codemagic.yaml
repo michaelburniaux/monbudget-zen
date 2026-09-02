@@ -36,7 +36,8 @@ workflows:
 
 
   ios-app-store:
-    name: Mon Budget ZEN App Store
+    # TEST UNIQUEMENT : génère une IPA mais ne la publie PAS automatiquement chez Apple.
+    name: Mon Budget ZEN+ TEST
     max_build_duration: 60
 
     integrations:
@@ -134,9 +135,12 @@ workflows:
         script: |
           npm install @pantrist/capacitor-plugin-ml-kit-text-recognition@7
           npm install @capacitor-community/admob@7
+          npm install @capacitor/app-launcher@7
 
       - name: Sync Capacitor plugins
         script: |
+          node -e "const p=require('./node_modules/@capacitor/app-launcher/package.json'); if(!String(p.version).startsWith('7.')){ console.error('ERREUR : AppLauncher doit être en version 7.x. Version trouvée : '+p.version); process.exit(1); } console.log('OK : AppLauncher installé en version '+p.version);"
+          npm install @capgo/native-purchases@7
           npx cap sync ios
 
       - name: Verify iOS 15.5 and OCR plugin
@@ -253,12 +257,12 @@ workflows:
       - name: Set iOS build number
         script: |
           set -e
-          echo "=== Forçage du build Apple à 27 ==="
+          echo "=== Forçage du build TEST Apple à 54 ==="
 
           cd ios/App
 
           # 1) Réglage Xcode standard.
-          agvtool new-version -all 27 || true
+          agvtool new-version -all 54 || true
 
           # 2) Force CURRENT_PROJECT_VERSION dans le projet Xcode.
           python3 - <<'PY'
@@ -266,33 +270,33 @@ workflows:
           import re
           p=Path("App.xcodeproj/project.pbxproj")
           s=p.read_text()
-          s,n=re.subn(r'CURRENT_PROJECT_VERSION = [^;]+;', 'CURRENT_PROJECT_VERSION = 27;', s)
+          s,n=re.subn(r'CURRENT_PROJECT_VERSION = [^;]+;', 'CURRENT_PROJECT_VERSION = 54;', s)
           if n == 0:
               raise SystemExit("ERREUR : CURRENT_PROJECT_VERSION introuvable dans project.pbxproj")
           p.write_text(s)
-          print(f"OK : CURRENT_PROJECT_VERSION forcé à 27 ({n} occurrence(s)).")
+          print(f"OK : CURRENT_PROJECT_VERSION forcé à 54 ({n} occurrence(s)).")
           PY
 
           # 3) Force aussi CFBundleVersion dans le vrai Info.plist de l'app.
-          /usr/libexec/PlistBuddy -c "Set :CFBundleVersion 27" App/Info.plist 2>/dev/null || \
-          /usr/libexec/PlistBuddy -c "Add :CFBundleVersion string 27" App/Info.plist
+          /usr/libexec/PlistBuddy -c "Set :CFBundleVersion 54" App/Info.plist 2>/dev/null || \
+          /usr/libexec/PlistBuddy -c "Add :CFBundleVersion string 54" App/Info.plist
 
           echo "=== Vérification AVANT signature ==="
           PLIST_BUILD=$(/usr/libexec/PlistBuddy -c "Print :CFBundleVersion" App/Info.plist)
           echo "Info.plist CFBundleVersion = $PLIST_BUILD"
-          if [ "$PLIST_BUILD" != "27" ]; then
-            echo "ERREUR : Info.plist n'est pas au build 27."
+          if [ "$PLIST_BUILD" != "54" ]; then
+            echo "ERREUR : Info.plist n'est pas au build 54."
             exit 1
           fi
 
-          PBX_OTHER=$(grep -E "CURRENT_PROJECT_VERSION = " App.xcodeproj/project.pbxproj | grep -v "CURRENT_PROJECT_VERSION = 27;" || true)
+          PBX_OTHER=$(grep -E "CURRENT_PROJECT_VERSION = " App.xcodeproj/project.pbxproj | grep -v "CURRENT_PROJECT_VERSION = 54;" || true)
           if [ -n "$PBX_OTHER" ]; then
-            echo "ERREUR : au moins une configuration Xcode n'est pas au build 27 :"
+            echo "ERREUR : au moins une configuration Xcode n'est pas au build 54 :"
             echo "$PBX_OTHER"
             exit 1
           fi
 
-          echo "OK : le projet iOS est intégralement réglé sur le build 27."
+          echo "OK : le projet iOS est intégralement réglé sur le build 54."
           cd ../..
 
       - name: Configure Mon Budget ZEN app icon
@@ -407,7 +411,7 @@ workflows:
           BUILD_NUMBER=$(/usr/libexec/PlistBuddy -c "Print :CFBundleVersion" "$APP_PLIST" 2>/dev/null || true)
 
           echo "Bundle ID : $APP_ID"
-          echo "Build : $BUILD_NUMBER"
+          echo "Build TEST : $BUILD_NUMBER"
           echo "NSCameraUsageDescription : $CAMERA_VALUE"
           echo "NSPhotoLibraryUsageDescription : $PHOTO_VALUE"
 
@@ -416,8 +420,8 @@ workflows:
             exit 1
           fi
 
-          if [ "$BUILD_NUMBER" != "27" ]; then
-            echo "ERREUR : le numéro de build final n'est pas 27."
+          if [ "$BUILD_NUMBER" != "54" ]; then
+            echo "ERREUR : le numéro de build final n'est pas 54."
             exit 1
           fi
 
@@ -431,13 +435,16 @@ workflows:
             exit 1
           fi
 
-          echo "OK : build 27 vérifié, avec autorisations caméra présentes dans l'IPA finale."
+          echo "OK : build 54 vérifié, avec autorisations caméra présentes dans l'IPA finale."
 
     artifacts:
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
       - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
 
+
     publishing:
       app_store_connect:
         auth: integration
+        submit_to_testflight: true
+        submit_to_app_store: false
