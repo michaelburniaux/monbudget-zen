@@ -1440,7 +1440,7 @@ select:focus{
 
   <div class="header">
     <h1>💶 Mon Budget ZEN</h1>
-    <p>Mes économies • v5.6 TEST — IAP APPLE + SÉLECTION MENSUELLE</p>
+    <p>Mes économies • v5.7 TEST — DIAGNOSTIC STOREKIT</p>
 
     <div
       class="headerClock"
@@ -10333,38 +10333,134 @@ function renderZenPlusPremiumState(){
 
 const ZENPLUS_APPLE_PRODUCT_ID="ZENPREMIUM";
 let zenPlusAppleProduct=null;
+let zenPlusStoreDiagnostic=null;
 
 function zenNativePurchases(){
   return window.Capacitor?.Plugins?.NativePurchases || null;
 }
-async function loadZenPlusAppleProduct(){
-  const n=zenNativePurchases(); if(!n) return null;
+function zenPlusErrorDetails(e){
+  if(!e) return "Erreur inconnue";
+  const parts=[];
+  if(e.code!==undefined) parts.push("code="+String(e.code));
+  if(e.message!==undefined) parts.push("message="+String(e.message));
+  if(e.errorMessage!==undefined) parts.push("errorMessage="+String(e.errorMessage));
+  if(e.localizedDescription!==undefined) parts.push("description="+String(e.localizedDescription));
+  if(!parts.length) parts.push(String(e));
+  return parts.join("\n");
+}
+async function loadZenPlusAppleProduct(showDiagnostic=false){
+  const diagnostic={
+    productId:ZENPLUS_APPLE_PRODUCT_ID,
+    pluginDetected:false,
+    pluginVersion:"",
+    billingSupported:null,
+    storefront:"",
+    productsCount:null,
+    returnedIds:[],
+    error:""
+  };
+  zenPlusStoreDiagnostic=diagnostic;
+
+  const n=zenNativePurchases();
+  if(!n){
+    diagnostic.error="Plugin NativePurchases introuvable dans window.Capacitor.Plugins.";
+    if(showDiagnostic) alert("🧪 DIAGNOSTIC STOREKIT\n\n"+diagnostic.error);
+    return null;
+  }
+  diagnostic.pluginDetected=true;
+
   try{
+    if(typeof n.getPluginVersion==="function"){
+      try{
+        const v=await n.getPluginVersion();
+        diagnostic.pluginVersion=String(v?.version||"");
+      }catch(_){}
+    }
+    if(typeof n.getStorefront==="function"){
+      try{
+        const sf=await n.getStorefront();
+        diagnostic.storefront=String(sf?.countryCode||sf?.storefront||sf?.identifier||"");
+      }catch(_){}
+    }
+
     const s=await n.isBillingSupported();
-    if(!s?.isBillingSupported) return null;
-    const r=await n.getProducts({productIdentifiers:[ZENPLUS_APPLE_PRODUCT_ID],productType:"inapp"});
-    zenPlusAppleProduct=r?.products?.[0]||null;
+    diagnostic.billingSupported=!!s?.isBillingSupported;
+    if(!diagnostic.billingSupported){
+      diagnostic.error="isBillingSupported() a renvoyé false.";
+      if(showDiagnostic) alert(zenPlusStoreDiagnosticText(diagnostic));
+      return null;
+    }
+
+    const r=await n.getProducts({
+      productIdentifiers:[ZENPLUS_APPLE_PRODUCT_ID],
+      productType:"inapp"
+    });
+    const products=Array.isArray(r?.products)?r.products:[];
+    diagnostic.productsCount=products.length;
+    diagnostic.returnedIds=products.map(p=>String(p?.productIdentifier||p?.identifier||p?.id||"?"));
+
+    zenPlusAppleProduct=products.find(
+      p=>String(p?.productIdentifier||p?.identifier||p?.id||"")===ZENPLUS_APPLE_PRODUCT_ID
+    ) || products[0] || null;
+
     const price=zenPlusAppleProduct?.priceString;
     if(price) document.querySelectorAll("[data-zenplus-price]").forEach(e=>e.textContent=price);
+
+    if(!zenPlusAppleProduct){
+      diagnostic.error="StoreKit n’a renvoyé aucun produit pour ZENPREMIUM.";
+    }
+    if(showDiagnostic) alert(zenPlusStoreDiagnosticText(diagnostic));
     return zenPlusAppleProduct;
-  }catch(e){console.warn("StoreKit ZEN+",e);return null;}
+  }catch(e){
+    diagnostic.error=zenPlusErrorDetails(e);
+    console.error("StoreKit ZEN+ diagnostic",e);
+    if(showDiagnostic) alert(zenPlusStoreDiagnosticText(diagnostic));
+    return null;
+  }
+}
+function zenPlusStoreDiagnosticText(d){
+  return [
+    "🧪 DIAGNOSTIC STOREKIT — BUILD 56",
+    "",
+    "Produit demandé : "+d.productId,
+    "Plugin détecté : "+(d.pluginDetected?"OUI":"NON"),
+    "Version plugin : "+(d.pluginVersion||"non retournée"),
+    "Billing supporté : "+(d.billingSupported===null?"non testé":(d.billingSupported?"OUI":"NON")),
+    "Storefront : "+(d.storefront||"non retourné"),
+    "Produits renvoyés : "+(d.productsCount===null?"non testé":String(d.productsCount)),
+    "Identifiants renvoyés : "+(d.returnedIds.length?d.returnedIds.join(", "):"aucun"),
+    d.error ? "Erreur : "+d.error : "Erreur : aucune"
+  ].join("\n");
 }
 async function buyZenPlusPremium(){
   const n=zenNativePurchases();
-  if(!n){alert("L’achat Apple n’est pas disponible dans cette version.");return;}
+  if(!n){
+    await loadZenPlusAppleProduct(true);
+    return;
+  }
   try{
-    const p=zenPlusAppleProduct||await loadZenPlusAppleProduct();
-    if(!p){alert("ZEN+ Premium n’est pas encore disponible sur l’App Store.");return;}
-    const r=await n.purchaseProduct({productIdentifier:ZENPLUS_APPLE_PRODUCT_ID,productType:"inapp",quantity:1});
+    const p=zenPlusAppleProduct||await loadZenPlusAppleProduct(false);
+    if(!p){
+      await loadZenPlusAppleProduct(true);
+      return;
+    }
+    const r=await n.purchaseProduct({
+      productIdentifier:ZENPLUS_APPLE_PRODUCT_ID,
+      productType:"inapp",
+      quantity:1
+    });
     if(r?.productIdentifier===ZENPLUS_APPLE_PRODUCT_ID){
       localStorage.setItem("zenPlusPremiumEntitlementV1","1");
       refreshZenPlusPremiumUI();
       alert("ZEN+ Premium est activé. Merci !");
+    }else{
+      alert("🧪 DIAGNOSTIC ACHAT\n\nStoreKit a terminé l’appel mais l’identifiant retourné ne correspond pas à ZENPREMIUM.\n\nIdentifiant : "+String(r?.productIdentifier||"non retourné"));
     }
   }catch(e){
     const msg=String(e?.message||e||"");
     if(/cancel|cancell/i.test(msg)) return;
-    console.error(e); alert("L’achat n’a pas pu être terminé.");
+    console.error("StoreKit purchase ZEN+",e);
+    alert("🧪 ERREUR ACHAT STOREKIT\n\n"+zenPlusErrorDetails(e));
   }
 }
 async function restoreZenPlusPremium(){
