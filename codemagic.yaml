@@ -36,8 +36,8 @@ workflows:
 
 
   ios-app-store:
-    # TEST UNIQUEMENT : génère une IPA mais ne la publie PAS automatiquement chez Apple.
-    name: Mon Budget ZEN+ TEST
+    # VERSION FINALE : génère une IPA signée et l’envoie vers TestFlight/App Store Connect.
+    name: Mon Budget ZEN FINAL
     max_build_duration: 60
 
     integrations:
@@ -257,12 +257,12 @@ workflows:
       - name: Set iOS build number
         script: |
           set -e
-          echo "=== Forçage du build TEST Apple à 56 ==="
+          echo "=== Forçage du build Apple FINAL à 57 ==="
 
           cd ios/App
 
           # 1) Réglage Xcode standard.
-          agvtool new-version -all 56 || true
+          agvtool new-version -all 57 || true
 
           # 2) Force CURRENT_PROJECT_VERSION dans le projet Xcode.
           python3 - <<'PY'
@@ -270,33 +270,33 @@ workflows:
           import re
           p=Path("App.xcodeproj/project.pbxproj")
           s=p.read_text()
-          s,n=re.subn(r'CURRENT_PROJECT_VERSION = [^;]+;', 'CURRENT_PROJECT_VERSION = 56;', s)
+          s,n=re.subn(r'CURRENT_PROJECT_VERSION = [^;]+;', 'CURRENT_PROJECT_VERSION = 57;', s)
           if n == 0:
               raise SystemExit("ERREUR : CURRENT_PROJECT_VERSION introuvable dans project.pbxproj")
           p.write_text(s)
-          print(f"OK : CURRENT_PROJECT_VERSION forcé à 56 ({n} occurrence(s)).")
+          print(f"OK : CURRENT_PROJECT_VERSION forcé à 57 ({n} occurrence(s)).")
           PY
 
           # 3) Force aussi CFBundleVersion dans le vrai Info.plist de l'app.
-          /usr/libexec/PlistBuddy -c "Set :CFBundleVersion 56" App/Info.plist 2>/dev/null || \
-          /usr/libexec/PlistBuddy -c "Add :CFBundleVersion string 55" App/Info.plist
+          /usr/libexec/PlistBuddy -c "Set :CFBundleVersion 57" App/Info.plist 2>/dev/null || \
+          /usr/libexec/PlistBuddy -c "Add :CFBundleVersion string 57" App/Info.plist
 
           echo "=== Vérification AVANT signature ==="
           PLIST_BUILD=$(/usr/libexec/PlistBuddy -c "Print :CFBundleVersion" App/Info.plist)
           echo "Info.plist CFBundleVersion = $PLIST_BUILD"
-          if [ "$PLIST_BUILD" != "56" ]; then
-            echo "ERREUR : Info.plist n'est pas au build 56."
+          if [ "$PLIST_BUILD" != "57" ]; then
+            echo "ERREUR : Info.plist n'est pas au build 57."
             exit 1
           fi
 
-          PBX_OTHER=$(grep -E "CURRENT_PROJECT_VERSION = " App.xcodeproj/project.pbxproj | grep -v "CURRENT_PROJECT_VERSION = 56;" || true)
+          PBX_OTHER=$(grep -E "CURRENT_PROJECT_VERSION = " App.xcodeproj/project.pbxproj | grep -v "CURRENT_PROJECT_VERSION = 57;" || true)
           if [ -n "$PBX_OTHER" ]; then
-            echo "ERREUR : au moins une configuration Xcode n'est pas au build 56 :"
+            echo "ERREUR : au moins une configuration Xcode n'est pas au build 57 :"
             echo "$PBX_OTHER"
             exit 1
           fi
 
-          echo "OK : le projet iOS est intégralement réglé sur le build 56."
+          echo "OK : le projet iOS est intégralement réglé sur le build 57."
           cd ../..
 
       - name: Configure Mon Budget ZEN app icon
@@ -420,8 +420,8 @@ workflows:
             exit 1
           fi
 
-          if [ "$BUILD_NUMBER" != "56" ]; then
-            echo "ERREUR : le numéro de build final n'est pas 56."
+          if [ "$BUILD_NUMBER" != "57" ]; then
+            echo "ERREUR : le numéro de build final n'est pas 57."
             exit 1
           fi
 
@@ -435,7 +435,7 @@ workflows:
             exit 1
           fi
 
-          echo "OK : build 56 vérifié, avec autorisations caméra présentes dans l'IPA finale."
+          echo "OK : build 57 vérifié, avec autorisations caméra présentes dans l'IPA finale."
 
     artifacts:
       - build/ios/ipa/*.ipa
