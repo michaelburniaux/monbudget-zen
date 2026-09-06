@@ -191,6 +191,17 @@ workflows:
             -c "Set :GADApplicationIdentifier ca-app-pub-1076788224709799~8711250560" \
             ios/App/App/Info.plist
 
+      - name: Verify AdMob iOS configuration
+        script: |
+          EXPECTED_GAD_ID="ca-app-pub-1076788224709799~8711250560"
+          GAD_ID=$(/usr/libexec/PlistBuddy -c "Print :GADApplicationIdentifier" ios/App/App/Info.plist 2>/dev/null || true)
+          echo "GADApplicationIdentifier = $GAD_ID"
+          if [ "$GAD_ID" != "$EXPECTED_GAD_ID" ]; then
+            echo "ERREUR : identifiant d'application AdMob absent ou incorrect."
+            exit 1
+          fi
+          echo "OK : identifiant d'application AdMob iOS configuré."
+
       - name: Configure Camera and Photo Library permissions
         script: |
           python3 <<'PYTHON'
@@ -257,12 +268,12 @@ workflows:
       - name: Set iOS build number
         script: |
           set -e
-          echo "=== Forçage du build Apple FINAL à 57 ==="
+          echo "=== Forçage du build Apple FINAL à 58 ==="
 
           cd ios/App
 
           # 1) Réglage Xcode standard.
-          agvtool new-version -all 57 || true
+          agvtool new-version -all 58 || true
 
           # 2) Force CURRENT_PROJECT_VERSION dans le projet Xcode.
           python3 - <<'PY'
@@ -270,33 +281,33 @@ workflows:
           import re
           p=Path("App.xcodeproj/project.pbxproj")
           s=p.read_text()
-          s,n=re.subn(r'CURRENT_PROJECT_VERSION = [^;]+;', 'CURRENT_PROJECT_VERSION = 57;', s)
+          s,n=re.subn(r'CURRENT_PROJECT_VERSION = [^;]+;', 'CURRENT_PROJECT_VERSION = 58;', s)
           if n == 0:
               raise SystemExit("ERREUR : CURRENT_PROJECT_VERSION introuvable dans project.pbxproj")
           p.write_text(s)
-          print(f"OK : CURRENT_PROJECT_VERSION forcé à 57 ({n} occurrence(s)).")
+          print(f"OK : CURRENT_PROJECT_VERSION forcé à 58 ({n} occurrence(s)).")
           PY
 
           # 3) Force aussi CFBundleVersion dans le vrai Info.plist de l'app.
-          /usr/libexec/PlistBuddy -c "Set :CFBundleVersion 57" App/Info.plist 2>/dev/null || \
-          /usr/libexec/PlistBuddy -c "Add :CFBundleVersion string 57" App/Info.plist
+          /usr/libexec/PlistBuddy -c "Set :CFBundleVersion 58" App/Info.plist 2>/dev/null || \
+          /usr/libexec/PlistBuddy -c "Add :CFBundleVersion string 58" App/Info.plist
 
           echo "=== Vérification AVANT signature ==="
           PLIST_BUILD=$(/usr/libexec/PlistBuddy -c "Print :CFBundleVersion" App/Info.plist)
           echo "Info.plist CFBundleVersion = $PLIST_BUILD"
-          if [ "$PLIST_BUILD" != "57" ]; then
-            echo "ERREUR : Info.plist n'est pas au build 57."
+          if [ "$PLIST_BUILD" != "58" ]; then
+            echo "ERREUR : Info.plist n'est pas au build 58."
             exit 1
           fi
 
-          PBX_OTHER=$(grep -E "CURRENT_PROJECT_VERSION = " App.xcodeproj/project.pbxproj | grep -v "CURRENT_PROJECT_VERSION = 57;" || true)
+          PBX_OTHER=$(grep -E "CURRENT_PROJECT_VERSION = " App.xcodeproj/project.pbxproj | grep -v "CURRENT_PROJECT_VERSION = 58;" || true)
           if [ -n "$PBX_OTHER" ]; then
-            echo "ERREUR : au moins une configuration Xcode n'est pas au build 57 :"
+            echo "ERREUR : au moins une configuration Xcode n'est pas au build 58 :"
             echo "$PBX_OTHER"
             exit 1
           fi
 
-          echo "OK : le projet iOS est intégralement réglé sur le build 57."
+          echo "OK : le projet iOS est intégralement réglé sur le build 58."
           cd ../..
 
       - name: Configure Mon Budget ZEN app icon
@@ -409,9 +420,11 @@ workflows:
           PHOTO_VALUE=$(/usr/libexec/PlistBuddy -c "Print :NSPhotoLibraryUsageDescription" "$APP_PLIST" 2>/dev/null || true)
           APP_ID=$(/usr/libexec/PlistBuddy -c "Print :CFBundleIdentifier" "$APP_PLIST" 2>/dev/null || true)
           BUILD_NUMBER=$(/usr/libexec/PlistBuddy -c "Print :CFBundleVersion" "$APP_PLIST" 2>/dev/null || true)
+          GAD_ID=$(/usr/libexec/PlistBuddy -c "Print :GADApplicationIdentifier" "$APP_PLIST" 2>/dev/null || true)
 
           echo "Bundle ID : $APP_ID"
-          echo "Build TEST : $BUILD_NUMBER"
+          echo "Build FINAL : $BUILD_NUMBER"
+          echo "GADApplicationIdentifier : $GAD_ID"
           echo "NSCameraUsageDescription : $CAMERA_VALUE"
           echo "NSPhotoLibraryUsageDescription : $PHOTO_VALUE"
 
@@ -420,8 +433,13 @@ workflows:
             exit 1
           fi
 
-          if [ "$BUILD_NUMBER" != "57" ]; then
-            echo "ERREUR : le numéro de build final n'est pas 57."
+          if [ "$BUILD_NUMBER" != "58" ]; then
+            echo "ERREUR : le numéro de build final n'est pas 58."
+            exit 1
+          fi
+
+          if [ "$GAD_ID" != "ca-app-pub-1076788224709799~8711250560" ]; then
+            echo "ERREUR : GADApplicationIdentifier est absent ou incorrect dans l'IPA finale."
             exit 1
           fi
 
@@ -435,7 +453,7 @@ workflows:
             exit 1
           fi
 
-          echo "OK : build 57 vérifié, avec autorisations caméra présentes dans l'IPA finale."
+          echo "OK : build 58 vérifié, avec autorisations caméra présentes dans l'IPA finale."
 
     artifacts:
       - build/ios/ipa/*.ipa
