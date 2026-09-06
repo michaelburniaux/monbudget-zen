@@ -434,15 +434,12 @@ select:focus{
 }
 
 .ad{
-  height:62px;
-  border:1px dashed #416385;
-  border-radius:15px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  color:#7190af;
-  font-size:12px;
-  margin:16px 0;
+  display:none;
+}
+
+/* ===== build 58 — bannière AdMob native ===== */
+body.admob-banner-active{
+  padding-bottom:175px;
 }
 
 .backupButtons{
@@ -2289,9 +2286,7 @@ select:focus{
 
   </div>
 
-  <div class="ad">
-    EMPLACEMENT PUBLICITAIRE
-  </div>
+  <div class="ad" id="admobNativeMarker" aria-hidden="true"></div>
 
 </div>
 
@@ -10895,6 +10890,94 @@ setTimeout(bindZenNearbyButtons,300);
 
 
 window.addEventListener("DOMContentLoaded",()=>{setTimeout(async()=>{await loadZenPlusAppleProduct();await syncZenPlusAppleEntitlement();},700);});
+
+
+/* ==========================================================
+   BUILD 58 — ADMOB NATIF iOS
+   - ID application configuré dans Info.plist par Codemagic
+   - ID bannière de production créé dans AdMob
+   - consentement UMP vérifié avant toute demande d'annonce
+   ========================================================== */
+const ADMOB_BANNER_ID="ca-app-pub-1076788224709799/1467163280";
+const ADMOB_BANNER_MARGIN=75;
+let admobBannerStarted=false;
+
+function getNativeAdMobPlugin(){
+  try{
+    const cap=window.Capacitor;
+    if(!cap) return null;
+    if(cap.Plugins && cap.Plugins.AdMob) return cap.Plugins.AdMob;
+    if(typeof cap.registerPlugin==="function") return cap.registerPlugin("AdMob");
+    return null;
+  }catch(e){
+    console.warn("AdMob : plugin natif introuvable",e);
+    return null;
+  }
+}
+
+async function initializeAdMobBanner(){
+  if(admobBannerStarted) return;
+  const cap=window.Capacitor;
+  if(!cap) return;
+
+  try{
+    if(typeof cap.getPlatform==="function" && cap.getPlatform()==="web") return;
+  }catch(_){ }
+
+  const AdMob=getNativeAdMobPlugin();
+  if(!AdMob){
+    console.warn("AdMob : plugin indisponible dans ce build.");
+    return;
+  }
+
+  admobBannerStarted=true;
+
+  try{
+    await AdMob.initialize();
+
+    let consentInfo=await AdMob.requestConsentInfo();
+    if(consentInfo && consentInfo.isConsentFormAvailable && consentInfo.status==="REQUIRED"){
+      consentInfo=await AdMob.showConsentForm();
+    }
+
+    if(consentInfo && consentInfo.canRequestAds===false){
+      console.log("AdMob : le SDK n'autorise pas encore la demande d'annonces.");
+      admobBannerStarted=false;
+      return;
+    }
+
+    if(typeof AdMob.addListener==="function"){
+      try{
+        await AdMob.addListener("bannerAdLoaded",()=>{
+          document.body.classList.add("admob-banner-active");
+          console.log("AdMob : bannière chargée.");
+        });
+        await AdMob.addListener("bannerAdFailedToLoad",error=>{
+          document.body.classList.remove("admob-banner-active");
+          console.warn("AdMob : échec de chargement de la bannière",error);
+        });
+      }catch(listenerError){
+        console.warn("AdMob : listeners indisponibles",listenerError);
+      }
+    }
+
+    await AdMob.showBanner({
+      adId:ADMOB_BANNER_ID,
+      adSize:"ADAPTIVE_BANNER",
+      position:"BOTTOM_CENTER",
+      margin:ADMOB_BANNER_MARGIN,
+      isTesting:false
+    });
+  }catch(e){
+    admobBannerStarted=false;
+    document.body.classList.remove("admob-banner-active");
+    console.error("AdMob : initialisation ou affichage impossible",e);
+  }
+}
+
+window.addEventListener("DOMContentLoaded",()=>{
+  setTimeout(initializeAdMobBanner,1200);
+});
 </script>
 
 </body>
