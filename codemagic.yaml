@@ -310,6 +310,43 @@ workflows:
           echo "OK : le projet iOS est intégralement réglé sur le build 58."
           cd ../..
 
+
+      - name: Set iOS marketing version
+        script: |
+          set -e
+          echo "=== Forçage de la version Apple à 1.1 ==="
+
+          PBXPROJ="ios/App/App.xcodeproj/project.pbxproj"
+          PLIST="ios/App/App/Info.plist"
+
+          python3 <<'PYTHON'
+          from pathlib import Path
+          import re
+
+          p = Path("ios/App/App.xcodeproj/project.pbxproj")
+          if not p.exists():
+              raise SystemExit("ERREUR : project.pbxproj introuvable")
+
+          s = p.read_text()
+          s, n = re.subn(r'MARKETING_VERSION = [^;]+;', 'MARKETING_VERSION = 1.1;', s)
+          if n == 0:
+              raise SystemExit("ERREUR : MARKETING_VERSION introuvable dans project.pbxproj")
+
+          p.write_text(s)
+          print(f"OK : MARKETING_VERSION forcé à 1.1 ({n} occurrence(s)).")
+          PYTHON
+
+          /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString 1.1" "$PLIST" 2>/dev/null || \
+          /usr/libexec/PlistBuddy -c "Add :CFBundleShortVersionString string 1.1" "$PLIST"
+
+          VERSION_VALUE=$(/usr/libexec/PlistBuddy -c "Print :CFBundleShortVersionString" "$PLIST")
+          if [ "$VERSION_VALUE" != "1.1" ]; then
+            echo "ERREUR : CFBundleShortVersionString n'est pas 1.1."
+            exit 1
+          fi
+
+          echo "OK : version Apple réglée sur 1.1."
+
       - name: Configure Mon Budget ZEN app icon
         script: |
           set -e
@@ -420,6 +457,7 @@ workflows:
           PHOTO_VALUE=$(/usr/libexec/PlistBuddy -c "Print :NSPhotoLibraryUsageDescription" "$APP_PLIST" 2>/dev/null || true)
           APP_ID=$(/usr/libexec/PlistBuddy -c "Print :CFBundleIdentifier" "$APP_PLIST" 2>/dev/null || true)
           BUILD_NUMBER=$(/usr/libexec/PlistBuddy -c "Print :CFBundleVersion" "$APP_PLIST" 2>/dev/null || true)
+          VERSION_NUMBER=$(/usr/libexec/PlistBuddy -c "Print :CFBundleShortVersionString" "$APP_PLIST" 2>/dev/null || true)
           GAD_ID=$(/usr/libexec/PlistBuddy -c "Print :GADApplicationIdentifier" "$APP_PLIST" 2>/dev/null || true)
 
           echo "Bundle ID : $APP_ID"
@@ -430,6 +468,12 @@ workflows:
 
           if [ "$APP_ID" != "com.michaelburniaux.monbudget" ]; then
             echo "ERREUR : mauvais Bundle ID dans l'IPA finale."
+            exit 1
+          fi
+
+
+          if [ "$VERSION_NUMBER" != "1.1" ]; then
+            echo "ERREUR : la version App Store finale n'est pas 1.1."
             exit 1
           fi
 
