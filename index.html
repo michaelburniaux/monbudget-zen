@@ -10898,7 +10898,7 @@ window.addEventListener("DOMContentLoaded",()=>{setTimeout(async()=>{await loadZ
    - ID bannière de production créé dans AdMob
    - consentement UMP vérifié avant toute demande d'annonce
    ========================================================== */
-const ADMOB_BANNER_ID="ca-app-pub-1076788224709799/1467163280";
+const ADMOB_BANNER_ID="ca-app-pub-3940256099942544/2435281174";
 const ADMOB_BANNER_MARGIN=75;
 let admobBannerStarted=false;
 
@@ -10950,11 +10950,11 @@ async function initializeAdMobBanner(){
       try{
         await AdMob.addListener("bannerAdLoaded",()=>{
           document.body.classList.add("admob-banner-active");
-          console.log("AdMob : bannière chargée.");
+          console.log("AdMob BUILD 59 TEST : bannière Google de test chargée.");
         });
         await AdMob.addListener("bannerAdFailedToLoad",error=>{
           document.body.classList.remove("admob-banner-active");
-          console.warn("AdMob : échec de chargement de la bannière",error);
+          console.warn("AdMob BUILD 59 TEST : échec de chargement de la bannière",error);
         });
       }catch(listenerError){
         console.warn("AdMob : listeners indisponibles",listenerError);
@@ -10966,7 +10966,7 @@ async function initializeAdMobBanner(){
       adSize:"ADAPTIVE_BANNER",
       position:"BOTTOM_CENTER",
       margin:ADMOB_BANNER_MARGIN,
-      isTesting:false
+      isTesting:true
     });
   }catch(e){
     admobBannerStarted=false;
